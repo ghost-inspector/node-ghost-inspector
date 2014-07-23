@@ -1,0 +1,44 @@
+{
+  "name": "node-ghost-inspector",
+  "version": "1.0.0",
+  "description": "Ghost Inspector API for Node.js",
+  "homepage": "https://github.com/ghost-inspector/node-ghost-inspector",
+  "author": {
+    "name": "Justin Klemm",
+    "email": "justin@ghostinspector.com"
+  },
+  "repository": {
+    "type" : "git",
+    "url" : "http://github.com/ghost-inspector/node-ghost-inspector.git"
+  },
+  "engines": {
+    "node": "*"
+  },
+  "scripts": {
+    "test": "./node_modules/.bin/mocha"
+  },
+  "main": "./index.js",
+  "dependencies": {},
+  "devDependencies": {
+    "grunt": "0.4.*",
+    "grunt-cli": "0.1.*",
+    "grunt-contrib-coffee": "0.7.*",
+    "grunt-contrib-watch": "0.5.*",
+    "mocha": "~1.16.1",
+    "should": "~2.1.1"
+  },
+  "keywords": [
+    "ghost",
+    "inspector",
+    "ghost inspector",
+    "test",
+    "testing",
+    "automated testing",
+    "browser testing",
+    "automated browser testing",
+    "selenium"
+  ],
+  "license": "MIT",
+  "readme": "",
+  "readmeFilename": "README.md"
+}

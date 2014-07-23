@@ -1,0 +1,5 @@
+# Node packages downloaded via "npm install"
+node_modules/
+
+# Misc file types
+*.DS_Store
