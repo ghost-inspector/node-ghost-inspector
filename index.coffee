@@ -19,8 +19,8 @@ class GhostInspector
       # Process response
       res.on 'end', ->
         result = JSON.parse(json)
-        if result.code is 'ERROR' then return callback(result.message)
-        return callback(null, result.data)
+        if result.code is 'ERROR' then return callback?(result.message)
+        return callback?(null, result.data)
 
   getSuites: (callback) ->
     @execute '/suites/', callback

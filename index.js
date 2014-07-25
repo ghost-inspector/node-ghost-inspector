@@ -25,9 +25,9 @@ GhostInspector = (function() {
         var result;
         result = JSON.parse(json);
         if (result.code === 'ERROR') {
-          return callback(result.message);
+          return typeof callback === "function" ? callback(result.message) : void 0;
         }
-        return callback(null, result.data);
+        return typeof callback === "function" ? callback(null, result.data) : void 0;
       });
     });
   };
