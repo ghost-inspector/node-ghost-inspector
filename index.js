@@ -29,6 +29,8 @@ GhostInspector = (function() {
         }
         return typeof callback === "function" ? callback(null, result.data) : void 0;
       });
+    }).on('error', function(err) {
+      return typeof callback === "function" ? callback(err.message) : void 0;
     });
   };
 
