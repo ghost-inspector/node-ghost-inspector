@@ -3,6 +3,8 @@ module.exports = (grunt) ->
   # Grunt configuration
   grunt.initConfig
     coffee:
+      options:
+        bare: true
       source:
         expand: true
         cwd: './'
