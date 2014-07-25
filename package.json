@@ -8,8 +8,8 @@
     "email": "justin@ghostinspector.com"
   },
   "repository": {
-    "type" : "git",
-    "url" : "http://github.com/ghost-inspector/node-ghost-inspector.git"
+    "type": "git",
+    "url": "http://github.com/ghost-inspector/node-ghost-inspector.git"
   },
   "engines": {
     "node": "*"
@@ -21,6 +21,7 @@
   "dependencies": {},
   "devDependencies": {
     "grunt": "~0.4.5",
+    "grunt-bump": "0.0.14",
     "grunt-cli": "~0.1.13",
     "grunt-contrib-coffee": "~0.7.0",
     "grunt-contrib-watch": "~0.5.3",

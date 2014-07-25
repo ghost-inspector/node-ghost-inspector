@@ -2,6 +2,10 @@ module.exports = (grunt) ->
 
   # Grunt configuration
   grunt.initConfig
+    bump:
+      options:
+        files: ['package.json']
+        pushTo: 'origin'
     coffee:
       options:
         bare: true
@@ -22,6 +26,7 @@ module.exports = (grunt) ->
   ]
 
   # Load grunt modules
+  grunt.loadNpmTasks('grunt-bump')
   grunt.loadNpmTasks('grunt-contrib-coffee')
   grunt.loadNpmTasks('grunt-contrib-watch')
   
