@@ -35,13 +35,13 @@ class GhostInspector
 
   executeSuite: (suiteId, callback) ->
     @execute '/suites/' + suiteId + '/execute/', (err, data) ->
-      if err then return callback(err)
+      if err then return callback?(err)
       # Check test results, determine overall pass/fail
       passing = true
       for test in data
         passing = passing && test.passing
       # call back with extra pass/fail parameter
-      callback(null, data, passing)
+      callback?(null, data, passing)
 
   getTests: (callback) ->
     @execute '/tests/', callback
@@ -54,9 +54,9 @@ class GhostInspector
 
   executeTest: (testId, callback) ->
     @execute '/tests/' + testId + '/execute/', (err, data) ->
-      if err then return callback(err)
+      if err then return callback?(err)
       # call back with extra pass/fail parameter
-      callback(null, data, data.passing)
+      callback?(null, data, data.passing)
 
   getResult: (resultId, callback) ->
     @execute '/results/' + resultId + '/', callback

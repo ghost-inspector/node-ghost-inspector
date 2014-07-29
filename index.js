@@ -50,14 +50,14 @@ GhostInspector = (function() {
     return this.execute('/suites/' + suiteId + '/execute/', function(err, data) {
       var passing, test, _i, _len;
       if (err) {
-        return callback(err);
+        return typeof callback === "function" ? callback(err) : void 0;
       }
       passing = true;
       for (_i = 0, _len = data.length; _i < _len; _i++) {
         test = data[_i];
         passing = passing && test.passing;
       }
-      return callback(null, data, passing);
+      return typeof callback === "function" ? callback(null, data, passing) : void 0;
     });
   };
 
@@ -76,9 +76,9 @@ GhostInspector = (function() {
   GhostInspector.prototype.executeTest = function(testId, callback) {
     return this.execute('/tests/' + testId + '/execute/', function(err, data) {
       if (err) {
-        return callback(err);
+        return typeof callback === "function" ? callback(err) : void 0;
       }
-      return callback(null, data, data.passing);
+      return typeof callback === "function" ? callback(null, data, data.passing) : void 0;
     });
   };
 
