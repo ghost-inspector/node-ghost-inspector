@@ -2,3 +2,4 @@
 *.coffee
 Gruntfile.*
 /node_modules
+/test
