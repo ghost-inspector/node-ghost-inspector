@@ -1,6 +1,6 @@
 https = require 'https'
 
-# Define GhostInspector clas
+# Define GhostInspector class
 class GhostInspector
   host:   'api.ghostinspector.com'
   prefix: '/v1'
@@ -40,7 +40,7 @@ class GhostInspector
       passing = true
       for test in data
         passing = passing && test.passing
-      # call back with extra pass/fail parameter
+      # Call back with extra pass/fail parameter
       callback?(null, data, passing)
 
   getTests: (callback) ->
@@ -55,12 +55,12 @@ class GhostInspector
   executeTest: (testId, callback) ->
     @execute '/tests/' + testId + '/execute/', (err, data) ->
       if err then return callback?(err)
-      # call back with extra pass/fail parameter
+      # Call back with extra pass/fail parameter
       callback?(null, data, data.passing)
 
   getResult: (resultId, callback) ->
     @execute '/results/' + resultId + '/', callback
 
-# export new GhostInspector instance
+# Export new GhostInspector instance
 module.exports = (userId, apiKey) ->
   return new GhostInspector(userId, apiKey)
