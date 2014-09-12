@@ -69,6 +69,15 @@ describe 'Execute test ', ->
       passing.should.be.true
       done()
 
+describe 'Execute test overriding start URL ', ->
+  @timeout(0)
+  it 'should return a start URL of "https://www.google.com.br"', (done) ->
+    GhostInspector.executeTest '53cf58fc350c6c41029a11bf', { startUrl: 'https://www.google.com.br' }, (err, data, passing) ->
+      (err is null).should.be.true
+      data.startUrl.should.equal("https://www.google.com.br")
+      passing.should.be.true
+      done()
+
 describe 'Get result ', ->
   @timeout(0)
   it 'should return a result with a start URL of "https://www.google.com"', (done) ->

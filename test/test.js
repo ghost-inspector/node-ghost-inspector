@@ -94,6 +94,20 @@ describe('Execute test ', function() {
   });
 });
 
+describe('Execute test overriding start URL ', function() {
+  this.timeout(0);
+  return it('should return a start URL of "https://www.google.com.br"', function(done) {
+    return GhostInspector.executeTest('53cf58fc350c6c41029a11bf', {
+      startUrl: 'https://www.google.com.br'
+    }, function(err, data, passing) {
+      (err === null).should.be["true"];
+      data.startUrl.should.equal("https://www.google.com.br");
+      passing.should.be["true"];
+      return done();
+    });
+  });
+});
+
 describe('Get result ', function() {
   this.timeout(0);
   return it('should return a result with a start URL of "https://www.google.com"', function(done) {
