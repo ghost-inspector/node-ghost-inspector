@@ -7,9 +7,20 @@ class GhostInspector
 
   constructor: (@userId, @apiKey) ->
 
-  execute: (path, callback) ->
+  execute: (path, params, callback) ->
+    # Sort out params and callback
+    if typeof params is 'function'
+      callback = params
+      params = {}
+    else if not params or typeof params isnt 'object'
+      params = {}
+    # add auth to params
+    params.userId = @userId
+    params.apiKey = @apiKey
     # Build request URL
-    url = 'https://' + @host + @prefix + path + '?userId=' + @userId + '&apiKey=' + @apiKey
+    url = 'https://' + @host + @prefix + path + '?'
+    for key, val of params
+      url += key + '=' + encodeURIComponent(val) + '&'
     # Send request to API
     https.get url, (res) ->
       json = ''
@@ -33,8 +44,13 @@ class GhostInspector
   getSuiteTests: (suiteId, callback) ->
     @execute '/suites/' + suiteId + '/tests/', callback
 
-  executeSuite: (suiteId, callback) ->
-    @execute '/suites/' + suiteId + '/execute/', (err, data) ->
+  executeSuite: (suiteId, options, callback) ->
+    # Sort out options and callback
+    if typeof options is 'function'
+      callback = options
+      options = {}
+    # Execute API call
+    @execute '/suites/' + suiteId + '/execute/', options, (err, data) ->
       if err then return callback?(err)
       # Check test results, determine overall pass/fail
       passing = true
@@ -52,8 +68,13 @@ class GhostInspector
   getTestResults: (testId, callback) ->
     @execute '/tests/' + testId + '/results/', callback
 
-  executeTest: (testId, callback) ->
-    @execute '/tests/' + testId + '/execute/', (err, data) ->
+  executeTest: (testId, options, callback) ->
+    # Sort out options and callback
+    if typeof options is 'function'
+      callback = options
+      options = {}
+    # Execute API call
+    @execute '/tests/' + testId + '/execute/', options, (err, data) ->
       if err then return callback?(err)
       # Call back with extra pass/fail parameter
       callback?(null, data, data.passing)

@@ -12,9 +12,21 @@ GhostInspector = (function() {
     this.apiKey = apiKey;
   }
 
-  GhostInspector.prototype.execute = function(path, callback) {
-    var url;
-    url = 'https://' + this.host + this.prefix + path + '?userId=' + this.userId + '&apiKey=' + this.apiKey;
+  GhostInspector.prototype.execute = function(path, params, callback) {
+    var key, url, val;
+    if (typeof params === 'function') {
+      callback = params;
+      params = {};
+    } else if (!params || typeof params !== 'object') {
+      params = {};
+    }
+    params.userId = this.userId;
+    params.apiKey = this.apiKey;
+    url = 'https://' + this.host + this.prefix + path + '?';
+    for (key in params) {
+      val = params[key];
+      url += key + '=' + encodeURIComponent(val) + '&';
+    }
     return https.get(url, function(res) {
       var json;
       json = '';
@@ -46,8 +58,12 @@ GhostInspector = (function() {
     return this.execute('/suites/' + suiteId + '/tests/', callback);
   };
 
-  GhostInspector.prototype.executeSuite = function(suiteId, callback) {
-    return this.execute('/suites/' + suiteId + '/execute/', function(err, data) {
+  GhostInspector.prototype.executeSuite = function(suiteId, options, callback) {
+    if (typeof options === 'function') {
+      callback = options;
+      options = {};
+    }
+    return this.execute('/suites/' + suiteId + '/execute/', options, function(err, data) {
       var passing, test, _i, _len;
       if (err) {
         return typeof callback === "function" ? callback(err) : void 0;
@@ -73,8 +89,12 @@ GhostInspector = (function() {
     return this.execute('/tests/' + testId + '/results/', callback);
   };
 
-  GhostInspector.prototype.executeTest = function(testId, callback) {
-    return this.execute('/tests/' + testId + '/execute/', function(err, data) {
+  GhostInspector.prototype.executeTest = function(testId, options, callback) {
+    if (typeof options === 'function') {
+      callback = options;
+      options = {};
+    }
+    return this.execute('/tests/' + testId + '/execute/', options, function(err, data) {
       if (err) {
         return typeof callback === "function" ? callback(err) : void 0;
       }
