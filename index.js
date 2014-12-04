@@ -12,7 +12,7 @@ GhostInspector = (function() {
   }
 
   GhostInspector.prototype.execute = function(path, params, callback) {
-    var key, url, val;
+    var item, key, url, val, _i, _len;
     if (typeof params === 'function') {
       callback = params;
       params = {};
@@ -23,7 +23,14 @@ GhostInspector = (function() {
     url = this.host + this.prefix + path + '?';
     for (key in params) {
       val = params[key];
-      url += key + '=' + encodeURIComponent(val) + '&';
+      if (val instanceof Array) {
+        for (_i = 0, _len = val.length; _i < _len; _i++) {
+          item = val[_i];
+          url += key + '[]=' + encodeURIComponent(item) + '&';
+        }
+      } else {
+        url += key + '=' + encodeURIComponent(val) + '&';
+      }
     }
     return https.get(url, function(res) {
       var json;

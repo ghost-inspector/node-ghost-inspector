@@ -20,7 +20,12 @@ class GhostInspector
     # Build request URL
     url = @host + @prefix + path + '?'
     for key, val of params
-      url += key + '=' + encodeURIComponent(val) + '&'
+      # handle array params
+      if val instanceof Array
+        for item in val
+          url += key + '[]=' + encodeURIComponent(item) + '&'
+      else
+        url += key + '=' + encodeURIComponent(val) + '&'
     # Send request to API
     https.get url, (res) ->
       json = ''
