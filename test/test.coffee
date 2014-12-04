@@ -1,6 +1,6 @@
 # The API key and IDs used in this file belong to the official Ghost Inspector API testing account.
 should = require('should')
-GhostInspector = require('../index')('53cf58be350c6c41029a11bd', 'ff586dcaaa9b781163dbae48a230ea1947f894ff')
+GhostInspector = require('../index')('ff586dcaaa9b781163dbae48a230ea1947f894ff')
 
 
 describe 'Get suites', ->

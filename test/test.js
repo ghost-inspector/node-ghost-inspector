@@ -2,7 +2,7 @@ var GhostInspector, should;
 
 should = require('should');
 
-GhostInspector = require('../index')('53cf58be350c6c41029a11bd', 'ff586dcaaa9b781163dbae48a230ea1947f894ff');
+GhostInspector = require('../index')('ff586dcaaa9b781163dbae48a230ea1947f894ff');
 
 describe('Get suites', function() {
   this.timeout(0);
