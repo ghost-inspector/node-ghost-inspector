@@ -87,7 +87,7 @@ describe('Execute test ', function() {
   return it('should return a test name of "Google" and a passing status', function(done) {
     return GhostInspector.executeTest('53cf58fc350c6c41029a11bf', function(err, data, passing) {
       (err === null).should.be["true"];
-      data.testName.should.equal("Google");
+      data.test.name.should.equal("Google");
       passing.should.be["true"];
       return done();
     });

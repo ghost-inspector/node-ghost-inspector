@@ -65,7 +65,7 @@ describe 'Execute test ', ->
   it 'should return a test name of "Google" and a passing status', (done) ->
     GhostInspector.executeTest '53cf58fc350c6c41029a11bf', (err, data, passing) ->
       (err is null).should.be.true
-      data.testName.should.equal("Google")
+      data.test.name.should.equal("Google")
       passing.should.be.true
       done()
 
