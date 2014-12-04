@@ -10,10 +10,10 @@ Node.js module for interacting with [Ghost Inspector's API](https://ghostinspect
 
 ## Usage
 
-Every method is accessed via your `GhostInspector` instance. Your User ID and API Key is passed in when the instance is created:
+Every method is accessed via your `GhostInspector` instance. Your API Key is passed in when the instance is created:
 
 ```js
-var GhostInspector = require('ghost-inspector')('[user-id]', '[api-key]');
+var GhostInspector = require('ghost-inspector')('[api-key]');
 ```
 
 #### getSuites([callback])
