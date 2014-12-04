@@ -5,7 +5,7 @@ class GhostInspector
   host:   'api.ghostinspector.com'
   prefix: '/v1'
 
-  constructor: (@userId, @apiKey) ->
+  constructor: (@apiKey) ->
 
   execute: (path, params, callback) ->
     # Sort out params and callback
@@ -15,7 +15,6 @@ class GhostInspector
     else if not params or typeof params isnt 'object'
       params = {}
     # add auth to params
-    params.userId = @userId
     params.apiKey = @apiKey
     # Build request URL
     url = 'https://' + @host + @prefix + path + '?'
@@ -83,5 +82,5 @@ class GhostInspector
     @execute '/results/' + resultId + '/', callback
 
 # Export new GhostInspector instance
-module.exports = (userId, apiKey) ->
-  return new GhostInspector(userId, apiKey)
+module.exports = (param1, param2) ->
+  return new GhostInspector(if param2 then param2 else param1)

@@ -7,8 +7,7 @@ GhostInspector = (function() {
 
   GhostInspector.prototype.prefix = '/v1';
 
-  function GhostInspector(userId, apiKey) {
-    this.userId = userId;
+  function GhostInspector(apiKey) {
     this.apiKey = apiKey;
   }
 
@@ -20,7 +19,6 @@ GhostInspector = (function() {
     } else if (!params || typeof params !== 'object') {
       params = {};
     }
-    params.userId = this.userId;
     params.apiKey = this.apiKey;
     url = 'https://' + this.host + this.prefix + path + '?';
     for (key in params) {
@@ -110,6 +108,6 @@ GhostInspector = (function() {
 
 })();
 
-module.exports = function(userId, apiKey) {
-  return new GhostInspector(userId, apiKey);
+module.exports = function(param1, param2) {
+  return new GhostInspector(param2 ? param2 : param1);
 };
