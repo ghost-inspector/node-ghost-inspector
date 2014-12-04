@@ -1,8 +1,9 @@
-https = require 'https'
+https = require('https')
+
 
 # Define GhostInspector class
 class GhostInspector
-  host:   'api.ghostinspector.com'
+  host:   'https://api.ghostinspector.com'
   prefix: '/v1'
 
   constructor: (@apiKey) ->
@@ -17,7 +18,7 @@ class GhostInspector
     # add auth to params
     params.apiKey = @apiKey
     # Build request URL
-    url = 'https://' + @host + @prefix + path + '?'
+    url = @host + @prefix + path + '?'
     for key, val of params
       url += key + '=' + encodeURIComponent(val) + '&'
     # Send request to API

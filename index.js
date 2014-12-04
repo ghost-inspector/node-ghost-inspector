@@ -3,7 +3,7 @@ var GhostInspector, https;
 https = require('https');
 
 GhostInspector = (function() {
-  GhostInspector.prototype.host = 'api.ghostinspector.com';
+  GhostInspector.prototype.host = 'https://api.ghostinspector.com';
 
   GhostInspector.prototype.prefix = '/v1';
 
@@ -20,7 +20,7 @@ GhostInspector = (function() {
       params = {};
     }
     params.apiKey = this.apiKey;
-    url = 'https://' + this.host + this.prefix + path + '?';
+    url = this.host + this.prefix + path + '?';
     for (key in params) {
       val = params[key];
       url += key + '=' + encodeURIComponent(val) + '&';
