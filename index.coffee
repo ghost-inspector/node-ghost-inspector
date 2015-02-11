@@ -63,9 +63,12 @@ class GhostInspector
     @execute '/suites/' + suiteId + '/execute/', options, (err, data) ->
       if err then return callback?(err)
       # Check test results, determine overall pass/fail
-      passing = true
-      for test in data
-        passing = passing && test.passing
+      if data instanceof Array
+        passing = true
+        for test in data
+          passing = passing && test.passing
+      else
+        passing = null
       # Call back with extra pass/fail parameter
       callback?(null, data, passing)
 
@@ -87,7 +90,8 @@ class GhostInspector
     @execute '/tests/' + testId + '/execute/', options, (err, data) ->
       if err then return callback?(err)
       # Call back with extra pass/fail parameter
-      callback?(null, data, data.passing)
+      passing = if data.passing is undefined then null else data.passing
+      callback?(null, data, passing)
 
   getResult: (resultId, callback) ->
     @execute '/results/' + resultId + '/', callback
