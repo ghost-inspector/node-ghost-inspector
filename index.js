@@ -39,8 +39,16 @@ GhostInspector = (function() {
         return json += data;
       });
       return res.on('end', function() {
-        var result;
-        result = JSON.parse(json);
+        var err, result;
+        try {
+          result = JSON.parse(json);
+        } catch (_error) {
+          err = _error;
+          result = {
+            code: 'ERROR',
+            message: 'The Ghost Inspector service is not returning a valid response.'
+          };
+        }
         if (result.code === 'ERROR') {
           return typeof callback === "function" ? callback(result.message) : void 0;
         }

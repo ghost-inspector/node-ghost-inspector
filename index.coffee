@@ -34,7 +34,12 @@ class GhostInspector
         json += data
       # Process response
       res.on 'end', ->
-        result = JSON.parse(json)
+        try
+          result = JSON.parse(json)
+        catch err
+          result =
+            code: 'ERROR'
+            message: 'The Ghost Inspector service is not returning a valid response.'
         if result.code is 'ERROR' then return callback?(result.message)
         return callback?(null, result.data)
     .on 'error', (err) ->
