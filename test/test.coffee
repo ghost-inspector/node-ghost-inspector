@@ -63,10 +63,10 @@ describe 'Get test', ->
 
 describe 'Get test results', ->
   @timeout(0)
-  it 'should return at least 1 result with a start URL of "https://www.google.com"', (done) ->
+  it 'should return at least 1 result with a test name of "Google"', (done) ->
     GhostInspector.getTestResults '53cf58fc350c6c41029a11bf', (err, data) ->
       (err is null).should.be.true
-      data[0].startUrl.should.equal("https://www.google.com")
+      data[0].test.name.should.equal("Google")
       done()
 
 describe 'Execute test ', ->
@@ -98,8 +98,8 @@ describe 'Execute test with immediate response ', ->
 
 describe 'Get result ', ->
   @timeout(0)
-  it 'should return a result with a start URL of "https://www.google.com"', (done) ->
+  it 'should return a result with a test name of "Google"', (done) ->
     GhostInspector.getResult '53cf58fe8e871daa3d95c6c5', (err, data) ->
       (err is null).should.be.true
-      data.startUrl.should.equal("https://www.google.com")
+      data.test.name.should.equal("Google")
       done()

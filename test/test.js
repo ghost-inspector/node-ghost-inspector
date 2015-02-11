@@ -87,10 +87,10 @@ describe('Get test', function() {
 
 describe('Get test results', function() {
   this.timeout(0);
-  return it('should return at least 1 result with a start URL of "https://www.google.com"', function(done) {
+  return it('should return at least 1 result with a test name of "Google"', function(done) {
     return GhostInspector.getTestResults('53cf58fc350c6c41029a11bf', function(err, data) {
       (err === null).should.be["true"];
-      data[0].startUrl.should.equal("https://www.google.com");
+      data[0].test.name.should.equal("Google");
       return done();
     });
   });
@@ -102,6 +102,20 @@ describe('Execute test ', function() {
     return GhostInspector.executeTest('53cf58fc350c6c41029a11bf', function(err, data, passing) {
       (err === null).should.be["true"];
       data.test.name.should.equal("Google");
+      passing.should.be["true"];
+      return done();
+    });
+  });
+});
+
+describe('Execute test overriding start URL ', function() {
+  this.timeout(0);
+  return it('should return a start URL of "https://www.google.com.br"', function(done) {
+    return GhostInspector.executeTest('53cf58fc350c6c41029a11bf', {
+      startUrl: 'https://www.google.com.br'
+    }, function(err, data, passing) {
+      (err === null).should.be["true"];
+      data.startUrl.should.equal("https://www.google.com.br");
       passing.should.be["true"];
       return done();
     });
@@ -122,26 +136,12 @@ describe('Execute test with immediate response ', function() {
   });
 });
 
-describe('Execute test overriding start URL ', function() {
-  this.timeout(0);
-  return it('should return a start URL of "https://www.google.com.br"', function(done) {
-    return GhostInspector.executeTest('53cf58fc350c6c41029a11bf', {
-      startUrl: 'https://www.google.com.br'
-    }, function(err, data, passing) {
-      (err === null).should.be["true"];
-      data.startUrl.should.equal("https://www.google.com.br");
-      passing.should.be["true"];
-      return done();
-    });
-  });
-});
-
 describe('Get result ', function() {
   this.timeout(0);
-  return it('should return a result with a start URL of "https://www.google.com"', function(done) {
+  return it('should return a result with a test name of "Google"', function(done) {
     return GhostInspector.getResult('53cf58fe8e871daa3d95c6c5', function(err, data) {
       (err === null).should.be["true"];
-      data.startUrl.should.equal("https://www.google.com");
+      data.test.name.should.equal("Google");
       return done();
     });
   });
