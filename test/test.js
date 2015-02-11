@@ -49,6 +49,20 @@ describe('Execute suite ', function() {
   });
 });
 
+describe('Execute suite with immediate response ', function() {
+  this.timeout(0);
+  return it('should return success with empty data and null passing value', function(done) {
+    return GhostInspector.executeSuite('53cf58c0350c6c41029a11be', {
+      immediate: true
+    }, function(err, data, passing) {
+      (err === null).should.be["true"];
+      JSON.stringify(data).should.equal('{}');
+      (passing === null).should.be["true"];
+      return done();
+    });
+  });
+});
+
 describe('Get tests', function() {
   this.timeout(0);
   return it('should return 2 tests', function(done) {
@@ -89,6 +103,20 @@ describe('Execute test ', function() {
       (err === null).should.be["true"];
       data.test.name.should.equal("Google");
       passing.should.be["true"];
+      return done();
+    });
+  });
+});
+
+describe('Execute test with immediate response ', function() {
+  this.timeout(0);
+  return it('should return success with empty data and null passing value', function(done) {
+    return GhostInspector.executeTest('53cf58fc350c6c41029a11bf', {
+      immediate: true
+    }, function(err, data, passing) {
+      (err === null).should.be["true"];
+      JSON.stringify(data).should.equal('{}');
+      (passing === null).should.be["true"];
       return done();
     });
   });

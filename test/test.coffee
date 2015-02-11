@@ -36,6 +36,15 @@ describe 'Execute suite ', ->
       passing.should.be.true
       done()
 
+describe 'Execute suite with immediate response ', ->
+  @timeout(0)
+  it 'should return success with empty data and null passing value', (done) ->
+    GhostInspector.executeSuite '53cf58c0350c6c41029a11be', { immediate: true }, (err, data, passing) ->
+      (err is null).should.be.true
+      JSON.stringify(data).should.equal('{}')
+      (passing is null).should.be.true
+      done()
+
 describe 'Get tests', ->
   @timeout(0)
   it 'should return 2 tests', (done) ->
@@ -76,6 +85,15 @@ describe 'Execute test overriding start URL ', ->
       (err is null).should.be.true
       data.startUrl.should.equal("https://www.google.com.br")
       passing.should.be.true
+      done()
+
+describe 'Execute test with immediate response ', ->
+  @timeout(0)
+  it 'should return success with empty data and null passing value', (done) ->
+    GhostInspector.executeTest '53cf58fc350c6c41029a11bf', { immediate: true }, (err, data, passing) ->
+      (err is null).should.be.true
+      JSON.stringify(data).should.equal('{}')
+      (passing is null).should.be.true
       done()
 
 describe 'Get result ', ->

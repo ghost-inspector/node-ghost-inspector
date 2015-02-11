@@ -39,8 +39,16 @@ GhostInspector = (function() {
         return json += data;
       });
       return res.on('end', function() {
-        var result;
-        result = JSON.parse(json);
+        var err, result;
+        try {
+          result = JSON.parse(json);
+        } catch (_error) {
+          err = _error;
+          result = {
+            code: 'ERROR',
+            message: 'The Ghost Inspector service is not returning a valid response.'
+          };
+        }
         if (result.code === 'ERROR') {
           return typeof callback === "function" ? callback(result.message) : void 0;
         }
@@ -73,10 +81,14 @@ GhostInspector = (function() {
       if (err) {
         return typeof callback === "function" ? callback(err) : void 0;
       }
-      passing = true;
-      for (_i = 0, _len = data.length; _i < _len; _i++) {
-        test = data[_i];
-        passing = passing && test.passing;
+      if (data instanceof Array) {
+        passing = true;
+        for (_i = 0, _len = data.length; _i < _len; _i++) {
+          test = data[_i];
+          passing = passing && test.passing;
+        }
+      } else {
+        passing = null;
       }
       return typeof callback === "function" ? callback(null, data, passing) : void 0;
     });
@@ -100,10 +112,12 @@ GhostInspector = (function() {
       options = {};
     }
     return this.execute('/tests/' + testId + '/execute/', options, function(err, data) {
+      var passing;
       if (err) {
         return typeof callback === "function" ? callback(err) : void 0;
       }
-      return typeof callback === "function" ? callback(null, data, data.passing) : void 0;
+      passing = data.passing === void 0 ? null : data.passing;
+      return typeof callback === "function" ? callback(null, data, passing) : void 0;
     });
   };
 
