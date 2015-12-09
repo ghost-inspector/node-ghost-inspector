@@ -12,7 +12,7 @@ GhostInspector = (function() {
   }
 
   GhostInspector.prototype.execute = function(path, params, callback) {
-    var item, key, url, val, _i, _len;
+    var i, item, key, len, url, val;
     if (typeof params === 'function') {
       callback = params;
       params = {};
@@ -24,8 +24,8 @@ GhostInspector = (function() {
     for (key in params) {
       val = params[key];
       if (val instanceof Array) {
-        for (_i = 0, _len = val.length; _i < _len; _i++) {
-          item = val[_i];
+        for (i = 0, len = val.length; i < len; i++) {
+          item = val[i];
           url += key + '[]=' + encodeURIComponent(item) + '&';
         }
       } else {
@@ -78,14 +78,14 @@ GhostInspector = (function() {
       options = {};
     }
     return this.execute('/suites/' + suiteId + '/execute/', options, function(err, data) {
-      var passing, test, _i, _len;
+      var i, len, passing, test;
       if (err) {
         return typeof callback === "function" ? callback(err) : void 0;
       }
       if (data instanceof Array) {
         passing = true;
-        for (_i = 0, _len = data.length; _i < _len; _i++) {
-          test = data[_i];
+        for (i = 0, len = data.length; i < len; i++) {
+          test = data[i];
           passing = passing && test.passing;
         }
       } else {
