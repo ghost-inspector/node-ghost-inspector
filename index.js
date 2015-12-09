@@ -35,6 +35,7 @@ GhostInspector = (function() {
     return https.get(url, function(res) {
       var json;
       json = '';
+      res.setTimeout(1800000);
       res.on('data', function(data) {
         return json += data;
       });

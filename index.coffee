@@ -29,6 +29,8 @@ class GhostInspector
     # Send request to API
     https.get url, (res) ->
       json = ''
+      # Set long timeout (30 mins)
+      res.setTimeout(1800000)
       # Get response
       res.on 'data', (data) ->
         json += data
