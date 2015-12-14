@@ -1,6 +1,8 @@
-var GhostInspector, https;
+var GhostInspector, fs, https;
 
 https = require('https');
+
+fs = require('fs');
 
 GhostInspector = (function() {
   GhostInspector.prototype.host = 'https://api.ghostinspector.com';
@@ -65,24 +67,21 @@ GhostInspector = (function() {
         return typeof callback === "function" ? callback(null, result.data) : void 0;
       });
     }).on('error', function(err) {
-      return typeof callback === "function" ? callback(err.message) : void 0;
+      return typeof callback === "function" ? callback(err) : void 0;
     });
   };
 
-  GhostInspector.prototype.download = function(path, callback) {
-    var url;
+  GhostInspector.prototype.download = function(path, dest, callback) {
+    var file, url;
+    file = fs.createWriteStream(dest);
     url = this.buildRequestUrl(path);
     return https.get(url, function(res) {
-      var contents;
-      contents = '';
-      res.on('data', function(data) {
-        return contents += data;
-      });
-      return res.on('end', function() {
-        return typeof callback === "function" ? callback(null, contents) : void 0;
+      res.pipe(file);
+      return file.on('finish', function() {
+        return file.close(callback);
       });
     }).on('error', function(err) {
-      return typeof callback === "function" ? callback(err.message) : void 0;
+      return typeof callback === "function" ? callback(err) : void 0;
     });
   };
 
@@ -121,8 +120,8 @@ GhostInspector = (function() {
     });
   };
 
-  GhostInspector.prototype.downloadSuiteSeleniumHtml = function(suiteId, callback) {
-    return this.download('/suites/' + suiteId + '/export/selenium-html/', callback);
+  GhostInspector.prototype.downloadSuiteSeleniumHtml = function(suiteId, dest, callback) {
+    return this.download('/suites/' + suiteId + '/export/selenium-html/', dest, callback);
   };
 
   GhostInspector.prototype.getTests = function(callback) {
@@ -156,8 +155,8 @@ GhostInspector = (function() {
     });
   };
 
-  GhostInspector.prototype.downloadTestSeleniumHtml = function(testId, callback) {
-    return this.download('/tests/' + testId + '/export/selenium-html/', callback);
+  GhostInspector.prototype.downloadTestSeleniumHtml = function(testId, dest, callback) {
+    return this.download('/tests/' + testId + '/export/selenium-html/', dest, callback);
   };
 
   GhostInspector.prototype.getResult = function(resultId, callback) {

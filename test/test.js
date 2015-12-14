@@ -1,4 +1,6 @@
-var GhostInspector, should;
+var GhostInspector, fs, should;
+
+fs = require('fs');
 
 should = require('should');
 
@@ -64,11 +66,14 @@ describe('Execute suite with immediate response ', function() {
 });
 
 describe('Download suite in (zipped) Selenium format', function() {
+  var dest;
   this.timeout(0);
+  dest = 'test/suite.zip';
   return it('should return a zip file', function(done) {
-    return GhostInspector.downloadSuiteSeleniumHtml('53cf58c0350c6c41029a11be', function(err, contents) {
+    return GhostInspector.downloadSuiteSeleniumHtml('53cf58c0350c6c41029a11be', dest, function(err) {
       (err === null).should.be["true"];
-      contents.should.match(/.*DOCTYPE.*/);
+      fs.existsSync(dest).should.be["true"];
+      fs.unlinkSync(dest);
       return done();
     });
   });
@@ -161,11 +166,14 @@ describe('Execute test with immediate response ', function() {
 });
 
 describe('Download test in Selenium format', function() {
+  var dest;
   this.timeout(0);
+  dest = 'test/test.html';
   return it('should return an HTML document', function(done) {
-    return GhostInspector.downloadTestSeleniumHtml('53cf58fc350c6c41029a11bf', function(err, contents) {
+    return GhostInspector.downloadTestSeleniumHtml('53cf58fc350c6c41029a11bf', dest, function(err) {
       (err === null).should.be["true"];
-      contents.should.match(/.*DOCTYPE.*/);
+      fs.existsSync(dest).should.be["true"];
+      fs.unlinkSync(dest);
       return done();
     });
   });

@@ -1,4 +1,5 @@
 https = require('https')
+fs = require('fs')
 
 
 # Define GhostInspector class
@@ -49,21 +50,19 @@ class GhostInspector
         if result.code is 'ERROR' then return callback?(result.message)
         return callback?(null, result.data)
     .on 'error', (err) ->
-      callback?(err.message)
+      callback?(err)
 
-  download: (path, callback) ->
+  download: (path, dest, callback) ->
+    file = fs.createWriteStream(dest)
     # Send request to API
     url = @buildRequestUrl(path)
     https.get url, (res) ->
-      contents = ''
-      # Get response
-      res.on 'data', (data) ->
-        contents += data
-      # Return file contents
-      res.on 'end', ->
-        callback?(null, contents)
+      # Save response into file
+      res.pipe(file)
+      file.on 'finish', ->
+        file.close(callback)
     .on 'error', (err) ->
-      callback?(err.message)
+      callback?(err)
 
   getSuites: (callback) ->
     @request '/suites/', callback
@@ -92,8 +91,8 @@ class GhostInspector
       # Call back with extra pass/fail parameter
       callback?(null, data, passing)
 
-  downloadSuiteSeleniumHtml: (suiteId, callback) ->
-    @download '/suites/' + suiteId + '/export/selenium-html/', callback
+  downloadSuiteSeleniumHtml: (suiteId, dest, callback) ->
+    @download '/suites/' + suiteId + '/export/selenium-html/', dest, callback
 
   getTests: (callback) ->
     @request '/tests/', callback
@@ -121,8 +120,8 @@ class GhostInspector
       passing = if data.passing is undefined then null else data.passing
       callback?(null, data, passing)
 
-  downloadTestSeleniumHtml: (testId, callback) ->
-    @download '/tests/' + testId + '/export/selenium-html/', callback
+  downloadTestSeleniumHtml: (testId, dest, callback) ->
+    @download '/tests/' + testId + '/export/selenium-html/', dest, callback
 
   getResult: (resultId, callback) ->
     @request '/results/' + resultId + '/', callback

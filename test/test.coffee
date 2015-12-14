@@ -1,4 +1,5 @@
 # The API key and IDs used in this file belong to the official Ghost Inspector API testing account.
+fs = require('fs')
 should = require('should')
 GhostInspector = require('../index')('ff586dcaaa9b781163dbae48a230ea1947f894ff')
 
@@ -47,10 +48,12 @@ describe 'Execute suite with immediate response ', ->
 
 describe 'Download suite in (zipped) Selenium format', ->
   @timeout(0)
+  dest = 'test/suite.zip'
   it 'should return a zip file', (done) ->
-    GhostInspector.downloadSuiteSeleniumHtml '53cf58c0350c6c41029a11be', (err, contents) ->
+    GhostInspector.downloadSuiteSeleniumHtml '53cf58c0350c6c41029a11be', dest, (err) ->
       (err is null).should.be.true
-      contents.should.match(/.*DOCTYPE.*/)
+      fs.existsSync(dest).should.be.true
+      fs.unlinkSync(dest)
       done()
 
 describe 'Get tests', ->
@@ -114,10 +117,12 @@ describe 'Execute test with immediate response ', ->
 
 describe 'Download test in Selenium format', ->
   @timeout(0)
+  dest = 'test/test.html'
   it 'should return an HTML document', (done) ->
-    GhostInspector.downloadTestSeleniumHtml '53cf58fc350c6c41029a11bf', (err, contents) ->
+    GhostInspector.downloadTestSeleniumHtml '53cf58fc350c6c41029a11bf', dest, (err) ->
       (err is null).should.be.true
-      contents.should.match(/.*DOCTYPE.*/)
+      fs.existsSync(dest).should.be.true
+      fs.unlinkSync(dest)
       done()
 
 describe 'Get result ', ->
