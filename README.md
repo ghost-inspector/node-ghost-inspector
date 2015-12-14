@@ -82,11 +82,16 @@ GhostInspector.getTest('[test-id]', function(err, test){
 });
 ```
 
-#### getTestResults(testId, [callback])
-Fetch an array of all the results for a test.
+#### getTestResults(testId, [options], [callback])
+Fetch an array of results for a test.
 
 ```js
-GhostInspector.getTestResults('[test-id]', function(err, results){
+var options = {
+    count: 10,
+    offset: 0
+};
+
+GhostInspector.getTestResults('[test-id]', options, function(err, results){
     if(err) return console.log('Error: ' + err);
     console.log(results);
 });
