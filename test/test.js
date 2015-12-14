@@ -63,6 +63,17 @@ describe('Execute suite with immediate response ', function() {
   });
 });
 
+describe('Download suite in (zipped) Selenium format', function() {
+  this.timeout(0);
+  return it('should return a zip file', function(done) {
+    return GhostInspector.downloadSuiteSeleniumHtml('53cf58c0350c6c41029a11be', function(err, contents) {
+      (err === null).should.be["true"];
+      contents.should.match(/.*DOCTYPE.*/);
+      return done();
+    });
+  });
+});
+
 describe('Get tests', function() {
   this.timeout(0);
   return it('should return 2 tests', function(done) {
@@ -144,6 +155,17 @@ describe('Execute test with immediate response ', function() {
       (err === null).should.be["true"];
       JSON.stringify(data).should.equal('{}');
       (passing === null).should.be["true"];
+      return done();
+    });
+  });
+});
+
+describe('Download test in Selenium format', function() {
+  this.timeout(0);
+  return it('should return an HTML document', function(done) {
+    return GhostInspector.downloadTestSeleniumHtml('53cf58fc350c6c41029a11bf', function(err, contents) {
+      (err === null).should.be["true"];
+      contents.should.match(/.*DOCTYPE.*/);
       return done();
     });
   });

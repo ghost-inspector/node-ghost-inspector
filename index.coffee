@@ -51,6 +51,20 @@ class GhostInspector
     .on 'error', (err) ->
       callback?(err.message)
 
+  download: (path, callback) ->
+    # Send request to API
+    url = @buildRequestUrl(path)
+    https.get url, (res) ->
+      contents = ''
+      # Get response
+      res.on 'data', (data) ->
+        contents += data
+      # Return file contents
+      res.on 'end', ->
+        callback?(null, contents)
+    .on 'error', (err) ->
+      callback?(err.message)
+
   getSuites: (callback) ->
     @request '/suites/', callback
 
@@ -78,6 +92,9 @@ class GhostInspector
       # Call back with extra pass/fail parameter
       callback?(null, data, passing)
 
+  downloadSuiteSeleniumHtml: (suiteId, callback) ->
+    @download '/suites/' + suiteId + '/export/selenium-html/', callback
+
   getTests: (callback) ->
     @request '/tests/', callback
 
@@ -103,6 +120,9 @@ class GhostInspector
       # Call back with extra pass/fail parameter
       passing = if data.passing is undefined then null else data.passing
       callback?(null, data, passing)
+
+  downloadTestSeleniumHtml: (testId, callback) ->
+    @download '/tests/' + testId + '/export/selenium-html/', callback
 
   getResult: (resultId, callback) ->
     @request '/results/' + resultId + '/', callback

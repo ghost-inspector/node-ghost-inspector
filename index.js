@@ -69,6 +69,23 @@ GhostInspector = (function() {
     });
   };
 
+  GhostInspector.prototype.download = function(path, callback) {
+    var url;
+    url = this.buildRequestUrl(path);
+    return https.get(url, function(res) {
+      var contents;
+      contents = '';
+      res.on('data', function(data) {
+        return contents += data;
+      });
+      return res.on('end', function() {
+        return typeof callback === "function" ? callback(null, contents) : void 0;
+      });
+    }).on('error', function(err) {
+      return typeof callback === "function" ? callback(err.message) : void 0;
+    });
+  };
+
   GhostInspector.prototype.getSuites = function(callback) {
     return this.request('/suites/', callback);
   };
@@ -104,6 +121,10 @@ GhostInspector = (function() {
     });
   };
 
+  GhostInspector.prototype.downloadSuiteSeleniumHtml = function(suiteId, callback) {
+    return this.download('/suites/' + suiteId + '/export/selenium-html/', callback);
+  };
+
   GhostInspector.prototype.getTests = function(callback) {
     return this.request('/tests/', callback);
   };
@@ -133,6 +154,10 @@ GhostInspector = (function() {
       passing = data.passing === void 0 ? null : data.passing;
       return typeof callback === "function" ? callback(null, data, passing) : void 0;
     });
+  };
+
+  GhostInspector.prototype.downloadTestSeleniumHtml = function(testId, callback) {
+    return this.download('/tests/' + testId + '/export/selenium-html/', callback);
   };
 
   GhostInspector.prototype.getResult = function(resultId, callback) {

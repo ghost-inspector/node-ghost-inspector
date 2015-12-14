@@ -45,6 +45,14 @@ describe 'Execute suite with immediate response ', ->
       (passing is null).should.be.true
       done()
 
+describe 'Download suite in (zipped) Selenium format', ->
+  @timeout(0)
+  it 'should return a zip file', (done) ->
+    GhostInspector.downloadSuiteSeleniumHtml '53cf58c0350c6c41029a11be', (err, contents) ->
+      (err is null).should.be.true
+      contents.should.match(/.*DOCTYPE.*/)
+      done()
+
 describe 'Get tests', ->
   @timeout(0)
   it 'should return 2 tests', (done) ->
@@ -102,6 +110,14 @@ describe 'Execute test with immediate response ', ->
       (err is null).should.be.true
       JSON.stringify(data).should.equal('{}')
       (passing is null).should.be.true
+      done()
+
+describe 'Download test in Selenium format', ->
+  @timeout(0)
+  it 'should return an HTML document', (done) ->
+    GhostInspector.downloadTestSeleniumHtml '53cf58fc350c6c41029a11bf', (err, contents) ->
+      (err is null).should.be.true
+      contents.should.match(/.*DOCTYPE.*/)
       done()
 
 describe 'Get result ', ->
