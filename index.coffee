@@ -1,4 +1,5 @@
 https = require('https')
+fs = require('fs')
 
 
 # Define GhostInspector class
@@ -8,17 +9,11 @@ class GhostInspector
 
   constructor: (@apiKey) ->
 
-  execute: (path, params, callback) ->
-    # Sort out params and callback
-    if typeof params is 'function'
-      callback = params
-      params = {}
-    else if not params or typeof params isnt 'object'
-      params = {}
-    # add auth to params
-    params.apiKey = @apiKey
+  buildRequestUrl: (path, params = {}) ->
     # Build request URL
     url = @host + @prefix + path + '?'
+    # Add auth and other params
+    params.apiKey = @apiKey
     for key, val of params
       # handle array params
       if val instanceof Array
@@ -26,9 +21,21 @@ class GhostInspector
           url += key + '[]=' + encodeURIComponent(item) + '&'
       else
         url += key + '=' + encodeURIComponent(val) + '&'
+    return url
+
+  request: (path, params, callback) ->
+    # Sort out params and callback
+    if typeof params is 'function'
+      callback = params
+      params = {}
+    else if not params or typeof params isnt 'object'
+      params = {}
     # Send request to API
+    url = @buildRequestUrl(path, params)
     https.get url, (res) ->
       json = ''
+      # Set long timeout (30 mins)
+      res.setTimeout(1800000)
       # Get response
       res.on 'data', (data) ->
         json += data
@@ -43,16 +50,28 @@ class GhostInspector
         if result.code is 'ERROR' then return callback?(result.message)
         return callback?(null, result.data)
     .on 'error', (err) ->
-      callback?(err.message)
+      callback?(err)
+
+  download: (path, dest, callback) ->
+    file = fs.createWriteStream(dest)
+    # Send request to API
+    url = @buildRequestUrl(path)
+    https.get url, (res) ->
+      # Save response into file
+      res.pipe(file)
+      file.on 'finish', ->
+        file.close(callback)
+    .on 'error', (err) ->
+      callback?(err)
 
   getSuites: (callback) ->
-    @execute '/suites/', callback
+    @request '/suites/', callback
 
   getSuite: (suiteId, callback) ->
-    @execute '/suites/' + suiteId + '/', callback
+    @request '/suites/' + suiteId + '/', callback
 
   getSuiteTests: (suiteId, callback) ->
-    @execute '/suites/' + suiteId + '/tests/', callback
+    @request '/suites/' + suiteId + '/tests/', callback
 
   executeSuite: (suiteId, options, callback) ->
     # Sort out options and callback
@@ -60,7 +79,7 @@ class GhostInspector
       callback = options
       options = {}
     # Execute API call
-    @execute '/suites/' + suiteId + '/execute/', options, (err, data) ->
+    @request '/suites/' + suiteId + '/execute/', options, (err, data) ->
       if err then return callback?(err)
       # Check test results, determine overall pass/fail
       if data instanceof Array
@@ -72,14 +91,22 @@ class GhostInspector
       # Call back with extra pass/fail parameter
       callback?(null, data, passing)
 
+  downloadSuiteSeleniumHtml: (suiteId, dest, callback) ->
+    @download '/suites/' + suiteId + '/export/selenium-html/', dest, callback
+
   getTests: (callback) ->
-    @execute '/tests/', callback
+    @request '/tests/', callback
 
   getTest: (testId, callback) ->
-    @execute '/tests/' + testId + '/', callback
+    @request '/tests/' + testId + '/', callback
 
-  getTestResults: (testId, callback) ->
-    @execute '/tests/' + testId + '/results/', callback
+  getTestResults: (testId, options, callback) ->
+    # Sort out options and callback
+    if typeof options is 'function'
+      callback = options
+      options = {}
+    # Execute API call
+    @request '/tests/' + testId + '/results/', options, callback
 
   executeTest: (testId, options, callback) ->
     # Sort out options and callback
@@ -87,14 +114,18 @@ class GhostInspector
       callback = options
       options = {}
     # Execute API call
-    @execute '/tests/' + testId + '/execute/', options, (err, data) ->
+    @request '/tests/' + testId + '/execute/', options, (err, data) ->
       if err then return callback?(err)
       # Call back with extra pass/fail parameter
       passing = if data.passing is undefined then null else data.passing
       callback?(null, data, passing)
 
+  downloadTestSeleniumHtml: (testId, dest, callback) ->
+    @download '/tests/' + testId + '/export/selenium-html/', dest, callback
+
   getResult: (resultId, callback) ->
-    @execute '/results/' + resultId + '/', callback
+    @request '/results/' + resultId + '/', callback
+
 
 # Export new GhostInspector instance
 module.exports = (param1, param2) ->

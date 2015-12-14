@@ -1,4 +1,6 @@
-var GhostInspector, should;
+var GhostInspector, fs, should;
+
+fs = require('fs');
 
 should = require('should');
 
@@ -63,6 +65,20 @@ describe('Execute suite with immediate response ', function() {
   });
 });
 
+describe('Download suite in (zipped) Selenium format', function() {
+  var dest;
+  this.timeout(0);
+  dest = 'test/suite.zip';
+  return it('should return a zip file', function(done) {
+    return GhostInspector.downloadSuiteSeleniumHtml('53cf58c0350c6c41029a11be', dest, function(err) {
+      (err === null).should.be["true"];
+      fs.existsSync(dest).should.be["true"];
+      fs.unlinkSync(dest);
+      return done();
+    });
+  });
+});
+
 describe('Get tests', function() {
   this.timeout(0);
   return it('should return 2 tests', function(done) {
@@ -91,6 +107,19 @@ describe('Get test results', function() {
     return GhostInspector.getTestResults('53cf58fc350c6c41029a11bf', function(err, data) {
       (err === null).should.be["true"];
       data[0].test.name.should.equal("Google");
+      return done();
+    });
+  });
+});
+
+describe('Get test results with options', function() {
+  this.timeout(0);
+  return it('should return 5 results', function(done) {
+    return GhostInspector.getTestResults('53cf58fc350c6c41029a11bf', {
+      'count': 5
+    }, function(err, data) {
+      (err === null).should.be["true"];
+      data.length.should.equal(5);
       return done();
     });
   });
@@ -131,6 +160,20 @@ describe('Execute test with immediate response ', function() {
       (err === null).should.be["true"];
       JSON.stringify(data).should.equal('{}');
       (passing === null).should.be["true"];
+      return done();
+    });
+  });
+});
+
+describe('Download test in Selenium format', function() {
+  var dest;
+  this.timeout(0);
+  dest = 'test/test.html';
+  return it('should return an HTML document', function(done) {
+    return GhostInspector.downloadTestSeleniumHtml('53cf58fc350c6c41029a11bf', dest, function(err) {
+      (err === null).should.be["true"];
+      fs.existsSync(dest).should.be["true"];
+      fs.unlinkSync(dest);
       return done();
     });
   });

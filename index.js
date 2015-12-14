@@ -1,6 +1,8 @@
-var GhostInspector, https;
+var GhostInspector, fs, https;
 
 https = require('https');
+
+fs = require('fs');
 
 GhostInspector = (function() {
   GhostInspector.prototype.host = 'https://api.ghostinspector.com';
@@ -11,30 +13,40 @@ GhostInspector = (function() {
     this.apiKey = apiKey;
   }
 
-  GhostInspector.prototype.execute = function(path, params, callback) {
-    var item, key, url, val, _i, _len;
-    if (typeof params === 'function') {
-      callback = params;
-      params = {};
-    } else if (!params || typeof params !== 'object') {
+  GhostInspector.prototype.buildRequestUrl = function(path, params) {
+    var i, item, key, len, url, val;
+    if (params == null) {
       params = {};
     }
-    params.apiKey = this.apiKey;
     url = this.host + this.prefix + path + '?';
+    params.apiKey = this.apiKey;
     for (key in params) {
       val = params[key];
       if (val instanceof Array) {
-        for (_i = 0, _len = val.length; _i < _len; _i++) {
-          item = val[_i];
+        for (i = 0, len = val.length; i < len; i++) {
+          item = val[i];
           url += key + '[]=' + encodeURIComponent(item) + '&';
         }
       } else {
         url += key + '=' + encodeURIComponent(val) + '&';
       }
     }
+    return url;
+  };
+
+  GhostInspector.prototype.request = function(path, params, callback) {
+    var url;
+    if (typeof params === 'function') {
+      callback = params;
+      params = {};
+    } else if (!params || typeof params !== 'object') {
+      params = {};
+    }
+    url = this.buildRequestUrl(path, params);
     return https.get(url, function(res) {
       var json;
       json = '';
+      res.setTimeout(1800000);
       res.on('data', function(data) {
         return json += data;
       });
@@ -55,20 +67,34 @@ GhostInspector = (function() {
         return typeof callback === "function" ? callback(null, result.data) : void 0;
       });
     }).on('error', function(err) {
-      return typeof callback === "function" ? callback(err.message) : void 0;
+      return typeof callback === "function" ? callback(err) : void 0;
+    });
+  };
+
+  GhostInspector.prototype.download = function(path, dest, callback) {
+    var file, url;
+    file = fs.createWriteStream(dest);
+    url = this.buildRequestUrl(path);
+    return https.get(url, function(res) {
+      res.pipe(file);
+      return file.on('finish', function() {
+        return file.close(callback);
+      });
+    }).on('error', function(err) {
+      return typeof callback === "function" ? callback(err) : void 0;
     });
   };
 
   GhostInspector.prototype.getSuites = function(callback) {
-    return this.execute('/suites/', callback);
+    return this.request('/suites/', callback);
   };
 
   GhostInspector.prototype.getSuite = function(suiteId, callback) {
-    return this.execute('/suites/' + suiteId + '/', callback);
+    return this.request('/suites/' + suiteId + '/', callback);
   };
 
   GhostInspector.prototype.getSuiteTests = function(suiteId, callback) {
-    return this.execute('/suites/' + suiteId + '/tests/', callback);
+    return this.request('/suites/' + suiteId + '/tests/', callback);
   };
 
   GhostInspector.prototype.executeSuite = function(suiteId, options, callback) {
@@ -76,15 +102,15 @@ GhostInspector = (function() {
       callback = options;
       options = {};
     }
-    return this.execute('/suites/' + suiteId + '/execute/', options, function(err, data) {
-      var passing, test, _i, _len;
+    return this.request('/suites/' + suiteId + '/execute/', options, function(err, data) {
+      var i, len, passing, test;
       if (err) {
         return typeof callback === "function" ? callback(err) : void 0;
       }
       if (data instanceof Array) {
         passing = true;
-        for (_i = 0, _len = data.length; _i < _len; _i++) {
-          test = data[_i];
+        for (i = 0, len = data.length; i < len; i++) {
+          test = data[i];
           passing = passing && test.passing;
         }
       } else {
@@ -94,16 +120,24 @@ GhostInspector = (function() {
     });
   };
 
+  GhostInspector.prototype.downloadSuiteSeleniumHtml = function(suiteId, dest, callback) {
+    return this.download('/suites/' + suiteId + '/export/selenium-html/', dest, callback);
+  };
+
   GhostInspector.prototype.getTests = function(callback) {
-    return this.execute('/tests/', callback);
+    return this.request('/tests/', callback);
   };
 
   GhostInspector.prototype.getTest = function(testId, callback) {
-    return this.execute('/tests/' + testId + '/', callback);
+    return this.request('/tests/' + testId + '/', callback);
   };
 
-  GhostInspector.prototype.getTestResults = function(testId, callback) {
-    return this.execute('/tests/' + testId + '/results/', callback);
+  GhostInspector.prototype.getTestResults = function(testId, options, callback) {
+    if (typeof options === 'function') {
+      callback = options;
+      options = {};
+    }
+    return this.request('/tests/' + testId + '/results/', options, callback);
   };
 
   GhostInspector.prototype.executeTest = function(testId, options, callback) {
@@ -111,7 +145,7 @@ GhostInspector = (function() {
       callback = options;
       options = {};
     }
-    return this.execute('/tests/' + testId + '/execute/', options, function(err, data) {
+    return this.request('/tests/' + testId + '/execute/', options, function(err, data) {
       var passing;
       if (err) {
         return typeof callback === "function" ? callback(err) : void 0;
@@ -121,8 +155,12 @@ GhostInspector = (function() {
     });
   };
 
+  GhostInspector.prototype.downloadTestSeleniumHtml = function(testId, dest, callback) {
+    return this.download('/tests/' + testId + '/export/selenium-html/', dest, callback);
+  };
+
   GhostInspector.prototype.getResult = function(resultId, callback) {
-    return this.execute('/results/' + resultId + '/', callback);
+    return this.request('/results/' + resultId + '/', callback);
   };
 
   return GhostInspector;
