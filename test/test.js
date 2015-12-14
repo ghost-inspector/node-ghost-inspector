@@ -96,6 +96,19 @@ describe('Get test results', function() {
   });
 });
 
+describe('Get test results with options', function() {
+  this.timeout(0);
+  return it('should return 5 results', function(done) {
+    return GhostInspector.getTestResults('53cf58fc350c6c41029a11bf', {
+      'count': 5
+    }, function(err, data) {
+      (err === null).should.be["true"];
+      data.length.should.equal(5);
+      return done();
+    });
+  });
+});
+
 describe('Execute test ', function() {
   this.timeout(0);
   return it('should return a test name of "Google" and a passing status', function(done) {

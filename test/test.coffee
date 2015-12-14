@@ -69,6 +69,14 @@ describe 'Get test results', ->
       data[0].test.name.should.equal("Google")
       done()
 
+describe 'Get test results with options', ->
+  @timeout(0)
+  it 'should return 5 results', (done) ->
+    GhostInspector.getTestResults '53cf58fc350c6c41029a11bf', { 'count': 5 }, (err, data) ->
+      (err is null).should.be.true
+      data.length.should.equal(5)
+      done()
+
 describe 'Execute test ', ->
   @timeout(0)
   it 'should return a test name of "Google" and a passing status', (done) ->
