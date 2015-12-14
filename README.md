@@ -62,6 +62,16 @@ GhostInspector.executeSuite('[suite-id]', options, function(err, results, passin
 });
 ```
 
+#### downloadSuiteSeleniumHtml(suiteId, dest, [callback])
+Download a zip file of all tests in Selenium HTML format
+
+```js
+GhostInspector.downloadSuiteSeleniumHtml('[suite-id]', 'suite.zip', function(err){
+    if(err) return console.log('Error: ' + err);
+    console.log('File saved to suite.zip.');
+});
+```
+
 #### getTests([callback])
 Fetch an array of all the tests in your account.
 
@@ -110,6 +120,16 @@ GhostInspector.executeTest('[test-id]', options, function(err, results, passing)
     if(err) return console.log('Error: ' + err);
     console.log(passing === true ? 'Passed' : 'Failed');
     console.log(results);
+});
+```
+
+#### downloadTestSeleniumHtml(testId, dest, [callback])
+Download a single test in Selenium HTML format
+
+```js
+GhostInspector.downloadTestSeleniumHtml('[test-id]', 'test.html', function(err){
+    if(err) return console.log('Error: ' + err);
+    console.log('File saved to test.html.');
 });
 ```
 
