@@ -1,6 +1,6 @@
 # Ghost Inspector Node.js Bindings
 
-[![Build Status](https://travis-ci.org/ghost-inspector/node-ghost-inspector.png)](https://travis-ci.org/ghost-inspector/node-ghost-inspector)
+[![Circle CI](https://circleci.com/gh/ghost-inspector/node-ghost-inspector.svg?style=svg)](https://circleci.com/gh/ghost-inspector/node-ghost-inspector)
 
 Node.js module for interacting with [Ghost Inspector's API](https://ghostinspector.com/api/).
 
