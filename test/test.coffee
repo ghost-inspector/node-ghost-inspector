@@ -39,10 +39,12 @@ describe 'Execute suite ', ->
 
 describe 'Execute suite with immediate response ', ->
   @timeout(0)
-  it 'should return success with empty data and null passing value', (done) ->
+  it 'should return success with a pending suite result and null passing value', (done) ->
     GhostInspector.executeSuite '53cf58c0350c6c41029a11be', { immediate: true }, (err, data, passing) ->
       (err is null).should.be.true
-      JSON.stringify(data).should.equal('{}')
+      data.suite.should.equal('53cf58c0350c6c41029a11be')
+      data.name.should.equal('Test Suite')
+      (data.passing is null).should.be.true
       (passing is null).should.be.true
       done()
 
@@ -108,10 +110,12 @@ describe 'Execute test overriding start URL ', ->
 
 describe 'Execute test with immediate response ', ->
   @timeout(0)
-  it 'should return success with empty data and null passing value', (done) ->
+  it 'should return success with a pending result and null passing value', (done) ->
     GhostInspector.executeTest '53cf58fc350c6c41029a11bf', { immediate: true }, (err, data, passing) ->
       (err is null).should.be.true
-      JSON.stringify(data).should.equal('{}')
+      data.test.should.equal('53cf58fc350c6c41029a11bf')
+      data.name.should.equal('Google')
+      (data.passing is null).should.be.true
       (passing is null).should.be.true
       done()
 
@@ -127,8 +131,7 @@ describe 'Download test in Selenium format', ->
 
 describe 'Get result ', ->
   @timeout(0)
-  it 'should return a result with a test name of "Google"', (done) ->
+  it 'should return an error that the result does not exist', (done) ->
     GhostInspector.getResult '53cf58fe8e871daa3d95c6c5', (err, data) ->
-      (err is null).should.be.true
-      data.test.name.should.equal("Google")
+      err.should.equal("Result not found")
       done()

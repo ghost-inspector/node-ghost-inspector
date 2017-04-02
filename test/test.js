@@ -53,12 +53,14 @@ describe('Execute suite ', function() {
 
 describe('Execute suite with immediate response ', function() {
   this.timeout(0);
-  return it('should return success with empty data and null passing value', function(done) {
+  return it('should return success with a pending suite result and null passing value', function(done) {
     return GhostInspector.executeSuite('53cf58c0350c6c41029a11be', {
       immediate: true
     }, function(err, data, passing) {
       (err === null).should.be["true"];
-      JSON.stringify(data).should.equal('{}');
+      data.suite.should.equal('53cf58c0350c6c41029a11be');
+      data.name.should.equal('Test Suite');
+      (data.passing === null).should.be["true"];
       (passing === null).should.be["true"];
       return done();
     });
@@ -153,12 +155,14 @@ describe('Execute test overriding start URL ', function() {
 
 describe('Execute test with immediate response ', function() {
   this.timeout(0);
-  return it('should return success with empty data and null passing value', function(done) {
+  return it('should return success with a pending result and null passing value', function(done) {
     return GhostInspector.executeTest('53cf58fc350c6c41029a11bf', {
       immediate: true
     }, function(err, data, passing) {
       (err === null).should.be["true"];
-      JSON.stringify(data).should.equal('{}');
+      data.test.should.equal('53cf58fc350c6c41029a11bf');
+      data.name.should.equal('Google');
+      (data.passing === null).should.be["true"];
       (passing === null).should.be["true"];
       return done();
     });
@@ -181,10 +185,9 @@ describe('Download test in Selenium format', function() {
 
 describe('Get result ', function() {
   this.timeout(0);
-  return it('should return a result with a test name of "Google"', function(done) {
+  return it('should return an error that the result does not exist', function(done) {
     return GhostInspector.getResult('53cf58fe8e871daa3d95c6c5', function(err, data) {
-      (err === null).should.be["true"];
-      data.test.name.should.equal("Google");
+      err.should.equal("Result not found");
       return done();
     });
   });
