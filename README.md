@@ -46,6 +46,21 @@ GhostInspector.getSuiteTests('[suite-id]', function(err, tests){
 });
 ```
 
+#### getSuiteResults(suiteId, [options], [callback])
+Fetch an array of suite results for a suite.
+
+```js
+var options = {
+    count: 10,
+    offset: 0
+};
+
+GhostInspector.getSuiteResults('[suite-id]', options, function(err, results){
+    if(err) return console.log('Error: ' + err);
+    console.log(results);
+});
+```
+
 #### executeSuite(suiteId, [options], [callback])
 Execute all the tests in a suite and returns an array of results.
 
@@ -72,6 +87,16 @@ GhostInspector.downloadSuiteSeleniumHtml('[suite-id]', 'suite.zip', function(err
 });
 ```
 
+#### downloadSuiteSeleniumJson(suiteId, dest, [callback])
+Download a zip file of all tests in Selenium JSON format
+
+```js
+GhostInspector.downloadSuiteSeleniumJson('[suite-id]', 'suite.zip', function(err){
+    if(err) return console.log('Error: ' + err);
+    console.log('File saved to suite.zip.');
+});
+```
+
 #### getTests([callback])
 Fetch an array of all the tests in your account.
 
@@ -93,7 +118,7 @@ GhostInspector.getTest('[test-id]', function(err, test){
 ```
 
 #### getTestResults(testId, [options], [callback])
-Fetch an array of results for a test.
+Fetch an array of test results for a test.
 
 ```js
 var options = {
@@ -133,11 +158,61 @@ GhostInspector.downloadTestSeleniumHtml('[test-id]', 'test.html', function(err){
 });
 ```
 
+#### downloadTestSeleniumJson(testId, dest, [callback])
+Download a single test in Selenium JSON format
+
+```js
+GhostInspector.downloadTestSeleniumJson('[test-id]', 'test.json', function(err){
+    if(err) return console.log('Error: ' + err);
+    console.log('File saved to test.json.');
+});
+```
+
+#### getSuiteResult(resultId, [callback])
+Fetch a single suite result.
+
+```js
+GhostInspector.getSuiteResult('[result-id]', function(err, result){
+    if(err) return console.log('Error: ' + err);
+    console.log(result);
+});
+```
+
+#### getSuiteResultTestResults(resultId, [callback])
+Fetch the test results in a single suite result.
+
+```js
+GhostInspector.getSuiteResultTestResults('[result-id]', function(err, result){
+    if(err) return console.log('Error: ' + err);
+    console.log(result);
+});
+```
+
+#### cancelSuiteResult(resultId, [callback])
+Cancel an in-progress suite result.
+
+```js
+GhostInspector.cancelSuiteResult('[result-id]', function(err, result){
+    if(err) return console.log('Error: ' + err);
+    console.log(result);
+});
+```
+
 #### getResult(resultId, [callback])
 Fetch a single test result.
 
 ```js
 GhostInspector.getResult('[result-id]', function(err, result){
+    if(err) return console.log('Error: ' + err);
+    console.log(result);
+});
+```
+
+#### cancelResult(resultId, [callback])
+Cancel an in-progress test result.
+
+```js
+GhostInspector.cancelResult('[result-id]', function(err, result){
     if(err) return console.log('Error: ' + err);
     console.log(result);
 });
