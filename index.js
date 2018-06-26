@@ -191,8 +191,16 @@ class GhostInspector {
     this.request(`/suite-results/${resultId}/results/`, callback)
   }
 
+  cancelSuiteResult (resultId, callback) {
+    this.request(`/suite-results/${resultId}/cancel/`, callback)
+  }
+
   getResult (resultId, callback) {
     this.request(`/results/${resultId}/`, callback)
+  }
+
+  cancelResult (resultId, callback) {
+    this.request(`/results/${resultId}/cancel/`, callback)
   }
 }
 

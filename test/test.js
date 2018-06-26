@@ -234,10 +234,32 @@ describe('Get suite result test result listing', function () {
   })
 })
 
+describe('Cancel suite result ', function () {
+  this.timeout(0)
+  it('should return a suite result that was triggered above', (done) => {
+    GhostInspector.cancelSuiteResult(suiteResultId, (err, data) => {
+      (err === null).should.be.true
+      data.name.should.equal('Test Suite')
+      done()
+    })
+  })
+})
+
 describe('Get test result ', function () {
   this.timeout(0)
   it('should return a test result that was triggered above', (done) => {
     GhostInspector.getResult(testResultId, (err, data) => {
+      (err === null).should.be.true
+      data.name.should.equal('Google')
+      done()
+    })
+  })
+})
+
+describe('Cancel test result ', function () {
+  this.timeout(0)
+  it('should return a test result that was triggered above', (done) => {
+    GhostInspector.cancelResult(testResultId, (err, data) => {
       (err === null).should.be.true
       data.name.should.equal('Google')
       done()
