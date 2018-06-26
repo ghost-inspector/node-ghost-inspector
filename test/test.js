@@ -62,11 +62,24 @@ describe('Execute suite with immediate response ', function () {
   })
 })
 
-describe('Download suite in (zipped) Selenium format', function () {
+describe('Download suite in (zipped) Selenium HTML format', function () {
   this.timeout(0)
-  const dest = 'test/suite.zip'
+  const dest = '/tmp/suite-html.zip'
   it('should return a zip file', (done) => {
     GhostInspector.downloadSuiteSeleniumHtml('53cf58c0350c6c41029a11be', dest, (err) => {
+      (err === null).should.be.true
+      fs.existsSync(dest).should.be.true
+      fs.unlinkSync(dest)
+      done()
+    })
+  })
+})
+
+describe('Download suite in (zipped) Selenium JSON format', function () {
+  this.timeout(0)
+  const dest = '/tmp/suite-json.zip'
+  it('should return a zip file', (done) => {
+    GhostInspector.downloadSuiteSeleniumJson('53cf58c0350c6c41029a11be', dest, (err) => {
       (err === null).should.be.true
       fs.existsSync(dest).should.be.true
       fs.unlinkSync(dest)
@@ -157,11 +170,24 @@ describe('Execute test with immediate response ', function () {
   })
 })
 
-describe('Download test in Selenium format', function () {
+describe('Download test in Selenium HTML format', function () {
   this.timeout(0)
-  const dest = 'test/test.html'
+  const dest = '/tmp/test.html'
   it('should return an HTML document', (done) => {
     GhostInspector.downloadTestSeleniumHtml('53cf58fc350c6c41029a11bf', dest, (err) => {
+      (err === null).should.be.true
+      fs.existsSync(dest).should.be.true
+      fs.unlinkSync(dest)
+      done()
+    })
+  })
+})
+
+describe('Download test in Selenium JSON format', function () {
+  this.timeout(0)
+  const dest = '/tmp/test.json'
+  it('should return an HTML document', (done) => {
+    GhostInspector.downloadTestSeleniumJson('53cf58fc350c6c41029a11bf', dest, (err) => {
       (err === null).should.be.true
       fs.existsSync(dest).should.be.true
       fs.unlinkSync(dest)

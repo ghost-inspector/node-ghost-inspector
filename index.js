@@ -125,6 +125,10 @@ class GhostInspector {
     this.download(`/suites/${suiteId}/export/selenium-html/`, dest, callback)
   }
 
+  downloadSuiteSeleniumJson (suiteId, dest, callback) {
+    this.download(`/suites/${suiteId}/export/selenium-json/`, dest, callback)
+  }
+
   getTests (callback) {
     this.request('/tests/', callback)
   }
@@ -163,6 +167,10 @@ class GhostInspector {
 
   downloadTestSeleniumHtml (testId, dest, callback) {
     this.download(`/tests/${testId}/export/selenium-html/`, dest, callback)
+  }
+
+  downloadTestSeleniumJson (testId, dest, callback) {
+    this.download(`/tests/${testId}/export/selenium-json/`, dest, callback)
   }
 
   getResult (resultId, callback) {
