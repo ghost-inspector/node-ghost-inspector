@@ -3,6 +3,8 @@ const fs = require('fs')
 const should = require('should')
 const GhostInspector = require('../index')('ff586dcaaa9b781163dbae48a230ea1947f894ff')
 
+let suiteResultId, testResultId
+
 describe('Get suites', function () {
   this.timeout(0)
   it('should return 1 suite', (done) => {
@@ -57,6 +59,19 @@ describe('Execute suite with immediate response ', function () {
       data.name.should.equal('Test Suite');
       (data.passing === null).should.be.true;
       (passing === null).should.be.true
+      suiteResultId = data._id
+      done()
+    })
+  })
+})
+
+describe('Get suite results', function () {
+  this.timeout(0)
+  it('should return 1 suite result with a suite name of "Test Suite"', (done) => {
+    GhostInspector.getSuiteResults('53cf58c0350c6c41029a11be', { 'count': 1 }, (err, data) => {
+      (err === null).should.be.true
+      data.length.should.equal(1)
+      data[0].name.should.equal('Test Suite')
       done()
     })
   })
@@ -165,6 +180,7 @@ describe('Execute test with immediate response ', function () {
       data.name.should.equal('Google');
       (data.passing === null).should.be.true;
       (passing === null).should.be.true
+      testResultId = data._id
       done()
     })
   })
@@ -196,11 +212,34 @@ describe('Download test in Selenium JSON format', function () {
   })
 })
 
-describe('Get result ', function () {
+describe('Get suite result ', function () {
   this.timeout(0)
-  it('should return an error that the result does not exist', (done) => {
-    GhostInspector.getResult('53cf58fe8e871daa3d95c6c5', (err) => {
-      err.should.equal('Result not found')
+  it('should return a suite result that was triggered above', (done) => {
+    GhostInspector.getSuiteResult(suiteResultId, (err, data) => {
+      (err === null).should.be.true
+      data.name.should.equal('Test Suite')
+      done()
+    })
+  })
+})
+
+describe('Get suite result test result listing', function () {
+  this.timeout(0)
+  it('should return a list of test results for the suite result', (done) => {
+    GhostInspector.getSuiteResultTestResults(suiteResultId, (err, data) => {
+      (err === null).should.be.true
+      data.length.should.equal(2)
+      done()
+    })
+  })
+})
+
+describe('Get test result ', function () {
+  this.timeout(0)
+  it('should return a test result that was triggered above', (done) => {
+    GhostInspector.getResult(testResultId, (err, data) => {
+      (err === null).should.be.true
+      data.name.should.equal('Google')
       done()
     })
   })

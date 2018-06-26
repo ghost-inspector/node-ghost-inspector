@@ -94,6 +94,16 @@ class GhostInspector {
     this.request(`/suites/${suiteId}/tests/`, callback)
   }
 
+  getSuiteResults (suiteId, options, callback) {
+    // Sort out options and callback
+    if (typeof options === 'function') {
+      callback = options
+      options = {}
+    }
+    // Execute API call
+    this.request(`/suites/${suiteId}/results/`, options, callback)
+  }
+
   executeSuite (suiteId, options, callback) {
     // Sort out options and callback
     if (typeof options === 'function') {
@@ -171,6 +181,14 @@ class GhostInspector {
 
   downloadTestSeleniumJson (testId, dest, callback) {
     this.download(`/tests/${testId}/export/selenium-json/`, dest, callback)
+  }
+
+  getSuiteResult (resultId, callback) {
+    this.request(`/suite-results/${resultId}/`, callback)
+  }
+
+  getSuiteResultTestResults (resultId, callback) {
+    this.request(`/suite-results/${resultId}/results/`, callback)
   }
 
   getResult (resultId, callback) {
