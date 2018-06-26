@@ -84,10 +84,10 @@ describe 'Get test results', ->
 
 describe 'Get test results with options', ->
   @timeout(0)
-  it 'should return 5 results', (done) ->
-    GhostInspector.getTestResults '53cf58fc350c6c41029a11bf', { 'count': 5 }, (err, data) ->
+  it 'should return 1 result', (done) ->
+    GhostInspector.getTestResults '53cf58fc350c6c41029a11bf', { 'count': 1 }, (err, data) ->
       (err is null).should.be.true
-      data.length.should.equal(5)
+      data.length.should.equal(1)
       done()
 
 describe 'Execute test ', ->
