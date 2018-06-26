@@ -12,21 +12,15 @@
     "url": "http://github.com/ghost-inspector/node-ghost-inspector.git"
   },
   "engines": {
-    "node": ">=4.0.0"
+    "node": ">=8.0.0"
   },
   "scripts": {
     "bump": "./node_modules/.bin/grunt bump",
-    "coffee": "./node_modules/.bin/grunt coffee",
     "test": "./node_modules/.bin/mocha"
   },
   "main": "./index.js",
   "dependencies": {},
   "devDependencies": {
-    "grunt": "^1.0.3",
-    "grunt-bump": "^0.8.0",
-    "grunt-cli": "^1.2.0",
-    "grunt-contrib-coffee": "^2.0.0",
-    "grunt-contrib-watch": "^1.1.0",
     "mocha": "^5.2.0",
     "should": "^13.2.1"
   },
