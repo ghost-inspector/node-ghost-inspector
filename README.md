@@ -13,15 +13,15 @@ Node.js module for interacting with [Ghost Inspector's API](https://ghostinspect
 Every method is accessed via your `GhostInspector` instance. Your API Key is passed in when the instance is created:
 
 ```js
-var GhostInspector = require('ghost-inspector')('[api-key]');
+const GhostInspector = require('ghost-inspector')('[api-key]');
 ```
 
 #### getSuites([callback])
 Fetch an array of all the suites in your account.
 
 ```js
-GhostInspector.getSuites(function(err, suites){
-    if(err) return console.log('Error: ' + err);
+GhostInspector.getSuites(function (err, suites) {
+    if (err) return console.log('Error: ' + err);
     console.log(suites);
 });
 ```
@@ -30,8 +30,8 @@ GhostInspector.getSuites(function(err, suites){
 Fetch a single suite from your account.
 
 ```js
-GhostInspector.getSuite('[suite-id]', function(err, suite){
-    if(err) return console.log('Error: ' + err);
+GhostInspector.getSuite('[suite-id]', function (err, suite) {
+    if (err) return console.log('Error: ' + err);
     console.log(suite);
 });
 ```
@@ -40,8 +40,8 @@ GhostInspector.getSuite('[suite-id]', function(err, suite){
 Fetch an array of all the tests in a suite.
 
 ```js
-GhostInspector.getSuiteTests('[suite-id]', function(err, tests){
-    if(err) return console.log('Error: ' + err);
+GhostInspector.getSuiteTests('[suite-id]', function (err, tests) {
+    if (err) return console.log('Error: ' + err);
     console.log(tests);
 });
 ```
@@ -50,13 +50,13 @@ GhostInspector.getSuiteTests('[suite-id]', function(err, tests){
 Fetch an array of suite results for a suite.
 
 ```js
-var options = {
+const options = {
     count: 10,
     offset: 0
 };
 
-GhostInspector.getSuiteResults('[suite-id]', options, function(err, results){
-    if(err) return console.log('Error: ' + err);
+GhostInspector.getSuiteResults('[suite-id]', options, function (err, results) {
+    if (err) return console.log('Error: ' + err);
     console.log(results);
 });
 ```
@@ -66,12 +66,12 @@ Execute all the tests in a suite and returns an array of results.
 
 ```js
 // Optionally override the start URL of all tests in this suite (for this run only) 
-var options = {
+const options = {
     startUrl: 'http://alternate.yourcompany.com'
 };
 
-GhostInspector.executeSuite('[suite-id]', options, function(err, results, passing){
-    if(err) return console.log('Error: ' + err);
+GhostInspector.executeSuite('[suite-id]', options, function (err, results, passing) {
+    if (err) return console.log('Error: ' + err);
     console.log(passing === true ? 'Passed' : 'Failed');
     console.log(results);
 });
@@ -81,8 +81,8 @@ GhostInspector.executeSuite('[suite-id]', options, function(err, results, passin
 Download a zip file of all tests in Selenium HTML format
 
 ```js
-GhostInspector.downloadSuiteSeleniumHtml('[suite-id]', 'suite.zip', function(err){
-    if(err) return console.log('Error: ' + err);
+GhostInspector.downloadSuiteSeleniumHtml('[suite-id]', 'suite.zip', function (err) {
+    if (err) return console.log('Error: ' + err);
     console.log('File saved to suite.zip.');
 });
 ```
@@ -91,8 +91,8 @@ GhostInspector.downloadSuiteSeleniumHtml('[suite-id]', 'suite.zip', function(err
 Download a zip file of all tests in Selenium JSON format
 
 ```js
-GhostInspector.downloadSuiteSeleniumJson('[suite-id]', 'suite.zip', function(err){
-    if(err) return console.log('Error: ' + err);
+GhostInspector.downloadSuiteSeleniumJson('[suite-id]', 'suite.zip', function (err) {
+    if (err) return console.log('Error: ' + err);
     console.log('File saved to suite.zip.');
 });
 ```
@@ -101,8 +101,8 @@ GhostInspector.downloadSuiteSeleniumJson('[suite-id]', 'suite.zip', function(err
 Fetch an array of all the tests in your account.
 
 ```js
-GhostInspector.getTests(function(err, tests){
-    if(err) return console.log('Error: ' + err);
+GhostInspector.getTests(function (err, tests) {
+    if (err) return console.log('Error: ' + err);
     console.log(tests);
 });
 ```
@@ -111,8 +111,8 @@ GhostInspector.getTests(function(err, tests){
 Fetch a single test from your account.
 
 ```js
-GhostInspector.getTest('[test-id]', function(err, test){
-    if(err) return console.log('Error: ' + err);
+GhostInspector.getTest('[test-id]', function (err, test) {
+    if (err) return console.log('Error: ' + err);
     console.log(test);
 });
 ```
@@ -121,13 +121,13 @@ GhostInspector.getTest('[test-id]', function(err, test){
 Fetch an array of test results for a test.
 
 ```js
-var options = {
+const options = {
     count: 10,
     offset: 0
 };
 
-GhostInspector.getTestResults('[test-id]', options, function(err, results){
-    if(err) return console.log('Error: ' + err);
+GhostInspector.getTestResults('[test-id]', options, function (err, results) {
+    if (err) return console.log('Error: ' + err);
     console.log(results);
 });
 ```
@@ -137,12 +137,12 @@ Execute a single test in your account and return the result.
 
 ```js
 // Optionally override the start URL of the test (for this run only) 
-var options = {
+const options = {
     startUrl: 'http://alternate.yourcompany.com'
 };
 
-GhostInspector.executeTest('[test-id]', options, function(err, results, passing){
-    if(err) return console.log('Error: ' + err);
+GhostInspector.executeTest('[test-id]', options, function (err, results, passing) {
+    if (err) return console.log('Error: ' + err);
     console.log(passing === true ? 'Passed' : 'Failed');
     console.log(results);
 });
@@ -152,8 +152,8 @@ GhostInspector.executeTest('[test-id]', options, function(err, results, passing)
 Download a single test in Selenium HTML format
 
 ```js
-GhostInspector.downloadTestSeleniumHtml('[test-id]', 'test.html', function(err){
-    if(err) return console.log('Error: ' + err);
+GhostInspector.downloadTestSeleniumHtml('[test-id]', 'test.html', function (err) {
+    if (err) return console.log('Error: ' + err);
     console.log('File saved to test.html.');
 });
 ```
@@ -162,8 +162,8 @@ GhostInspector.downloadTestSeleniumHtml('[test-id]', 'test.html', function(err){
 Download a single test in Selenium JSON format
 
 ```js
-GhostInspector.downloadTestSeleniumJson('[test-id]', 'test.json', function(err){
-    if(err) return console.log('Error: ' + err);
+GhostInspector.downloadTestSeleniumJson('[test-id]', 'test.json', function (err) {
+    if (err) return console.log('Error: ' + err);
     console.log('File saved to test.json.');
 });
 ```
@@ -172,8 +172,8 @@ GhostInspector.downloadTestSeleniumJson('[test-id]', 'test.json', function(err){
 Fetch a single suite result.
 
 ```js
-GhostInspector.getSuiteResult('[result-id]', function(err, result){
-    if(err) return console.log('Error: ' + err);
+GhostInspector.getSuiteResult('[result-id]', function (err, result) {
+    if (err) return console.log('Error: ' + err);
     console.log(result);
 });
 ```
@@ -182,8 +182,8 @@ GhostInspector.getSuiteResult('[result-id]', function(err, result){
 Fetch the test results in a single suite result.
 
 ```js
-GhostInspector.getSuiteResultTestResults('[result-id]', function(err, result){
-    if(err) return console.log('Error: ' + err);
+GhostInspector.getSuiteResultTestResults('[result-id]', function (err, result) {
+    if (err) return console.log('Error: ' + err);
     console.log(result);
 });
 ```
@@ -192,8 +192,8 @@ GhostInspector.getSuiteResultTestResults('[result-id]', function(err, result){
 Cancel an in-progress suite result.
 
 ```js
-GhostInspector.cancelSuiteResult('[result-id]', function(err, result){
-    if(err) return console.log('Error: ' + err);
+GhostInspector.cancelSuiteResult('[result-id]', function (err, result) {
+    if (err) return console.log('Error: ' + err);
     console.log(result);
 });
 ```
@@ -202,8 +202,8 @@ GhostInspector.cancelSuiteResult('[result-id]', function(err, result){
 Fetch a single test result.
 
 ```js
-GhostInspector.getResult('[result-id]', function(err, result){
-    if(err) return console.log('Error: ' + err);
+GhostInspector.getResult('[result-id]', function (err, result) {
+    if (err) return console.log('Error: ' + err);
     console.log(result);
 });
 ```
@@ -212,8 +212,8 @@ GhostInspector.getResult('[result-id]', function(err, result){
 Cancel an in-progress test result.
 
 ```js
-GhostInspector.cancelResult('[result-id]', function(err, result){
-    if(err) return console.log('Error: ' + err);
+GhostInspector.cancelResult('[result-id]', function (err, result) {
+    if (err) return console.log('Error: ' + err);
     console.log(result);
 });
 ```
