@@ -4,15 +4,15 @@
   "description": "Ghost Inspector API for Node.js",
   "homepage": "https://github.com/ghost-inspector/node-ghost-inspector",
   "author": {
-    "name": "Justin Klemm",
-    "email": "justin@ghostinspector.com"
+    "name": "Ghost Inspector",
+    "email": "help@ghostinspector.com"
   },
   "repository": {
     "type": "git",
     "url": "http://github.com/ghost-inspector/node-ghost-inspector.git"
   },
   "engines": {
-    "node": "*"
+    "node": ">=4.0.0"
   },
   "scripts": {
     "bump": "./node_modules/.bin/grunt bump",
