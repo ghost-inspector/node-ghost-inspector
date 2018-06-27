@@ -1,172 +1,208 @@
-var GhostInspector, fs, https;
+const https = require('https')
+const fs = require('fs')
 
-https = require('https');
-
-fs = require('fs');
-
-GhostInspector = (function() {
-  GhostInspector.prototype.host = 'https://api.ghostinspector.com';
-
-  GhostInspector.prototype.prefix = '/v1';
-
-  function GhostInspector(apiKey) {
-    this.apiKey = apiKey;
+// Define GhostInspector class
+class GhostInspector {
+  constructor (apiKey) {
+    this.host = 'https://api.ghostinspector.com'
+    this.prefix = '/v1'
+    this.apiKey = apiKey
   }
 
-  GhostInspector.prototype.buildRequestUrl = function(path, params) {
-    var i, item, key, len, url, val;
-    if (params == null) {
-      params = {};
-    }
-    url = this.host + this.prefix + path + '?';
-    params.apiKey = this.apiKey;
-    for (key in params) {
-      val = params[key];
+  buildRequestUrl (path, params) {
+    // Build request URL
+    if (params == null) { params = {} }
+    let url = this.host + this.prefix + path + '?'
+    // Add auth and other params
+    params.apiKey = this.apiKey
+    for (let key in params) {
+      // handle array params
+      const val = params[key]
       if (val instanceof Array) {
-        for (i = 0, len = val.length; i < len; i++) {
-          item = val[i];
-          url += key + '[]=' + encodeURIComponent(item) + '&';
+        for (let item of val) {
+          url += key + '[]=' + encodeURIComponent(item) + '&'
         }
       } else {
-        url += key + '=' + encodeURIComponent(val) + '&';
+        url += key + '=' + encodeURIComponent(val) + '&'
       }
     }
-    return url;
-  };
+    return url
+  }
 
-  GhostInspector.prototype.request = function(path, params, callback) {
-    var url;
+  request (path, params, callback) {
+    // Sort out params and callback
     if (typeof params === 'function') {
-      callback = params;
-      params = {};
+      callback = params
+      params = {}
     } else if (!params || typeof params !== 'object') {
-      params = {};
+      params = {}
     }
-    url = this.buildRequestUrl(path, params);
-    return https.get(url, function(res) {
-      var json;
-      json = '';
-      res.setTimeout(1800000);
-      res.on('data', function(data) {
-        return json += data;
-      });
-      return res.on('end', function() {
-        var err, result;
+    // Send request to API
+    const url = this.buildRequestUrl(path, params)
+    https.get(url, (res) => {
+      let json = ''
+      // Set long timeout (30 mins)
+      res.setTimeout(1800000)
+      // Get response
+      res.on('data', data => { json += data })
+      // Process response
+      res.on('end', () => {
+        let result
         try {
-          result = JSON.parse(json);
-        } catch (_error) {
-          err = _error;
+          result = JSON.parse(json)
+        } catch (err) {
           result = {
             code: 'ERROR',
             message: 'The Ghost Inspector service is not returning a valid response.'
-          };
+          }
         }
         if (result.code === 'ERROR') {
-          return typeof callback === "function" ? callback(result.message) : void 0;
+          if (typeof callback === 'function') { callback(result.message) }
+          return
         }
-        return typeof callback === "function" ? callback(null, result.data) : void 0;
-      });
-    }).on('error', function(err) {
-      return typeof callback === "function" ? callback(err) : void 0;
-    });
-  };
+        if (typeof callback === 'function') { callback(null, result.data) }
+      })
+    }).on('error', (err) => {
+      if (typeof callback === 'function') { callback(err) }
+    })
+  }
 
-  GhostInspector.prototype.download = function(path, dest, callback) {
-    var file, url;
-    file = fs.createWriteStream(dest);
-    url = this.buildRequestUrl(path);
-    return https.get(url, function(res) {
-      res.pipe(file);
-      return file.on('finish', function() {
-        return file.close(callback);
-      });
-    }).on('error', function(err) {
-      return typeof callback === "function" ? callback(err) : void 0;
-    });
-  };
+  download (path, dest, callback) {
+    const file = fs.createWriteStream(dest)
+    // Send request to API
+    const url = this.buildRequestUrl(path)
+    https.get(url, (res) => {
+      // Save response into file
+      res.pipe(file)
+      file.on('finish', () => {
+        file.close(callback)
+      })
+    }).on('error', (err) => {
+      if (typeof callback === 'function') { callback(err) }
+    })
+  }
 
-  GhostInspector.prototype.getSuites = function(callback) {
-    return this.request('/suites/', callback);
-  };
+  getSuites (callback) {
+    this.request('/suites/', callback)
+  }
 
-  GhostInspector.prototype.getSuite = function(suiteId, callback) {
-    return this.request('/suites/' + suiteId + '/', callback);
-  };
+  getSuite (suiteId, callback) {
+    this.request(`/suites/${suiteId}/`, callback)
+  }
 
-  GhostInspector.prototype.getSuiteTests = function(suiteId, callback) {
-    return this.request('/suites/' + suiteId + '/tests/', callback);
-  };
+  getSuiteTests (suiteId, callback) {
+    this.request(`/suites/${suiteId}/tests/`, callback)
+  }
 
-  GhostInspector.prototype.executeSuite = function(suiteId, options, callback) {
+  getSuiteResults (suiteId, options, callback) {
+    // Sort out options and callback
     if (typeof options === 'function') {
-      callback = options;
-      options = {};
+      callback = options
+      options = {}
     }
-    return this.request('/suites/' + suiteId + '/execute/', options, function(err, data) {
-      var i, len, passing, test;
+    // Execute API call
+    this.request(`/suites/${suiteId}/results/`, options, callback)
+  }
+
+  executeSuite (suiteId, options, callback) {
+    // Sort out options and callback
+    if (typeof options === 'function') {
+      callback = options
+      options = {}
+    }
+    // Execute API call
+    this.request(`/suites/${suiteId}/execute/`, options, (err, data) => {
+      let passing
       if (err) {
-        return typeof callback === "function" ? callback(err) : void 0;
+        if (typeof callback === 'function') { callback(err) }
+        return
       }
+      // Check test results, determine overall pass/fail
       if (data instanceof Array) {
-        passing = true;
-        for (i = 0, len = data.length; i < len; i++) {
-          test = data[i];
-          passing = passing && test.passing;
+        passing = true
+        for (let test of data) {
+          passing = passing && test.passing
         }
       } else {
-        passing = null;
+        passing = null
       }
-      return typeof callback === "function" ? callback(null, data, passing) : void 0;
-    });
-  };
+      // Call back with extra pass/fail parameter
+      if (typeof callback === 'function') { callback(null, data, passing) }
+    })
+  }
 
-  GhostInspector.prototype.downloadSuiteSeleniumHtml = function(suiteId, dest, callback) {
-    return this.download('/suites/' + suiteId + '/export/selenium-html/', dest, callback);
-  };
+  downloadSuiteSeleniumHtml (suiteId, dest, callback) {
+    this.download(`/suites/${suiteId}/export/selenium-html/`, dest, callback)
+  }
 
-  GhostInspector.prototype.getTests = function(callback) {
-    return this.request('/tests/', callback);
-  };
+  downloadSuiteSeleniumJson (suiteId, dest, callback) {
+    this.download(`/suites/${suiteId}/export/selenium-json/`, dest, callback)
+  }
 
-  GhostInspector.prototype.getTest = function(testId, callback) {
-    return this.request('/tests/' + testId + '/', callback);
-  };
+  getTests (callback) {
+    this.request('/tests/', callback)
+  }
 
-  GhostInspector.prototype.getTestResults = function(testId, options, callback) {
+  getTest (testId, callback) {
+    this.request(`/tests/${testId}/`, callback)
+  }
+
+  getTestResults (testId, options, callback) {
+    // Sort out options and callback
     if (typeof options === 'function') {
-      callback = options;
-      options = {};
+      callback = options
+      options = {}
     }
-    return this.request('/tests/' + testId + '/results/', options, callback);
-  };
+    // Execute API call
+    this.request(`/tests/${testId}/results/`, options, callback)
+  }
 
-  GhostInspector.prototype.executeTest = function(testId, options, callback) {
+  executeTest (testId, options, callback) {
+    // Sort out options and callback
     if (typeof options === 'function') {
-      callback = options;
-      options = {};
+      callback = options
+      options = {}
     }
-    return this.request('/tests/' + testId + '/execute/', options, function(err, data) {
-      var passing;
+    // Execute API call
+    this.request(`/tests/${testId}/execute/`, options, (err, data) => {
       if (err) {
-        return typeof callback === "function" ? callback(err) : void 0;
+        if (typeof callback === 'function') { callback(err) }
+        return
       }
-      passing = data.passing === void 0 ? null : data.passing;
-      return typeof callback === "function" ? callback(null, data, passing) : void 0;
-    });
-  };
+      // Call back with extra pass/fail parameter
+      const passing = data.passing === undefined ? null : data.passing
+      if (typeof callback === 'function') { callback(null, data, passing) }
+    })
+  }
 
-  GhostInspector.prototype.downloadTestSeleniumHtml = function(testId, dest, callback) {
-    return this.download('/tests/' + testId + '/export/selenium-html/', dest, callback);
-  };
+  downloadTestSeleniumHtml (testId, dest, callback) {
+    this.download(`/tests/${testId}/export/selenium-html/`, dest, callback)
+  }
 
-  GhostInspector.prototype.getResult = function(resultId, callback) {
-    return this.request('/results/' + resultId + '/', callback);
-  };
+  downloadTestSeleniumJson (testId, dest, callback) {
+    this.download(`/tests/${testId}/export/selenium-json/`, dest, callback)
+  }
 
-  return GhostInspector;
+  getSuiteResult (resultId, callback) {
+    this.request(`/suite-results/${resultId}/`, callback)
+  }
 
-})();
+  getSuiteResultTestResults (resultId, callback) {
+    this.request(`/suite-results/${resultId}/results/`, callback)
+  }
 
-module.exports = function(param1, param2) {
-  return new GhostInspector(param2 ? param2 : param1);
-};
+  cancelSuiteResult (resultId, callback) {
+    this.request(`/suite-results/${resultId}/cancel/`, callback)
+  }
+
+  getResult (resultId, callback) {
+    this.request(`/results/${resultId}/`, callback)
+  }
+
+  cancelResult (resultId, callback) {
+    this.request(`/results/${resultId}/cancel/`, callback)
+  }
+}
+
+// Export new GhostInspector instance
+module.exports = (apiKey) => new GhostInspector(apiKey)
