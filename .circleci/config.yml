@@ -1,25 +1,50 @@
-version: 2
-jobs:
-  build-and-test:
-    docker:
-      - image: circleci/node:carbon
+version: 2.1
+
+commands:
+  test-nodejs:
     steps:
+      - run:
+          name: Versions
+          command: npm version
       - checkout
       - restore_cache:
-          key: dependency-cache-{{ checksum "package.json" }}
+          keys:
+            - v{{ .Environment.CIRCLE_CACHE_VERSION }}-{{ arch }}-npm-cache-{{ .Branch }}-{{ .Environment.CIRCLE_JOB }}
+            - v{{ .Environment.CIRCLE_CACHE_VERSION }}-{{ arch }}-npm-cache-master-{{ .Environment.CIRCLE_JOB }}
       - run:
-          name: NPM Install
-          command: npm install
+          name: Install dependencies
+          command: npm ci
       - run:
-          name: NPM Test
+          name: Test
           command: npm test
+      - save-npm-cache
+  save-npm-cache:
+    steps:
       - save_cache:
-          key: dependency-cache-{{ checksum "package.json" }}
+          key: v{{ .Environment.CIRCLE_CACHE_VERSION }}-{{ arch }}-npm-cache-{{ .Branch }}-{{ .Environment.CIRCLE_JOB }}-{{ checksum "package-lock.json" }}
           paths:
-            - node_modules
+            - ~/.npm/_cacache
+
+jobs:
+  node-v8:
+    docker:
+      - image: node:8
+    steps:
+      - test-nodejs
+  node-v10:
+    docker:
+      - image: node:10
+    steps:
+      - test-nodejs
+  node-v11:
+    docker:
+      - image: node:11
+    steps:
+      - test-nodejs
 
 workflows:
-  version: 2
-  build_and_test:
+  node-multi-build:
     jobs:
-      - build-and-test
+      - node-v8
+      - node-v10
+      - node-v11
