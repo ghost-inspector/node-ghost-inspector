@@ -1,6 +1,6 @@
 # Ghost Inspector Node.js Bindings
 
-[![Circle CI](https://circleci.com/gh/ghost-inspector/node-ghost-inspector.svg?style=svg)](https://circleci.com/gh/ghost-inspector/node-ghost-inspector)
+[![CircleCI](https://circleci.com/gh/ghost-inspector/node-ghost-inspector/tree/master.svg?style=svg)](https://circleci.com/gh/ghost-inspector/node-ghost-inspector/tree/master)
 
 Node.js module for interacting with [Ghost Inspector's API](https://ghostinspector.com/api/).
 
