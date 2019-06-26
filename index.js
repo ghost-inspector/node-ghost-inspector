@@ -1,5 +1,5 @@
-const https = require('https')
 const fs = require('fs')
+const rp = require('request-promise-native')
 
 // Define GhostInspector class
 class GhostInspector {
@@ -29,7 +29,8 @@ class GhostInspector {
     return url
   }
 
-  request (path, params, callback) {
+  async request (path, params, callback) {
+    let result
     // Sort out params and callback
     if (typeof params === 'function') {
       callback = params
@@ -37,170 +38,216 @@ class GhostInspector {
     } else if (!params || typeof params !== 'object') {
       params = {}
     }
-    // Send request to API
-    const url = this.buildRequestUrl(path, params)
-    https.get(url, (res) => {
-      let json = ''
-      // Set long timeout (30 mins)
-      res.setTimeout(1800000)
-      // Get response
-      res.on('data', data => { json += data })
-      // Process response
-      res.on('end', () => {
-        let result
-        try {
-          result = JSON.parse(json)
-        } catch (err) {
-          result = {
-            code: 'ERROR',
-            message: 'The Ghost Inspector service is not returning a valid response.'
-          }
-        }
-        if (result.code === 'ERROR') {
-          if (typeof callback === 'function') { callback(result.message) }
-          return
-        }
-        if (typeof callback === 'function') { callback(null, result.data) }
-      })
-    }).on('error', (err) => {
-      if (typeof callback === 'function') { callback(err) }
-    })
-  }
-
-  download (path, dest, callback) {
-    const file = fs.createWriteStream(dest)
-    // Send request to API
-    const url = this.buildRequestUrl(path)
-    https.get(url, (res) => {
-      // Save response into file
-      res.pipe(file)
-      file.on('finish', () => {
-        file.close(callback)
-      })
-    }).on('error', (err) => {
-      if (typeof callback === 'function') { callback(err) }
-    })
-  }
-
-  getSuites (callback) {
-    this.request('/suites/', callback)
-  }
-
-  getSuite (suiteId, callback) {
-    this.request(`/suites/${suiteId}/`, callback)
-  }
-
-  getSuiteTests (suiteId, callback) {
-    this.request(`/suites/${suiteId}/tests/`, callback)
-  }
-
-  getSuiteResults (suiteId, options, callback) {
-    // Sort out options and callback
-    if (typeof options === 'function') {
-      callback = options
-      options = {}
-    }
-    // Execute API call
-    this.request(`/suites/${suiteId}/results/`, options, callback)
-  }
-
-  executeSuite (suiteId, options, callback) {
-    // Sort out options and callback
-    if (typeof options === 'function') {
-      callback = options
-      options = {}
-    }
-    // Execute API call
-    this.request(`/suites/${suiteId}/execute/`, options, (err, data) => {
-      let passing
-      if (err) {
-        if (typeof callback === 'function') { callback(err) }
-        return
+    try {
+      // Send request to API
+      const options = {
+        method: 'GET',
+        uri: this.buildRequestUrl(path, params),
+        headers: {
+          'User-Agent': 'Ghost Inspector Node.js Bindings'
+        },
+        json: true,
+        timeout: 3600000
       }
-      // Check test results, determine overall pass/fail
-      if (data instanceof Array) {
-        passing = true
-        for (let test of data) {
-          passing = passing && test.passing
-        }
+      result = await rp(options)
+    } catch (err) {
+      if (typeof callback === 'function') {
+        return callback(err)
       } else {
-        passing = null
+        throw err
       }
-      // Call back with extra pass/fail parameter
-      if (typeof callback === 'function') { callback(null, data, passing) }
+    }
+    // Process response
+    if (result.code === 'ERROR') {
+      const err = new Error(result.message)
+      if (typeof callback === 'function') {
+        return callback(err)
+      } else {
+        throw err
+      }
+    } else {
+      if (typeof callback === 'function') {
+        return callback(null, result.data)
+      } else {
+        return result.data
+      }
+    }
+  }
+
+  async download (path, dest, callback) {
+    let data
+    try {
+      // Send request to API
+      const options = {
+        method: 'GET',
+        uri: this.buildRequestUrl(path),
+        headers: {
+          'User-Agent': 'Ghost Inspector Node.js Bindings'
+        }
+      }
+      data = await rp(options)
+    } catch (err) {
+      if (typeof callback === 'function') {
+        return callback(err)
+      } else {
+        throw err
+      }
+    }
+    // Save response into file
+    const err = await new Promise((resolve) => {
+      fs.writeFile(dest, data, resolve)
     })
+    // Process response
+    if (err) {
+      if (typeof callback === 'function') {
+        return callback(err)
+      } else {
+        throw err
+      }
+    } else {
+      if (typeof callback === 'function') {
+        return callback(null, data)
+      } else {
+        return data
+      }
+    }
   }
 
-  downloadSuiteSeleniumHtml (suiteId, dest, callback) {
-    this.download(`/suites/${suiteId}/export/selenium-html/`, dest, callback)
+  async getSuites (callback) {
+    return await this.request('/suites/', callback)
   }
 
-  downloadSuiteSeleniumJson (suiteId, dest, callback) {
-    this.download(`/suites/${suiteId}/export/selenium-json/`, dest, callback)
+  async getSuite (suiteId, callback) {
+    return await this.request(`/suites/${suiteId}/`, callback)
   }
 
-  getTests (callback) {
-    this.request('/tests/', callback)
+  async getSuiteTests (suiteId, callback) {
+    return await this.request(`/suites/${suiteId}/tests/`, callback)
   }
 
-  getTest (testId, callback) {
-    this.request(`/tests/${testId}/`, callback)
-  }
-
-  getTestResults (testId, options, callback) {
+  async getSuiteResults (suiteId, options, callback) {
     // Sort out options and callback
     if (typeof options === 'function') {
       callback = options
       options = {}
     }
     // Execute API call
-    this.request(`/tests/${testId}/results/`, options, callback)
+    return await this.request(`/suites/${suiteId}/results/`, options, callback)
   }
 
-  executeTest (testId, options, callback) {
+  async executeSuite (suiteId, options, callback) {
     // Sort out options and callback
     if (typeof options === 'function') {
       callback = options
       options = {}
     }
     // Execute API call
-    this.request(`/tests/${testId}/execute/`, options, (err, data) => {
-      if (err) {
-        if (typeof callback === 'function') { callback(err) }
-        return
+    let data
+    try {
+      data = await this.request(`/suites/${suiteId}/execute/`, options)
+    } catch (err) {
+      if (typeof callback === 'function') {
+        return callback(err)
+      } else {
+        throw err
       }
-      // Call back with extra pass/fail parameter
-      const passing = data.passing === undefined ? null : data.passing
-      if (typeof callback === 'function') { callback(null, data, passing) }
-    })
+    }      
+    // Check test results, determine overall pass/fail
+    let passing
+    if (data instanceof Array) {
+      passing = true
+      for (let test of data) {
+        passing = passing && test.passing
+      }
+    } else {
+      passing = null
+    }
+    // Call back with extra pass/fail parameter
+    if (typeof callback === 'function') {
+      return callback(null, data, passing)
+    } else {
+      return [data, passing]
+    }
   }
 
-  downloadTestSeleniumHtml (testId, dest, callback) {
-    this.download(`/tests/${testId}/export/selenium-html/`, dest, callback)
+  async downloadSuiteSeleniumHtml (suiteId, dest, callback) {
+    return await this.download(`/suites/${suiteId}/export/selenium-html/`, dest, callback)
   }
 
-  downloadTestSeleniumJson (testId, dest, callback) {
-    this.download(`/tests/${testId}/export/selenium-json/`, dest, callback)
+  async downloadSuiteSeleniumJson (suiteId, dest, callback) {
+    return await this.download(`/suites/${suiteId}/export/selenium-json/`, dest, callback)
   }
 
-  getSuiteResult (resultId, callback) {
-    this.request(`/suite-results/${resultId}/`, callback)
+  async getTests (callback) {
+    return await this.request('/tests/', callback)
   }
 
-  getSuiteResultTestResults (resultId, callback) {
-    this.request(`/suite-results/${resultId}/results/`, callback)
+  async getTest (testId, callback) {
+    return await this.request(`/tests/${testId}/`, callback)
   }
 
-  cancelSuiteResult (resultId, callback) {
-    this.request(`/suite-results/${resultId}/cancel/`, callback)
+  async getTestResults (testId, options, callback) {
+    // Sort out options and callback
+    if (typeof options === 'function') {
+      callback = options
+      options = {}
+    }
+    // Execute API call
+    return await this.request(`/tests/${testId}/results/`, options, callback)
   }
 
-  getResult (resultId, callback) {
-    this.request(`/results/${resultId}/`, callback)
+  async executeTest (testId, options, callback) {
+    // Sort out options and callback
+    if (typeof options === 'function') {
+      callback = options
+      options = {}
+    }
+    // Execute API call
+    let data
+    try {
+      data = await this.request(`/tests/${testId}/execute/`, options)
+    } catch (err) {
+      if (typeof callback === 'function') {
+        return callback(err)
+      } else {
+        throw err
+      }
+    }   
+    // Call back with extra pass/fail parameter
+    const passing = data.passing === undefined ? null : data.passing
+    if (typeof callback === 'function') {
+      return callback(null, data, passing)
+    } else {
+      return [data, passing]
+    }
   }
 
-  cancelResult (resultId, callback) {
-    this.request(`/results/${resultId}/cancel/`, callback)
+  async downloadTestSeleniumHtml (testId, dest, callback) {
+    return await this.download(`/tests/${testId}/export/selenium-html/`, dest, callback)
+  }
+
+  async downloadTestSeleniumJson (testId, dest, callback) {
+    return await this.download(`/tests/${testId}/export/selenium-json/`, dest, callback)
+  }
+
+  async getSuiteResult (resultId, callback) {
+    return await this.request(`/suite-results/${resultId}/`, callback)
+  }
+
+  async getSuiteResultTestResults (resultId, callback) {
+    return await this.request(`/suite-results/${resultId}/results/`, callback)
+  }
+
+  async cancelSuiteResult (resultId, callback) {
+    return await this.request(`/suite-results/${resultId}/cancel/`, callback)
+  }
+
+  async getResult (resultId, callback) {
+    return await this.request(`/results/${resultId}/`, callback)
+  }
+
+  async cancelResult (resultId, callback) {
+    return await this.request(`/results/${resultId}/cancel/`, callback)
   }
 }
 
