@@ -52,25 +52,24 @@ class GhostInspector {
       result = await rp(options)
     } catch (err) {
       if (typeof callback === 'function') {
-        return callback(err)
-      } else {
-        throw err
+        callback(err)
+        return
       }
+      throw err
     }
     // Process response
     if (result.code === 'ERROR') {
       const err = new Error(result.message)
       if (typeof callback === 'function') {
-        return callback(err)
-      } else {
-        throw err
+        callback(err)
+        return
       }
+      throw err
     } else {
       if (typeof callback === 'function') {
-        return callback(null, result.data)
-      } else {
-        return result.data
+        callback(null, result.data)
       }
+      return result.data
     }
   }
 
@@ -88,10 +87,10 @@ class GhostInspector {
       data = await rp(options)
     } catch (err) {
       if (typeof callback === 'function') {
-        return callback(err)
-      } else {
-        throw err
+        callback(err)
+        return
       }
+      throw err
     }
     // Save response into file
     const err = await new Promise((resolve) => {
@@ -100,16 +99,15 @@ class GhostInspector {
     // Process response
     if (err) {
       if (typeof callback === 'function') {
-        return callback(err)
-      } else {
-        throw err
+        callback(err)
+        return
       }
+      throw err
     } else {
       if (typeof callback === 'function') {
-        return callback(null, data)
-      } else {
-        return data
+        callback(null, data)
       }
+      return data
     }
   }
 
@@ -147,10 +145,10 @@ class GhostInspector {
       data = await this.request(`/suites/${suiteId}/execute/`, options)
     } catch (err) {
       if (typeof callback === 'function') {
-        return callback(err)
-      } else {
-        throw err
+        callback(err)
+        return
       }
+      throw err
     }      
     // Check test results, determine overall pass/fail
     let passing
@@ -164,10 +162,9 @@ class GhostInspector {
     }
     // Call back with extra pass/fail parameter
     if (typeof callback === 'function') {
-      return callback(null, data, passing)
-    } else {
-      return [data, passing]
+      callback(null, data, passing)
     }
+    return [data, passing]
   }
 
   async downloadSuiteSeleniumHtml (suiteId, dest, callback) {
@@ -208,18 +205,17 @@ class GhostInspector {
       data = await this.request(`/tests/${testId}/execute/`, options)
     } catch (err) {
       if (typeof callback === 'function') {
-        return callback(err)
-      } else {
-        throw err
+        callback(err)
+        return
       }
+      throw err
     }   
     // Call back with extra pass/fail parameter
     const passing = data.passing === undefined ? null : data.passing
     if (typeof callback === 'function') {
-      return callback(null, data, passing)
-    } else {
-      return [data, passing]
+      callback(null, data, passing)
     }
+    return [data, passing]
   }
 
   async downloadTestSeleniumHtml (testId, dest, callback) {
