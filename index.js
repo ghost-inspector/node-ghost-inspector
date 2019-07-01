@@ -238,12 +238,22 @@ class GhostInspector {
     return await this.request(`/suite-results/${resultId}/cancel/`, callback)
   }
 
-  async getResult (resultId, callback) {
+  async getTestResult (resultId, callback) {
     return await this.request(`/results/${resultId}/`, callback)
   }
 
-  async cancelResult (resultId, callback) {
+  // Legacy alias for getTestResult()
+  async getResult (resultId, callback) {
+    return this.getTestResult(resultId, callback)
+  }
+
+  async cancelTestResult (resultId, callback) {
     return await this.request(`/results/${resultId}/cancel/`, callback)
+  }
+
+  // Legacy alias for cancelTestResult()
+  async cancelResult (resultId, callback) {
+    return this.cancelTestResult(resultId, callback)
   }
 }
 

@@ -198,21 +198,21 @@ GhostInspector.cancelSuiteResult('[result-id]', function (err, result) {
 });
 ```
 
-#### getResult(resultId, [callback])
+#### getTestResult(resultId, [callback])
 Fetch a single test result.
 
 ```js
-GhostInspector.getResult('[result-id]', function (err, result) {
+GhostInspector.getTestResult('[result-id]', function (err, result) {
     if (err) return console.log('Error: ' + err);
     console.log(result);
 });
 ```
 
-#### cancelResult(resultId, [callback])
+#### cancelTestResult(resultId, [callback])
 Cancel an in-progress test result.
 
 ```js
-GhostInspector.cancelResult('[result-id]', function (err, result) {
+GhostInspector.cancelTestResult('[result-id]', function (err, result) {
     if (err) return console.log('Error: ' + err);
     console.log(result);
 });
