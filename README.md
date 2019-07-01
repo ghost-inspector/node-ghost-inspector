@@ -2,11 +2,13 @@
 
 [![CircleCI](https://circleci.com/gh/ghost-inspector/node-ghost-inspector/tree/master.svg?style=svg)](https://circleci.com/gh/ghost-inspector/node-ghost-inspector/tree/master)
 
-Node.js module for interacting with [Ghost Inspector's API](https://ghostinspector.com/api/).
+The official Node.js package for interacting with [Ghost Inspector's API](https://ghostinspector.com/docs/api/).
 
-## Installing with [npm](http://npmjs.org/)
+
+## Installing with [npm](https://www.npmjs.com/)
 
 `npm install ghost-inspector`
+
 
 ## Usage
 
@@ -16,37 +18,54 @@ Every method is accessed via your `GhostInspector` instance. Your API Key is pas
 const GhostInspector = require('ghost-inspector')('[api-key]');
 ```
 
-#### getSuites([callback])
+This package supports both callbacks and `await` to receive data back from the method call. Note that when an error is encountered, it will be return as the first argument in the callback. However, if no callback is passed in, it is assumed that `await` is being used and the method will throw an exception. This means that when using `await` you should wrap your calls in a `try/catch` block. 
+
+
+## Methods
+
+#### GhostInspector.getSuites([callback])
 Fetch an array of all the suites in your account.
 
 ```js
+// Example using await
+const suites = await GhostInspector.getSuites();
+
+// Example using a callback
 GhostInspector.getSuites(function (err, suites) {
-    if (err) return console.log('Error: ' + err);
+    if (err) return console.error(err);
     console.log(suites);
 });
 ```
 
-#### getSuite(suiteId, [callback])
+#### GhostInspector.getSuite(suiteId, [callback])
 Fetch a single suite from your account.
 
 ```js
+// Example using await
+const suite = await GhostInspector.getSuite('[suite-id]');
+
+// Example using a callback
 GhostInspector.getSuite('[suite-id]', function (err, suite) {
-    if (err) return console.log('Error: ' + err);
+    if (err) return console.error(err);
     console.log(suite);
 });
 ```
 
-#### getSuiteTests(suiteId, [callback])
+#### GhostInspector.getSuiteTests(suiteId, [callback])
 Fetch an array of all the tests in a suite.
 
 ```js
+// Example using await
+const tests = await GhostInspector.getSuiteTests('[suite-id]');
+
+// Example using a callback
 GhostInspector.getSuiteTests('[suite-id]', function (err, tests) {
-    if (err) return console.log('Error: ' + err);
+    if (err) return console.error(err);
     console.log(tests);
 });
 ```
 
-#### getSuiteResults(suiteId, [options], [callback])
+#### GhostInspector.getSuiteResults(suiteId, [options], [callback])
 Fetch an array of suite results for a suite.
 
 ```js
@@ -55,13 +74,17 @@ const options = {
     offset: 0
 };
 
+// Example using await
+const results = await GhostInspector.getSuiteResults('[suite-id]', options);
+
+// Example using a callback
 GhostInspector.getSuiteResults('[suite-id]', options, function (err, results) {
-    if (err) return console.log('Error: ' + err);
+    if (err) return console.error(err);
     console.log(results);
 });
 ```
 
-#### executeSuite(suiteId, [options], [callback])
+#### GhostInspector.executeSuite(suiteId, [options], [callback])
 Execute all the tests in a suite and returns an array of results.
 
 ```js
@@ -70,54 +93,74 @@ const options = {
     startUrl: 'http://alternate.yourcompany.com'
 };
 
+// Example using await
+const [results, passing] = await GhostInspector.executeSuite('[suite-id]', options);
+
+// Example using a callback
 GhostInspector.executeSuite('[suite-id]', options, function (err, results, passing) {
-    if (err) return console.log('Error: ' + err);
+    if (err) return console.error(err);
     console.log(passing === true ? 'Passed' : 'Failed');
     console.log(results);
 });
 ```
 
-#### downloadSuiteSeleniumHtml(suiteId, dest, [callback])
+#### GhostInspector.downloadSuiteSeleniumHtml(suiteId, dest, [callback])
 Download a zip file of all tests in Selenium HTML format
 
 ```js
+// Example using await
+await GhostInspector.downloadSuiteSeleniumHtml('[suite-id]', 'suite.zip');
+
+// Example using a callback
 GhostInspector.downloadSuiteSeleniumHtml('[suite-id]', 'suite.zip', function (err) {
-    if (err) return console.log('Error: ' + err);
+    if (err) return console.error(err);
     console.log('File saved to suite.zip.');
 });
 ```
 
-#### downloadSuiteSeleniumJson(suiteId, dest, [callback])
+#### GhostInspector.downloadSuiteSeleniumJson(suiteId, dest, [callback])
 Download a zip file of all tests in Selenium JSON format
 
 ```js
+// Example using await
+await GhostInspector.downloadSuiteSeleniumJson('[suite-id]', 'suite.zip');
+
+// Example using a callback
 GhostInspector.downloadSuiteSeleniumJson('[suite-id]', 'suite.zip', function (err) {
-    if (err) return console.log('Error: ' + err);
+    if (err) return console.error(err);
     console.log('File saved to suite.zip.');
 });
 ```
 
-#### getTests([callback])
+#### GhostInspector.getTests([callback])
 Fetch an array of all the tests in your account.
 
 ```js
+// Example using await
+const tests = await GhostInspector.getTests();
+
+// Example using a callback
 GhostInspector.getTests(function (err, tests) {
-    if (err) return console.log('Error: ' + err);
+    if (err) return console.error(err);
     console.log(tests);
 });
 ```
 
-#### getTest(testId, [callback])
+#### GhostInspector.getTest(testId, [callback])
 Fetch a single test from your account.
 
 ```js
+// Example using await
+const test = await GhostInspector.getTest('[test-id]');
+
+// Example using a callback
 GhostInspector.getTest('[test-id]', function (err, test) {
-    if (err) return console.log('Error: ' + err);
+    if (err) return console.error(err);
     console.log(test);
 });
 ```
 
-#### getTestResults(testId, [options], [callback])
+#### GhostInspector.getTestResults(testId, [options], [callback])
 Fetch an array of test results for a test.
 
 ```js
@@ -126,13 +169,17 @@ const options = {
     offset: 0
 };
 
+// Example using await
+const results = await GhostInspector.getTestResults('[test-id]', options);
+
+// Example using a callback
 GhostInspector.getTestResults('[test-id]', options, function (err, results) {
-    if (err) return console.log('Error: ' + err);
+    if (err) return console.error(err);
     console.log(results);
 });
 ```
 
-#### executeTest(testId, [options], [callback])
+#### GhostInspector.executeTest(testId, [options], [callback])
 Execute a single test in your account and return the result.
 
 ```js
@@ -141,79 +188,111 @@ const options = {
     startUrl: 'http://alternate.yourcompany.com'
 };
 
+// Example using await
+const [results, passing] = await GhostInspector.executeTest('[test-id]', options);
+
+// Example using a callback
 GhostInspector.executeTest('[test-id]', options, function (err, results, passing) {
-    if (err) return console.log('Error: ' + err);
+    if (err) return console.error(err);
     console.log(passing === true ? 'Passed' : 'Failed');
     console.log(results);
 });
 ```
 
-#### downloadTestSeleniumHtml(testId, dest, [callback])
+#### GhostInspector.downloadTestSeleniumHtml(testId, dest, [callback])
 Download a single test in Selenium HTML format
 
 ```js
+// Example using await
+await GhostInspector.downloadTestSeleniumHtml('[test-id]', 'test.html');
+
+// Example using a callback
 GhostInspector.downloadTestSeleniumHtml('[test-id]', 'test.html', function (err) {
-    if (err) return console.log('Error: ' + err);
+    if (err) return console.error(err);
     console.log('File saved to test.html.');
 });
 ```
 
-#### downloadTestSeleniumJson(testId, dest, [callback])
+#### GhostInspector.downloadTestSeleniumJson(testId, dest, [callback])
 Download a single test in Selenium JSON format
 
 ```js
+// Example using await
+await GhostInspector.downloadTestSeleniumJson('[test-id]', 'test.json');
+
+// Example using a callback
 GhostInspector.downloadTestSeleniumJson('[test-id]', 'test.json', function (err) {
-    if (err) return console.log('Error: ' + err);
+    if (err) return console.error(err);
     console.log('File saved to test.json.');
 });
 ```
 
-#### getSuiteResult(resultId, [callback])
+#### GhostInspector.getSuiteResult(resultId, [callback])
 Fetch a single suite result.
 
 ```js
+// Example using await
+const result = await GhostInspector.getSuiteResult('[result-id]');
+
+// Example using a callback
 GhostInspector.getSuiteResult('[result-id]', function (err, result) {
-    if (err) return console.log('Error: ' + err);
+    if (err) return console.error(err);
     console.log(result);
 });
 ```
 
-#### getSuiteResultTestResults(resultId, [callback])
+#### GhostInspector.getSuiteResultTestResults(resultId, [callback])
 Fetch the test results in a single suite result.
 
 ```js
-GhostInspector.getSuiteResultTestResults('[result-id]', function (err, result) {
-    if (err) return console.log('Error: ' + err);
-    console.log(result);
+// Example using await
+const results = await GhostInspector.getSuiteResultTestResults('[result-id]');
+
+// Example using a callback
+GhostInspector.getSuiteResultTestResults('[result-id]', function (err, results) {
+    if (err) return console.error(err);
+    console.log(results);
 });
 ```
 
-#### cancelSuiteResult(resultId, [callback])
+#### GhostInspector.cancelSuiteResult(resultId, [callback])
 Cancel an in-progress suite result.
 
 ```js
+// Example using await
+const result = await GhostInspector.cancelSuiteResult('[result-id]');
+
+// Example using a callback
 GhostInspector.cancelSuiteResult('[result-id]', function (err, result) {
-    if (err) return console.log('Error: ' + err);
+    if (err) return console.error(err);
     console.log(result);
 });
 ```
 
-#### getTestResult(resultId, [callback])
+#### GhostInspector.getTestResult(resultId, [callback])
 Fetch a single test result.
 
 ```js
+// Example using await
+const result = await GhostInspector.getTestResult('[result-id]');
+
+// Example using a callback
 GhostInspector.getTestResult('[result-id]', function (err, result) {
-    if (err) return console.log('Error: ' + err);
+    if (err) return console.error(err);
     console.log(result);
 });
 ```
 
-#### cancelTestResult(resultId, [callback])
+#### GhostInspector.cancelTestResult(resultId, [callback])
 Cancel an in-progress test result.
 
 ```js
+// Example using await
+const result = await GhostInspector.cancelTestResult('[result-id]');
+
+// Example using a callback
 GhostInspector.cancelTestResult('[result-id]', function (err, result) {
-    if (err) return console.log('Error: ' + err);
+    if (err) return console.error(err);
     console.log(result);
 });
 ```
