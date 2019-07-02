@@ -4,6 +4,7 @@ const rp = require('request-promise-native')
 // Define GhostInspector class
 class GhostInspector {
   constructor (apiKey) {
+    this.userAgent = 'Ghost Inspector Node.js Bindings'
     this.host = 'https://api.ghostinspector.com'
     this.prefix = '/v1'
     this.apiKey = apiKey
@@ -74,7 +75,7 @@ class GhostInspector {
       method: method,
       uri: this.buildRequestUrl(path),
       headers: {
-        'User-Agent': 'Ghost Inspector Node.js Bindings'
+        'User-Agent': this.userAgent
       },
       json: true,
       timeout: 3600000
@@ -127,7 +128,7 @@ class GhostInspector {
       method: 'GET',
       uri: this.buildRequestUrl(path) + this.buildQueryString(params),
       headers: {
-        'User-Agent': 'Ghost Inspector Node.js Bindings'
+        'User-Agent': this.userAgent
       }
     }
     // Send request to API
