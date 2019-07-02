@@ -9,28 +9,57 @@ class GhostInspector {
     this.apiKey = apiKey
   }
 
-  buildRequestUrl (path, params) {
-    // Build request URL
-    if (params == null) { params = {} }
-    let url = this.host + this.prefix + path + '?'
-    // Add auth and other params
-    params.apiKey = this.apiKey
+  buildRequestUrl (path) {
+    return this.host + this.prefix + path
+  }
+
+  buildQueryString (params = {}) {
+    let queryString = '?'
+    // Add params
     for (let key in params) {
       // handle array params
       const val = params[key]
       if (val instanceof Array) {
         for (let item of val) {
-          url += key + '[]=' + encodeURIComponent(item) + '&'
+          queryString += key + '[]=' + encodeURIComponent(item) + '&'
         }
       } else {
-        url += key + '=' + encodeURIComponent(val) + '&'
+        queryString += key + '=' + encodeURIComponent(val) + '&'
       }
     }
-    return url
+    return queryString
   }
 
-  async request (path, params, callback) {
-    let result
+  deepConvertParamToString (param) {
+    if (param instanceof Array) {
+      return param.map(this.deepConvertParamToString)
+    } else {
+      return param.toString()
+    }
+  }
+
+  buildFormData (params = {}) {
+    // Copy over all fields and convert non-arrays to strings
+    const formData = {}
+    for (let key in params) {
+      formData[key] = this.deepConvertParamToString(params[key])
+    }
+    return formData
+  }
+
+  getOverallResultOutcome (data) {
+    if (data instanceof Array) {
+      let passing = data.length ? true : null
+      for (let entry of data) {
+        passing = passing && entry.passing
+      }
+      return passing
+    } else {
+      return data.passing === undefined ? null : data.passing
+    }
+  }
+
+  async request (method, path, params, callback) {
     // Sort out params and callback
     if (typeof params === 'function') {
       callback = params
@@ -38,17 +67,33 @@ class GhostInspector {
     } else if (!params || typeof params !== 'object') {
       params = {}
     }
-    try {
-      // Send request to API
-      const options = {
-        method: 'GET',
-        uri: this.buildRequestUrl(path, params),
-        headers: {
-          'User-Agent': 'Ghost Inspector Node.js Bindings'
-        },
-        json: true,
-        timeout: 3600000
+    // Add API key to params
+    params.apiKey = this.apiKey
+    // Setup initial request options
+    const options = {
+      method: method,
+      uri: this.buildRequestUrl(path),
+      headers: {
+        'User-Agent': 'Ghost Inspector Node.js Bindings'
+      },
+      json: true,
+      timeout: 3600000
+    }
+    // Customize request based on GET or POST
+    if (method === 'POST') {
+      // Add params as form data
+      options.formData = this.buildFormData(params)
+      // Check for special `dataFile` parameter (path to CSV file) and open read stream for it
+      if (params.dataFile) {
+        options.formData.dataFile = fs.createReadStream(params.dataFile.toString())
       }
+    } else {
+      // Add params as query string
+      options.uri += this.buildQueryString(params)
+    }
+    // Send request to API
+    let result
+    try {
       result = await rp(options)
     } catch (err) {
       if (typeof callback === 'function') {
@@ -74,16 +119,20 @@ class GhostInspector {
   }
 
   async download (path, dest, callback) {
+    // Add API key to params
+    const params = {
+      apiKey: this.apiKey
+    }
+    const options = {
+      method: 'GET',
+      uri: this.buildRequestUrl(path) + this.buildQueryString(params),
+      headers: {
+        'User-Agent': 'Ghost Inspector Node.js Bindings'
+      }
+    }
+    // Send request to API
     let data
     try {
-      // Send request to API
-      const options = {
-        method: 'GET',
-        uri: this.buildRequestUrl(path),
-        headers: {
-          'User-Agent': 'Ghost Inspector Node.js Bindings'
-        }
-      }
       data = await rp(options)
     } catch (err) {
       if (typeof callback === 'function') {
@@ -112,15 +161,15 @@ class GhostInspector {
   }
 
   async getSuites (callback) {
-    return await this.request('/suites/', callback)
+    return await this.request('GET', '/suites/', callback)
   }
 
   async getSuite (suiteId, callback) {
-    return await this.request(`/suites/${suiteId}/`, callback)
+    return await this.request('GET', `/suites/${suiteId}/`, callback)
   }
 
   async getSuiteTests (suiteId, callback) {
-    return await this.request(`/suites/${suiteId}/tests/`, callback)
+    return await this.request('GET', `/suites/${suiteId}/tests/`, callback)
   }
 
   async getSuiteResults (suiteId, options, callback) {
@@ -130,7 +179,7 @@ class GhostInspector {
       options = {}
     }
     // Execute API call
-    return await this.request(`/suites/${suiteId}/results/`, options, callback)
+    return await this.request('GET', `/suites/${suiteId}/results/`, options, callback)
   }
 
   async executeSuite (suiteId, options, callback) {
@@ -142,7 +191,7 @@ class GhostInspector {
     // Execute API call
     let data
     try {
-      data = await this.request(`/suites/${suiteId}/execute/`, options)
+      data = await this.request('POST', `/suites/${suiteId}/execute/`, options)
     } catch (err) {
       if (typeof callback === 'function') {
         callback(err)
@@ -150,16 +199,8 @@ class GhostInspector {
       }
       throw err
     }      
-    // Check test results, determine overall pass/fail
-    let passing
-    if (data instanceof Array) {
-      passing = true
-      for (let test of data) {
-        passing = passing && test.passing
-      }
-    } else {
-      passing = null
-    }
+    // Check results, determine overall pass/fail
+    const passing = this.getOverallResultOutcome(data)
     // Call back with extra pass/fail parameter
     if (typeof callback === 'function') {
       callback(null, data, passing)
@@ -176,11 +217,11 @@ class GhostInspector {
   }
 
   async getTests (callback) {
-    return await this.request('/tests/', callback)
+    return await this.request('GET', '/tests/', callback)
   }
 
   async getTest (testId, callback) {
-    return await this.request(`/tests/${testId}/`, callback)
+    return await this.request('GET', `/tests/${testId}/`, callback)
   }
 
   async getTestResults (testId, options, callback) {
@@ -190,7 +231,7 @@ class GhostInspector {
       options = {}
     }
     // Execute API call
-    return await this.request(`/tests/${testId}/results/`, options, callback)
+    return await this.request('GET', `/tests/${testId}/results/`, options, callback)
   }
 
   async executeTest (testId, options, callback) {
@@ -202,16 +243,17 @@ class GhostInspector {
     // Execute API call
     let data
     try {
-      data = await this.request(`/tests/${testId}/execute/`, options)
+      data = await this.request('POST', `/tests/${testId}/execute/`, options)
     } catch (err) {
       if (typeof callback === 'function') {
         callback(err)
         return
       }
       throw err
-    }   
+    }
+    // Check results, determine overall pass/fail
+    const passing = this.getOverallResultOutcome(data)
     // Call back with extra pass/fail parameter
-    const passing = data.passing === undefined ? null : data.passing
     if (typeof callback === 'function') {
       callback(null, data, passing)
     }
@@ -227,19 +269,19 @@ class GhostInspector {
   }
 
   async getSuiteResult (resultId, callback) {
-    return await this.request(`/suite-results/${resultId}/`, callback)
+    return await this.request('GET', `/suite-results/${resultId}/`, callback)
   }
 
   async getSuiteResultTestResults (resultId, callback) {
-    return await this.request(`/suite-results/${resultId}/results/`, callback)
+    return await this.request('GET', `/suite-results/${resultId}/results/`, callback)
   }
 
   async cancelSuiteResult (resultId, callback) {
-    return await this.request(`/suite-results/${resultId}/cancel/`, callback)
+    return await this.request('GET', `/suite-results/${resultId}/cancel/`, callback)
   }
 
   async getTestResult (resultId, callback) {
-    return await this.request(`/results/${resultId}/`, callback)
+    return await this.request('GET', `/results/${resultId}/`, callback)
   }
 
   // Legacy alias for getTestResult()
@@ -248,7 +290,7 @@ class GhostInspector {
   }
 
   async cancelTestResult (resultId, callback) {
-    return await this.request(`/results/${resultId}/cancel/`, callback)
+    return await this.request('GET', `/results/${resultId}/cancel/`, callback)
   }
 
   // Legacy alias for cancelTestResult()

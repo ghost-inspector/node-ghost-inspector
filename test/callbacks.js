@@ -171,6 +171,18 @@ describe('Callback: Execute test overriding start URL ', function () {
   })
 })
 
+describe('Callback: Execute test with CSV file ', function () {
+  this.timeout(0)
+  it('should return a single result in an array with the "foo" value from the CSV used in step #2', (done) => {
+    GhostInspector.executeTest('53cf58fc350c6c41029a11bf', { dataFile: `${__dirname}/sample.csv` }, (err, data, passing) => {
+      assert.ok(err === null)
+      assert.strictEqual(data[0].steps[1].value, 'foo')
+      assert.ok(passing === true)
+      done()
+    })
+  })
+})
+
 describe('Callback: Execute test with immediate response ', function () {
   this.timeout(0)
   it('should return success with a pending result and null passing value', (done) => {
