@@ -105,7 +105,7 @@ GhostInspector.executeSuite('[suite-id]', options, function (err, results, passi
 ```
 
 #### GhostInspector.downloadSuiteSeleniumHtml(suiteId, dest, [callback])
-Download a zip file of all tests in Selenium HTML format
+Download a zip file of all tests in this suite in Selenium IDE .html format
 
 ```js
 // Example using await
@@ -118,8 +118,22 @@ GhostInspector.downloadSuiteSeleniumHtml('[suite-id]', 'suite.zip', function (er
 });
 ```
 
+#### GhostInspector.downloadSuiteSeleniumSide(suiteId, dest, [callback])
+Download a file of all tests in this suite in Selenium IDE .side format
+
+```js
+// Example using await
+await GhostInspector.downloadSuiteSeleniumSide('[suite-id]', 'suite.side');
+
+// Example using a callback
+GhostInspector.downloadSuiteSeleniumSide('[suite-id]', 'suite.side', function (err) {
+    if (err) return console.error(err);
+    console.log('File saved to suite.side.');
+});
+```
+
 #### GhostInspector.downloadSuiteSeleniumJson(suiteId, dest, [callback])
-Download a zip file of all tests in Selenium JSON format
+Download a zip file of all tests in this suite in Selenium JSON format
 
 ```js
 // Example using await
@@ -200,7 +214,7 @@ GhostInspector.executeTest('[test-id]', options, function (err, results, passing
 ```
 
 #### GhostInspector.downloadTestSeleniumHtml(testId, dest, [callback])
-Download a single test in Selenium HTML format
+Download a single test in Selenium IDE .html format
 
 ```js
 // Example using await
@@ -210,6 +224,20 @@ await GhostInspector.downloadTestSeleniumHtml('[test-id]', 'test.html');
 GhostInspector.downloadTestSeleniumHtml('[test-id]', 'test.html', function (err) {
     if (err) return console.error(err);
     console.log('File saved to test.html.');
+});
+```
+
+#### GhostInspector.downloadTestSeleniumSide(testId, dest, [callback])
+Download a single test in Selenium IDE .side format
+
+```js
+// Example using await
+await GhostInspector.downloadTestSeleniumSide('[test-id]', 'test.side');
+
+// Example using a callback
+GhostInspector.downloadTestSeleniumSide('[test-id]', 'test.side', function (err) {
+    if (err) return console.error(err);
+    console.log('File saved to test.side.');
 });
 ```
 

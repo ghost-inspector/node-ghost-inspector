@@ -217,6 +217,10 @@ class GhostInspector {
     return await this.download(`/suites/${suiteId}/export/selenium-json/`, dest, callback)
   }
 
+  async downloadSuiteSeleniumSide (suiteId, dest, callback) {
+    return await this.download(`/suites/${suiteId}/export/selenium-side/`, dest, callback)
+  }
+
   async getTests (callback) {
     return await this.request('GET', '/tests/', callback)
   }
@@ -267,6 +271,10 @@ class GhostInspector {
 
   async downloadTestSeleniumJson (testId, dest, callback) {
     return await this.download(`/tests/${testId}/export/selenium-json/`, dest, callback)
+  }
+
+  async downloadTestSeleniumSide (testId, dest, callback) {
+    return await this.download(`/tests/${testId}/export/selenium-side/`, dest, callback)
   }
 
   async getSuiteResult (resultId, callback) {

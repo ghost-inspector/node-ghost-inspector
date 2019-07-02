@@ -62,8 +62,18 @@ describe('Async: Get suite results', function () {
 describe('Async: Download suite in (zipped) Selenium HTML format', function () {
   this.timeout(0)
   const dest = '/tmp/suite-html.zip'
-  it('should return a zip file', async () => {
+  it('should save a zip file', async () => {
     await GhostInspector.downloadSuiteSeleniumHtml('53cf58c0350c6c41029a11be', dest)
+    assert.ok(fs.existsSync(dest))
+    fs.unlinkSync(dest)
+  })
+})
+
+describe('Async: Download suite in Selenium .side format', function () {
+  this.timeout(0)
+  const dest = '/tmp/suite.side'
+  it('should save a .side file', async () => {
+    await GhostInspector.downloadSuiteSeleniumSide('53cf58c0350c6c41029a11be', dest)
     assert.ok(fs.existsSync(dest))
     fs.unlinkSync(dest)
   })
@@ -72,7 +82,7 @@ describe('Async: Download suite in (zipped) Selenium HTML format', function () {
 describe('Async: Download suite in (zipped) Selenium JSON format', function () {
   this.timeout(0)
   const dest = '/tmp/suite-json.zip'
-  it('should return a zip file', async () => {
+  it('should save a zip file', async () => {
     await GhostInspector.downloadSuiteSeleniumJson('53cf58c0350c6c41029a11be', dest)
     assert.ok(fs.existsSync(dest))
     fs.unlinkSync(dest)
@@ -153,7 +163,7 @@ describe('Async: Execute test with immediate response ', function () {
 describe('Async: Download test in Selenium HTML format', function () {
   this.timeout(0)
   const dest = '/tmp/test.html'
-  it('should return an HTML document', async () => {
+  it('should save an HTML file', async () => {
     await GhostInspector.downloadTestSeleniumHtml('53cf58fc350c6c41029a11bf', dest)
     assert.ok(fs.existsSync(dest))
     const data = fs.readFileSync(dest)
@@ -162,10 +172,22 @@ describe('Async: Download test in Selenium HTML format', function () {
   })
 })
 
+describe('Async: Download test in Selenium .side format', function () {
+  this.timeout(0)
+  const dest = '/tmp/test.side'
+  it('should save a .side file', async () => {
+    await GhostInspector.downloadTestSeleniumSide('53cf58fc350c6c41029a11bf', dest)
+    assert.ok(fs.existsSync(dest))
+    const data = fs.readFileSync(dest)
+    assert.ok(data.toString().includes('Google'))
+    fs.unlinkSync(dest)
+  })
+})
+
 describe('Async: Download test in Selenium JSON format', function () {
   this.timeout(0)
   const dest = '/tmp/test.json'
-  it('should return an HTML document', async () => {
+  it('should save a JSON file', async () => {
     await GhostInspector.downloadTestSeleniumJson('53cf58fc350c6c41029a11bf', dest)
     assert.ok(fs.existsSync(dest))
     const data = fs.readFileSync(dest)
