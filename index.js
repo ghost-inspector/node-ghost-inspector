@@ -179,12 +179,6 @@ class GhostInspector {
   }
 
   async getSuiteResults (suiteId, options, callback) {
-    // Sort out options and callback
-    if (typeof options === 'function') {
-      callback = options
-      options = {}
-    }
-    // Execute API call
     return await this.request('GET', `/suites/${suiteId}/results/`, options, callback)
   }
 
@@ -235,12 +229,6 @@ class GhostInspector {
   }
 
   async getTestResults (testId, options, callback) {
-    // Sort out options and callback
-    if (typeof options === 'function') {
-      callback = options
-      options = {}
-    }
-    // Execute API call
     return await this.request('GET', `/tests/${testId}/results/`, options, callback)
   }
 
