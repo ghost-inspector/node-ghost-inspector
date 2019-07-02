@@ -282,38 +282,38 @@ class GhostInspector {
     return await this.download(`/tests/${testId}/export/selenium-side/`, dest, callback)
   }
 
-  async getSuiteResult (resultId, callback) {
-    return await this.request('GET', `/suite-results/${resultId}/`, callback)
+  async getSuiteResult (suiteResultId, callback) {
+    return await this.request('GET', `/suite-results/${suiteResultId}/`, callback)
   }
 
-  async getSuiteResultTestResults (resultId, callback) {
-    return await this.request('GET', `/suite-results/${resultId}/results/`, callback)
+  async getSuiteResultTestResults (suiteResultId, callback) {
+    return await this.request('GET', `/suite-results/${suiteResultId}/results/`, callback)
   }
 
-  async getSuiteResultXUnit (resultId, callback) {
-    return await this.request('GET', `/suite-results/${resultId}/xunit/`, {}, callback, false)
+  async getSuiteResultXUnit (suiteResultId, callback) {
+    return await this.request('GET', `/suite-results/${suiteResultId}/xunit/`, {}, callback, false)
   }
 
-  async cancelSuiteResult (resultId, callback) {
-    return await this.request('GET', `/suite-results/${resultId}/cancel/`, callback)
+  async cancelSuiteResult (suiteResultId, callback) {
+    return await this.request('GET', `/suite-results/${suiteResultId}/cancel/`, callback)
   }
 
-  async getTestResult (resultId, callback) {
-    return await this.request('GET', `/results/${resultId}/`, callback)
+  async getTestResult (testResultId, callback) {
+    return await this.request('GET', `/results/${testResultId}/`, callback)
   }
 
   // Legacy alias for getTestResult()
-  async getResult (resultId, callback) {
-    return this.getTestResult(resultId, callback)
+  async getResult (testResultId, callback) {
+    return this.getTestResult(testResultId, callback)
   }
 
-  async cancelTestResult (resultId, callback) {
-    return await this.request('GET', `/results/${resultId}/cancel/`, callback)
+  async cancelTestResult (testResultId, callback) {
+    return await this.request('GET', `/results/${testResultId}/cancel/`, callback)
   }
 
   // Legacy alias for cancelTestResult()
-  async cancelResult (resultId, callback) {
-    return this.cancelTestResult(resultId, callback)
+  async cancelResult (testResultId, callback) {
+    return this.cancelTestResult(testResultId, callback)
   }
 }
 
