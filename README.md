@@ -283,6 +283,20 @@ GhostInspector.getSuiteResultTestResults('[result-id]', function (err, results) 
 });
 ```
 
+#### GhostInspector.getSuiteResultXUnit(resultId, [callback])
+Fetch an XML report (XUnit v2) for a single suite result.
+
+```js
+// Example using await
+const xml = await GhostInspector.getSuiteResultXUnit('[result-id]');
+
+// Example using a callback
+GhostInspector.getSuiteResultXUnit('[result-id]', function (err, xml) {
+    if (err) return console.error(err);
+    console.log(xml);
+});
+```
+
 #### GhostInspector.cancelSuiteResult(resultId, [callback])
 Cancel an in-progress suite result.
 

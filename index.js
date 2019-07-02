@@ -60,7 +60,7 @@ class GhostInspector {
     }
   }
 
-  async request (method, path, params, callback) {
+  async request (method, path, params, callback, json = true) {
     // Sort out params and callback
     if (typeof params === 'function') {
       callback = params
@@ -77,7 +77,7 @@ class GhostInspector {
       headers: {
         'User-Agent': this.userAgent
       },
-      json: true,
+      json,
       timeout: 3600000
     }
     // Customize request based on GET or POST
@@ -104,18 +104,23 @@ class GhostInspector {
       throw err
     }
     // Process response
-    if (result.code === 'ERROR') {
+    if (json && result.code === 'ERROR') {
       const err = new Error(result.message)
       if (typeof callback === 'function') {
         callback(err)
         return
       }
       throw err
-    } else {
+    } else if (json) {
       if (typeof callback === 'function') {
         callback(null, result.data)
       }
       return result.data
+    } else {
+      if (typeof callback === 'function') {
+        callback(null, result)
+      }
+      return result
     }
   }
 
@@ -283,6 +288,10 @@ class GhostInspector {
 
   async getSuiteResultTestResults (resultId, callback) {
     return await this.request('GET', `/suite-results/${resultId}/results/`, callback)
+  }
+
+  async getSuiteResultXUnit (resultId, callback) {
+    return await this.request('GET', `/suite-results/${resultId}/xunit/`, {}, callback, false)
   }
 
   async cancelSuiteResult (resultId, callback) {

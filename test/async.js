@@ -212,6 +212,14 @@ describe('Async: Get suite result test result listing', function () {
   })
 })
 
+describe('Async: Get suite result XUnit report', function () {
+  this.timeout(0)
+  it('should return XML for the suite result', async () => {
+    const data = await GhostInspector.getSuiteResultXUnit(suiteResultId)
+    assert.ok(data.toString().startsWith('<?xml version="1.0" encoding="UTF-8"?>'))
+  })
+})
+
 describe('Async: Cancel suite result ', function () {
   this.timeout(0)
   it('should return a suite result that was triggered above', async () => {
