@@ -240,6 +240,10 @@ class GhostInspector {
     return await this.request('POST', `/tests/${testId}/accept-screenshot/`, callback)
   }
 
+  async duplicateTest (testId, callback) {
+    return await this.request('POST', `/tests/${testId}/duplicate/`, callback)
+  }
+
   async executeTest (testId, options, callback) {
     // Sort out options and callback
     if (typeof options === 'function') {
@@ -291,7 +295,7 @@ class GhostInspector {
   }
 
   async cancelSuiteResult (suiteResultId, callback) {
-    return await this.request('GET', `/suite-results/${suiteResultId}/cancel/`, callback)
+    return await this.request('POST', `/suite-results/${suiteResultId}/cancel/`, callback)
   }
 
   async getTestResult (testResultId, callback) {
@@ -304,7 +308,7 @@ class GhostInspector {
   }
 
   async cancelTestResult (testResultId, callback) {
-    return await this.request('GET', `/results/${testResultId}/cancel/`, callback)
+    return await this.request('POST', `/results/${testResultId}/cancel/`, callback)
   }
 
   // Legacy alias for cancelTestResult()

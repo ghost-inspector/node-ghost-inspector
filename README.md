@@ -221,6 +221,20 @@ GhostInspector.acceptTestScreenshot('[test-id]', function (err, test) {
 });
 ```
 
+#### GhostInspector.duplicateTest(testId, [callback])
+Create a duplicate copy of a test.
+
+```js
+// Example using await
+const newTest = await GhostInspector.duplicateTest('[test-id]');
+
+// Example using a callback
+GhostInspector.duplicateTest('[test-id]', function (err, newTest) {
+    if (err) return console.error(err);
+    console.log(newTest);
+});
+```
+
 #### GhostInspector.executeTest(testId, [options], [callback])
 Execute a single test in your account and return the result.
 
