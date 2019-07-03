@@ -222,6 +222,16 @@ describe('Callback: Get test results that are in progress', function () {
   })
 })
 
+describe('Callback: Accept screenshot for a test', function () {
+  this.timeout(0)
+  it('should fail with error because screenshot comparison is not enabled', (done) => {
+    GhostInspector.acceptTestScreenshot('53cf58fc350c6c41029a11bf', (err, data) => {
+      assert.ok(err.message.includes('Unable to accept screenshot'))
+      done()
+    })
+  })
+})
+
 describe('Callback: Download test in Selenium HTML format', function () {
   this.timeout(0)
   const dest = '/tmp/test.html'

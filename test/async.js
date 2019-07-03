@@ -168,6 +168,17 @@ describe('Async: Get test results that are in progress', function () {
   })
 })
 
+describe('Async: Accept screenshot for a test', function () {
+  this.timeout(0)
+  it('should fail with error because screenshot comparison is not enabled', async () => {
+    try {
+      await GhostInspector.acceptTestScreenshot('53cf58fc350c6c41029a11bf')
+    } catch (err) {
+      assert.ok(err.message.includes('Unable to accept screenshot'))
+    }
+  })
+})
+
 describe('Async: Download test in Selenium HTML format', function () {
   this.timeout(0)
   const dest = '/tmp/test.html'

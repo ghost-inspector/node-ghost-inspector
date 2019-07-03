@@ -207,6 +207,20 @@ GhostInspector.getTestResultsRunning('[test-id]', function (err, results) {
 });
 ```
 
+#### GhostInspector.acceptTestScreenshot(testId, [callback])
+Accept the current screenshot as the new baseline for a test. (Note: _This method will throw/return an error if the test's screenshot is already passing, or if screenshot comparison is disabled._)
+
+```js
+// Example using await
+const test = await GhostInspector.acceptTestScreenshot('[test-id]');
+
+// Example using a callback
+GhostInspector.acceptTestScreenshot('[test-id]', function (err, test) {
+    if (err) return console.error(err);
+    console.log(test);
+});
+```
+
 #### GhostInspector.executeTest(testId, [options], [callback])
 Execute a single test in your account and return the result.
 

@@ -236,6 +236,10 @@ class GhostInspector {
     return await this.request('GET', `/tests/${testId}/running/`, callback)
   }
 
+  async acceptTestScreenshot (testId, callback) {
+    return await this.request('POST', `/tests/${testId}/accept-screenshot/`, callback)
+  }
+
   async executeTest (testId, options, callback) {
     // Sort out options and callback
     if (typeof options === 'function') {
