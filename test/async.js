@@ -160,6 +160,14 @@ describe('Async: Execute test with immediate response ', function () {
   })
 })
 
+describe('Async: Get test results that are in progress', function () {
+  this.timeout(0)
+  it('should return at least 1 result', async () => {
+    const data = await GhostInspector.getTestResultsRunning('53cf58fc350c6c41029a11bf')
+    assert.ok(data.length >= 1)
+  })
+})
+
 describe('Async: Download test in Selenium HTML format', function () {
   this.timeout(0)
   const dest = '/tmp/test.html'

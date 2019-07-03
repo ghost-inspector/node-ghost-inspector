@@ -193,6 +193,20 @@ GhostInspector.getTestResults('[test-id]', options, function (err, results) {
 });
 ```
 
+#### GhostInspector.getTestResultsRunning(testId, [callback])
+Fetch an array of test results that are in progress for a test.
+
+```js
+// Example using await
+const results = await GhostInspector.getTestResultsRunning('[test-id]');
+
+// Example using a callback
+GhostInspector.getTestResultsRunning('[test-id]', function (err, results) {
+    if (err) return console.error(err);
+    console.log(results);
+});
+```
+
 #### GhostInspector.executeTest(testId, [options], [callback])
 Execute a single test in your account and return the result.
 

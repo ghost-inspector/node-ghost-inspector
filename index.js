@@ -232,6 +232,10 @@ class GhostInspector {
     return await this.request('GET', `/tests/${testId}/results/`, options, callback)
   }
 
+  async getTestResultsRunning (testId, callback) {
+    return await this.request('GET', `/tests/${testId}/running/`, callback)
+  }
+
   async executeTest (testId, options, callback) {
     // Sort out options and callback
     if (typeof options === 'function') {
