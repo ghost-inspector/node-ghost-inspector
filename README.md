@@ -23,6 +23,48 @@ This package supports both callbacks and `await` to receive data back from the m
 
 ## Methods
 
+#### GhostInspector.getFolders([callback])
+Fetch an array of all the folders in your account.
+
+```js
+// Example using await
+const folders = await GhostInspector.getFolders();
+
+// Example using a callback
+GhostInspector.getFolders(function (err, folders) {
+    if (err) return console.error(err);
+    console.log(folders);
+});
+```
+
+#### GhostInspector.getFolder(folderId, [callback])
+Fetch a single folder from your account.
+
+```js
+// Example using await
+const folder = await GhostInspector.getFolder('[folder-id]');
+
+// Example using a callback
+GhostInspector.getFolder('[folder-id]', function (err, folder) {
+    if (err) return console.error(err);
+    console.log(folder);
+});
+```
+
+#### GhostInspector.getFolderSuites(folderId, [callback])
+Fetch an array of all the suites in a folder.
+
+```js
+// Example using await
+const suites = await GhostInspector.getFolderSuites('[folder-id]');
+
+// Example using a callback
+GhostInspector.getFolderSuites('[folder-id]', function (err, suites) {
+    if (err) return console.error(err);
+    console.log(suites);
+});
+```
+
 #### GhostInspector.getSuites([callback])
 Fetch an array of all the suites in your account.
 

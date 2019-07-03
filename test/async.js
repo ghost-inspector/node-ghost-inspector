@@ -5,6 +5,30 @@ const GhostInspector = require('../index')('ff586dcaaa9b781163dbae48a230ea1947f8
 
 let suiteResultId, testResultId
 
+describe('Async: Get folders', function () {
+  this.timeout(0)
+  it('should return 1 folder', async () => {
+    const data = await GhostInspector.getFolders()
+    assert.strictEqual(data.length, 1)
+  })
+})
+
+describe('Async: Get folder', function () {
+  this.timeout(0)
+  it('should return a folder named "Test Folder"', async () => {
+    const data = await GhostInspector.getFolder('5d1bf45df12d703f463820a5')
+    assert.strictEqual(data.name, 'Test Folder')
+  })
+})
+
+describe('Async: Get folder suites', function () {
+  this.timeout(0)
+  it('should return 1 suite in the folder', async () => {
+    const data = await GhostInspector.getFolderSuites('5d1bf45df12d703f463820a5')
+    assert.strictEqual(data.length, 1)
+  })
+})
+
 describe('Async: Get suites', function () {
   this.timeout(0)
   it('should return 1 suite', async () => {

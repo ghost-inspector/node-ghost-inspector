@@ -166,6 +166,18 @@ class GhostInspector {
     }
   }
 
+  async getFolders (callback) {
+    return await this.request('GET', '/folders/', callback)
+  }
+
+  async getFolder (folderId, callback) {
+    return await this.request('GET', `/folders/${folderId}/`, callback)
+  }
+
+  async getFolderSuites (folderId, callback) {
+    return await this.request('GET', `/folders/${folderId}/suites/`, callback)
+  }
+
   async getSuites (callback) {
     return await this.request('GET', '/suites/', callback)
   }
