@@ -1,5 +1,5 @@
 const fs = require('fs')
-const rp = require('request-promise-native')
+const request = require('request-promise-native')
 
 // Define GhostInspector class
 class GhostInspector {
@@ -95,7 +95,7 @@ class GhostInspector {
     // Send request to API
     let result
     try {
-      result = await rp(options)
+      result = await request(options)
     } catch (err) {
       if (typeof callback === 'function') {
         callback(err)
@@ -139,7 +139,7 @@ class GhostInspector {
     // Send request to API
     let data
     try {
-      data = await rp(options)
+      data = await request(options)
     } catch (err) {
       if (typeof callback === 'function') {
         callback(err)
