@@ -1,5 +1,5 @@
 // The API key and IDs used in this file belong to the official Ghost Inspector API testing account.
-const assert = require('assert').strict
+const assert = require('assert')
 const fs = require('fs')
 const GhostInspector = require('../index')('ff586dcaaa9b781163dbae48a230ea1947f894ff')
 
