@@ -28,7 +28,11 @@ Fetch an array of all the folders in your account.
 
 ```js
 // Example using await
-const folders = await GhostInspector.getFolders();
+try {
+    const folders = await GhostInspector.getFolders();
+} catch (err) {
+    console.error(err);
+}
 
 // Example using a callback
 GhostInspector.getFolders(function (err, folders) {
@@ -42,7 +46,11 @@ Fetch a single folder from your account.
 
 ```js
 // Example using await
-const folder = await GhostInspector.getFolder('[folder-id]');
+try {
+    const folder = await GhostInspector.getFolder('[folder-id]');
+} catch (err) {
+    console.error(err);
+}
 
 // Example using a callback
 GhostInspector.getFolder('[folder-id]', function (err, folder) {
@@ -56,7 +64,11 @@ Fetch an array of all the suites in a folder.
 
 ```js
 // Example using await
-const suites = await GhostInspector.getFolderSuites('[folder-id]');
+try {
+    const suites = await GhostInspector.getFolderSuites('[folder-id]');
+} catch (err) {
+    console.error(err);
+}
 
 // Example using a callback
 GhostInspector.getFolderSuites('[folder-id]', function (err, suites) {
@@ -70,7 +82,11 @@ Fetch an array of all the suites in your account.
 
 ```js
 // Example using await
-const suites = await GhostInspector.getSuites();
+try {
+    const suites = await GhostInspector.getSuites();
+} catch (err) {
+    console.error(err);
+}
 
 // Example using a callback
 GhostInspector.getSuites(function (err, suites) {
@@ -84,7 +100,11 @@ Fetch a single suite from your account.
 
 ```js
 // Example using await
-const suite = await GhostInspector.getSuite('[suite-id]');
+try {
+    const suite = await GhostInspector.getSuite('[suite-id]');
+} catch (err) {
+    console.error(err);
+}
 
 // Example using a callback
 GhostInspector.getSuite('[suite-id]', function (err, suite) {
@@ -98,7 +118,11 @@ Fetch an array of all the tests in a suite.
 
 ```js
 // Example using await
-const tests = await GhostInspector.getSuiteTests('[suite-id]');
+try {
+    const tests = await GhostInspector.getSuiteTests('[suite-id]');
+} catch (err) {
+    console.error(err);
+}
 
 // Example using a callback
 GhostInspector.getSuiteTests('[suite-id]', function (err, tests) {
@@ -117,7 +141,11 @@ const options = {
 };
 
 // Example using await
-const results = await GhostInspector.getSuiteResults('[suite-id]', options);
+try {
+    const results = await GhostInspector.getSuiteResults('[suite-id]', options);
+} catch (err) {
+    console.error(err);
+}
 
 // Example using a callback
 GhostInspector.getSuiteResults('[suite-id]', options, function (err, results) {
@@ -136,7 +164,11 @@ const options = {
 };
 
 // Example using await
-const [results, passing] = await GhostInspector.executeSuite('[suite-id]', options);
+try {
+    const [results, passing] = await GhostInspector.executeSuite('[suite-id]', options);
+} catch (err) {
+    console.error(err);
+}
 
 // Example using a callback
 GhostInspector.executeSuite('[suite-id]', options, function (err, results, passing) {
@@ -151,7 +183,11 @@ Download a zip file of all tests in this suite in Selenium IDE .html format
 
 ```js
 // Example using await
-await GhostInspector.downloadSuiteSeleniumHtml('[suite-id]', 'suite.zip');
+try {
+    await GhostInspector.downloadSuiteSeleniumHtml('[suite-id]', 'suite.zip');
+} catch (err) {
+    console.error(err);
+}
 
 // Example using a callback
 GhostInspector.downloadSuiteSeleniumHtml('[suite-id]', 'suite.zip', function (err) {
@@ -165,7 +201,11 @@ Download a file of all tests in this suite in Selenium IDE .side format
 
 ```js
 // Example using await
-await GhostInspector.downloadSuiteSeleniumSide('[suite-id]', 'suite.side');
+try {
+    await GhostInspector.downloadSuiteSeleniumSide('[suite-id]', 'suite.side');
+} catch (err) {
+    console.error(err);
+}
 
 // Example using a callback
 GhostInspector.downloadSuiteSeleniumSide('[suite-id]', 'suite.side', function (err) {
@@ -179,7 +219,11 @@ Download a zip file of all tests in this suite in Selenium JSON format
 
 ```js
 // Example using await
-await GhostInspector.downloadSuiteSeleniumJson('[suite-id]', 'suite.zip');
+try {
+    await GhostInspector.downloadSuiteSeleniumJson('[suite-id]', 'suite.zip');
+} catch (err) {
+    console.error(err);
+}
 
 // Example using a callback
 GhostInspector.downloadSuiteSeleniumJson('[suite-id]', 'suite.zip', function (err) {
@@ -193,7 +237,11 @@ Fetch an array of all the tests in your account.
 
 ```js
 // Example using await
-const tests = await GhostInspector.getTests();
+try {
+    const tests = await GhostInspector.getTests();
+} catch (err) {
+    console.error(err);
+}
 
 // Example using a callback
 GhostInspector.getTests(function (err, tests) {
@@ -207,7 +255,11 @@ Fetch a single test from your account.
 
 ```js
 // Example using await
-const test = await GhostInspector.getTest('[test-id]');
+try {
+    const test = await GhostInspector.getTest('[test-id]');
+} catch (err) {
+    console.error(err);
+}
 
 // Example using a callback
 GhostInspector.getTest('[test-id]', function (err, test) {
@@ -226,7 +278,11 @@ const options = {
 };
 
 // Example using await
-const results = await GhostInspector.getTestResults('[test-id]', options);
+try {
+    const results = await GhostInspector.getTestResults('[test-id]', options);
+} catch (err) {
+    console.error(err);
+}
 
 // Example using a callback
 GhostInspector.getTestResults('[test-id]', options, function (err, results) {
@@ -240,7 +296,11 @@ Fetch an array of test results that are in progress for a test.
 
 ```js
 // Example using await
-const results = await GhostInspector.getTestResultsRunning('[test-id]');
+try {
+    const results = await GhostInspector.getTestResultsRunning('[test-id]');
+} catch (err) {
+    console.error(err);
+}
 
 // Example using a callback
 GhostInspector.getTestResultsRunning('[test-id]', function (err, results) {
@@ -254,7 +314,11 @@ Accept the current screenshot as the new baseline for a test. (Note: _This metho
 
 ```js
 // Example using await
-const test = await GhostInspector.acceptTestScreenshot('[test-id]');
+try {
+    const test = await GhostInspector.acceptTestScreenshot('[test-id]');
+} catch (err) {
+    console.error(err);
+}
 
 // Example using a callback
 GhostInspector.acceptTestScreenshot('[test-id]', function (err, test) {
@@ -268,7 +332,11 @@ Create a duplicate copy of a test.
 
 ```js
 // Example using await
-const newTest = await GhostInspector.duplicateTest('[test-id]');
+try {
+    const newTest = await GhostInspector.duplicateTest('[test-id]');
+} catch (err) {
+    console.error(err);
+}
 
 // Example using a callback
 GhostInspector.duplicateTest('[test-id]', function (err, newTest) {
@@ -287,7 +355,11 @@ const options = {
 };
 
 // Example using await
-const [results, passing] = await GhostInspector.executeTest('[test-id]', options);
+try {
+    const [results, passing] = await GhostInspector.executeTest('[test-id]', options);
+} catch (err) {
+    console.error(err);
+}
 
 // Example using a callback
 GhostInspector.executeTest('[test-id]', options, function (err, results, passing) {
@@ -302,7 +374,11 @@ Download a single test in Selenium IDE .html format
 
 ```js
 // Example using await
-await GhostInspector.downloadTestSeleniumHtml('[test-id]', 'test.html');
+try {
+    await GhostInspector.downloadTestSeleniumHtml('[test-id]', 'test.html');
+} catch (err) {
+    console.error(err);
+}
 
 // Example using a callback
 GhostInspector.downloadTestSeleniumHtml('[test-id]', 'test.html', function (err) {
@@ -316,7 +392,11 @@ Download a single test in Selenium IDE .side format
 
 ```js
 // Example using await
-await GhostInspector.downloadTestSeleniumSide('[test-id]', 'test.side');
+try {
+    await GhostInspector.downloadTestSeleniumSide('[test-id]', 'test.side');
+} catch (err) {
+    console.error(err);
+}
 
 // Example using a callback
 GhostInspector.downloadTestSeleniumSide('[test-id]', 'test.side', function (err) {
@@ -330,7 +410,11 @@ Download a single test in Selenium JSON format
 
 ```js
 // Example using await
-await GhostInspector.downloadTestSeleniumJson('[test-id]', 'test.json');
+try {
+    await GhostInspector.downloadTestSeleniumJson('[test-id]', 'test.json');
+} catch (err) {
+    console.error(err);
+}
 
 // Example using a callback
 GhostInspector.downloadTestSeleniumJson('[test-id]', 'test.json', function (err) {
@@ -344,7 +428,11 @@ Fetch a single suite result.
 
 ```js
 // Example using await
-const result = await GhostInspector.getSuiteResult('[suite-result-id]');
+try {
+    const result = await GhostInspector.getSuiteResult('[suite-result-id]');
+} catch (err) {
+    console.error(err);
+}
 
 // Example using a callback
 GhostInspector.getSuiteResult('[suite-result-id]', function (err, result) {
@@ -358,7 +446,11 @@ Fetch the test results in a single suite result.
 
 ```js
 // Example using await
-const results = await GhostInspector.getSuiteResultTestResults('[suite-result-id]');
+try {
+    const results = await GhostInspector.getSuiteResultTestResults('[suite-result-id]');
+} catch (err) {
+    console.error(err);
+}
 
 // Example using a callback
 GhostInspector.getSuiteResultTestResults('[suite-result-id]', function (err, results) {
@@ -372,7 +464,11 @@ Fetch an XML report (XUnit v2) for a single suite result.
 
 ```js
 // Example using await
-const xml = await GhostInspector.getSuiteResultXUnit('[suite-result-id]');
+try {
+    const xml = await GhostInspector.getSuiteResultXUnit('[suite-result-id]');
+} catch (err) {
+    console.error(err);
+}
 
 // Example using a callback
 GhostInspector.getSuiteResultXUnit('[suite-result-id]', function (err, xml) {
@@ -386,7 +482,11 @@ Cancel an in-progress suite result.
 
 ```js
 // Example using await
-const result = await GhostInspector.cancelSuiteResult('[suite-result-id]');
+try {
+    const result = await GhostInspector.cancelSuiteResult('[suite-result-id]');
+} catch (err) {
+    console.error(err);
+}
 
 // Example using a callback
 GhostInspector.cancelSuiteResult('[suite-result-id]', function (err, result) {
@@ -400,7 +500,11 @@ Fetch a single test result.
 
 ```js
 // Example using await
-const result = await GhostInspector.getTestResult('[test-result-id]');
+try {
+    const result = await GhostInspector.getTestResult('[test-result-id]');
+} catch (err) {
+    console.error(err);
+}
 
 // Example using a callback
 GhostInspector.getTestResult('[test-result-id]', function (err, result) {
@@ -414,7 +518,11 @@ Cancel an in-progress test result.
 
 ```js
 // Example using await
-const result = await GhostInspector.cancelTestResult('[test-result-id]');
+try {
+    const result = await GhostInspector.cancelTestResult('[test-result-id]');
+} catch (err) {
+    console.error(err);
+}
 
 // Example using a callback
 GhostInspector.cancelTestResult('[test-result-id]', function (err, result) {
