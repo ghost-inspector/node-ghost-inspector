@@ -95,7 +95,7 @@ class GhostInspector {
     // Send request to API
     let result
     try {
-      result = await request(options)
+      result = await this._request(options)
     } catch (err) {
       if (typeof callback === 'function') {
         callback(err)
@@ -139,7 +139,7 @@ class GhostInspector {
     // Send request to API
     let data
     try {
-      data = await request(options)
+      data = await this._request(options)
     } catch (err) {
       if (typeof callback === 'function') {
         callback(err)
@@ -164,6 +164,13 @@ class GhostInspector {
       }
       return data
     }
+  }
+
+  /**
+   * Wrapper for request-promise-native, used for testing.
+   */
+  async _request (options) {
+    return request(options)
   }
 
   async getFolders (callback) {
@@ -281,12 +288,6 @@ class GhostInspector {
     }
     return [data, passing]
   }
-
-  // async executeOnDemandTest (organizationId, testBody, options, callback) {
-  //   const wait = options.wait ? true : false
-  //   const response = await this.request()
-
-  // }
 
   async downloadTestSeleniumHtml (testId, dest, callback) {
     return this.download(`/tests/${testId}/export/selenium-html/`, dest, callback)
