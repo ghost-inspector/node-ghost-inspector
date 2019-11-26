@@ -1,5 +1,16 @@
+const assert = require('assert')
 const fs = require('fs')
 const request = require('request-promise-native')
+
+const DEFAULT_POLL_INTERVAL = 5000
+
+const wait = (time = 5) => {
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve()
+    }, time)
+  })
+}
 
 // Define GhostInspector class
 class GhostInspector {
@@ -87,6 +98,9 @@ class GhostInspector {
       // Check for special `dataFile` parameter (path to CSV file) and open read stream for it
       if (params.dataFile) {
         options.formData.dataFile = fs.createReadStream(params.dataFile.toString())
+      }
+      if (params.body) {
+        options.body = params.body
       }
     } else {
       // Add params as query string
@@ -287,6 +301,54 @@ class GhostInspector {
       callback(null, data, passing)
     }
     return [data, passing]
+  }
+
+  async waitForResult (resultId, options = { pollInterval: DEFAULT_POLL_INTERVAL }, callback) {
+    if (typeof options === 'function') {
+      callback = options
+      options = { pollInterval: DEFAULT_POLL_INTERVAL }
+    }
+    let result
+    try {
+      let passing = null
+      while (passing === null) {
+        await wait(options.pollInterval)
+        result = await this.getTestResult(resultId)
+        passing = result.passing
+      }
+    } catch (err) {
+      if (typeof callback === 'function') {
+        callback(err)
+        return
+      }
+      throw err
+    }
+    if (typeof callback === 'function') {
+      callback(null, result)
+    }
+    return result
+  }
+
+  async executeTestOnDemand (organizationId, options = {}, callback) {
+    assert.ok(options && options.body, 'options.body must be provided.')
+    let result
+    try {
+      result = await this.request('POST', `/organizations/${organizationId}/on-demand/execute/`, options)
+    } catch (err) {
+      if (typeof callback === 'function') {
+        callback(err)
+        return
+      }
+      throw err
+    }
+    if (options.wait) {
+      const pollInterval = options.pollInterval || DEFAULT_POLL_INTERVAL
+      return this.waitForResult(result._id, { pollInterval }, callback)
+    }
+    if (typeof callback === 'function') {
+      callback(null, result)
+    }
+    return result
   }
 
   async downloadTestSeleniumHtml (testId, dest, callback) {

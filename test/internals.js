@@ -81,5 +81,3 @@ describe('getOverallResultOutcome()', function () {
     assert.strictEqual(passing, null)
   })
 })
-
-xdescribe('request()', async function () {})

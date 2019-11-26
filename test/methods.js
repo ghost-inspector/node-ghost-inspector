@@ -267,7 +267,7 @@ describe('API methods', function () {
       assert.equal(error.message, 'some error')
     })
 
-    it('should download', async function () {
+    it('should download HTML', async function () {
       this.requestStub.resolves('<some>html</some>')
       const response = await this.client.downloadSuiteSeleniumHtml('suite-123', '/foo.html', this.callbackSpy)
       // assert API call
@@ -328,7 +328,7 @@ describe('API methods', function () {
       assert.equal(error.message, 'some error')
     })
 
-    it('should download', async function () {
+    it('should download JSON', async function () {
       this.requestStub.resolves('{"some": "json"}')
       const response = await this.client.downloadSuiteSeleniumJson('suite-123', '/foo.json', this.callbackSpy)
       // assert API call
@@ -389,7 +389,7 @@ describe('API methods', function () {
       assert.equal(error.message, 'some error')
     })
 
-    it('should download', async function () {
+    it('should download SIDE', async function () {
       this.requestStub.resolves('---\n - some data')
       const response = await this.client.downloadSuiteSeleniumSide('suite-123', '/foo.side', this.callbackSpy)
       // assert API call
@@ -546,6 +546,7 @@ describe('API methods', function () {
       assert.equal(requestOptions.json, true)
       assert.equal(requestOptions.method, 'POST')
       assert.equal(requestOptions.uri, 'https://api.ghostinspector.com/v1/tests/test-123/execute/')
+      assert.equal(requestOptions.formData.apiKey, 'my-api-key')
       // assert async
       assert.deepEqual(response, [{ expected: 'data' }, true])
       // assert callback called with (error, data, passing)
@@ -563,6 +564,171 @@ describe('API methods', function () {
       // assert callback called with (error, data, passing)
       assert.deepEqual(this.callbackSpy.args[0], [null, { expected: 'data' }, true])
       outcomeStub.restore()
+    })
+
+    it('should execute a test with a CSV file', async function () {
+      // mock out reading the file
+      const readFileStub = sinon.stub(fs, 'createReadStream')
+      readFileStub.returns('file-contents')
+      // fudge the result
+      const outcomeStub = sinon.stub(this.client, 'getOverallResultOutcome')
+      outcomeStub.returns(true)
+      const response = await this.client.executeTest('test-123', { dataFile: './my-data-file.csv' }, this.callbackSpy)
+      // assert API call
+      const requestOptions = this.requestStub.args[0][0]
+      assert.equal(requestOptions.headers['User-Agent'], 'Ghost Inspector Node.js Client')
+      assert.equal(requestOptions.json, true)
+      assert.equal(requestOptions.method, 'POST')
+      assert.equal(requestOptions.uri, 'https://api.ghostinspector.com/v1/tests/test-123/execute/')
+      assert.equal(requestOptions.formData.apiKey, 'my-api-key')
+      assert.equal(requestOptions.formData.dataFile, 'file-contents')
+      // assert async
+      assert.deepEqual(response, [{ expected: 'data' }, true])
+      // assert callback called with (error, data, passing)
+      assert.deepEqual(this.callbackSpy.args[0], [null, { expected: 'data' }, true])
+      // restore stubs
+      readFileStub.restore()
+      outcomeStub.restore()
+    })
+  })
+
+  /**
+   * waitForResult() also falls outside the standard internal pattern of passing through the basic
+   * parameters to client.request(), we'll set up a few special tests around this specifically.
+   */
+  describe('waitForResult()', function () {
+    it('(async) should throw an error with ERROR response', async function () {
+      const getTestResultStub = sinon.stub(this.client, 'getTestResult')
+      getTestResultStub.throws(new Error('some error'))
+      try {
+        await this.client.waitForResult('result-123', { pollInterval: 5 })
+      } catch (error) {
+        assert.ok(error)
+        assert.equal(error.message, 'some error')
+        getTestResultStub.restore()
+        return true
+      }
+      throw new assert.AssertionError({ message: 'Missing expected exception.' })
+    })
+
+    it('(callback) should throw an error with ERROR response', async function () {
+      const getTestResultStub = sinon.stub(this.client, 'getTestResult')
+      getTestResultStub.throws(new Error('some error'))
+      this.client.waitForResult('result-123', { pollInterval: 5 }, this.callbackSpy)
+      // allow callback to fire
+      await wait()
+      // first-position arg (error) should be non-null
+      const callbackArgs = this.callbackSpy.args
+      const error = callbackArgs[0][0]
+      assert.ok(error)
+      assert.equal(error.message, 'some error')
+      getTestResultStub.restore()
+    })
+
+    it('should poll for a result', async function () {
+      const getTestResultStub = sinon.stub(this.client, 'getTestResult')
+      getTestResultStub.onFirstCall().returns({ passing: null })
+      getTestResultStub.onSecondCall().returns({ passing: null })
+      getTestResultStub.onThirdCall().returns({ passing: true })
+      const result = await this.client.waitForResult('result-123', { pollInterval: 1 }, this.callbackSpy)
+      await wait(5)
+      // assert we polled
+      assert.equal(getTestResultStub.callCount, 3)
+      // assert we got a value back async
+      assert.equal(result.passing, true)
+      // assert callback
+      assert.deepEqual(this.callbackSpy.args[0], [null, { passing: true }])
+      getTestResultStub.restore()
+    })
+  })
+
+  /**
+   * executeTestOnDemand() also falls outside the standard internal pattern of passing through the basic
+   * parameters to client.request(), we'll set up a few special tests around this specifically.
+   */
+  describe('executeTestOnDemand()', function () {
+    it('should throw an error if options.body not provided', async function () {
+      try {
+        await this.client.executeTestOnDemand('org-123')
+      } catch (error) {
+        assert.ok(error)
+        assert.equal(error.message, 'options.body must be provided.')
+        return true
+      }
+      throw new assert.AssertionError({ message: 'Missing expected exception.' })
+    })
+
+    it('(async) should throw an error with ERROR response', async function () {
+      this.requestStub.throws(new Error('some error'))
+      try {
+        await this.client.executeTestOnDemand('org-123', { body: { name: 'foo' } })
+      } catch (error) {
+        assert.ok(error)
+        assert.equal(error.message, 'some error')
+        return true
+      }
+      throw new assert.AssertionError({ message: 'Missing expected exception.' })
+    })
+
+    it('(callback) should return an error with ERROR response', async function () {
+      this.requestStub.throws(new Error('some error'))
+      this.client.executeTestOnDemand('org-123', { body: { name: 'foo' } }, this.callbackSpy)
+      // give the callback a second to fire
+      await wait()
+      // first-position arg (error) should be non-null
+      const callbackArgs = this.callbackSpy.args
+      const error = callbackArgs[0][0]
+      assert.ok(error)
+      assert.equal(error.message, 'some error')
+    })
+
+    it('should execute on-demand test', async function () {
+      this.requestStub.resolves({ code: 'SUCCESS', data: { _id: '123' } })
+      const response = await this.client.executeTestOnDemand('org-123', { body: { name: 'foo' } }, this.callbackSpy)
+      // assert API call
+      const requestOptions = this.requestStub.args[0][0]
+      assert.equal(requestOptions.headers['User-Agent'], 'Ghost Inspector Node.js Client')
+      assert.equal(requestOptions.json, true)
+      assert.equal(requestOptions.method, 'POST')
+      assert.equal(requestOptions.uri, 'https://api.ghostinspector.com/v1/organizations/org-123/on-demand/execute/')
+      assert.equal(requestOptions.formData.apiKey, 'my-api-key')
+      assert.deepEqual(requestOptions.body, { name: 'foo' })
+      // assert async
+      assert.deepEqual(response, { _id: '123' })
+      // const callbackArgs = this.callbackSpy.args
+      assert.deepEqual(this.callbackSpy.args[0], [null, { _id: '123' }])
+    })
+
+    it('should execute on-demand test and poll', async function () {
+      const result = { _id: '123' }
+      // set up a stub to mock waiting for a results
+      const waitStub = sinon.stub(this.client, 'waitForResult')
+      waitStub.callsFake(function (_resultId) {
+        return new Promise(function (resolve) {
+          setTimeout(() => {
+            resolve(result)
+          }, 5)
+        })
+      })
+      // set up success response
+      this.requestStub.resolves({ code: 'SUCCESS', data: result })
+      const options = {
+        wait: true,
+        body: { name: 'foo' }
+      }
+      const response = await this.client.executeTestOnDemand('org-123', options, this.callbackSpy)
+      // assert API call
+      const requestOptions = this.requestStub.args[0][0]
+      assert.equal(requestOptions.headers['User-Agent'], 'Ghost Inspector Node.js Client')
+      assert.equal(requestOptions.json, true)
+      assert.equal(requestOptions.method, 'POST')
+      assert.equal(requestOptions.uri, 'https://api.ghostinspector.com/v1/organizations/org-123/on-demand/execute/')
+      assert.equal(requestOptions.formData.apiKey, 'my-api-key')
+      assert.deepEqual(requestOptions.body, { name: 'foo' })
+      // assert async
+      assert.deepEqual(response, { _id: '123' })
+      // assert that wait was called
+      assert.ok(waitStub.called)
     })
   })
 
@@ -607,7 +773,7 @@ describe('API methods', function () {
       assert.equal(error.message, 'some error')
     })
 
-    it('should download', async function () {
+    it('should download HTML', async function () {
       this.requestStub.resolves('<some>html</some>')
       const response = await this.client.downloadTestSeleniumHtml('test-123', '/foo.html', this.callbackSpy)
       // assert API call
@@ -668,7 +834,7 @@ describe('API methods', function () {
       assert.equal(error.message, 'some error')
     })
 
-    it('should download', async function () {
+    it('should download JSON', async function () {
       this.requestStub.resolves('{"some": "json"}')
       const response = await this.client.downloadTestSeleniumJson('test-123', '/foo.json', this.callbackSpy)
       // assert API call
@@ -729,7 +895,7 @@ describe('API methods', function () {
       assert.equal(error.message, 'some error')
     })
 
-    it('should download', async function () {
+    it('should download SIDE', async function () {
       this.requestStub.resolves('---\n - some data')
       const response = await this.client.downloadTestSeleniumSide('test-123', '/foo.side', this.callbackSpy)
       // assert API call
