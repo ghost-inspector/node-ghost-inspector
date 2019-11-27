@@ -341,6 +341,10 @@ class GhostInspector {
     return result
   }
 
+  async waitForTestResult (resultId, options, callback) {
+    return this.waitForResult(resultId, options, callback)
+  }
+
   async executeTestOnDemand (organizationId, test, options, callback) {
     assert.ok(test, 'test must be provided.')
     if (typeof options === 'function') {

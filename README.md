@@ -391,12 +391,12 @@ Execute an on-demand test against your organization.
 ```js
 const myTest = require('./my-test.json');
 
-// wait for the result to finish execution before returning
+// Wait for the result to finish execution before returning
 const options = {
   wait: true
 };
 
-// example using await
+// Example using await
 try {
   const result = await GhostInspector.executeTestOnDemand('[organization-id]', myTest, options);
 } catch (err) {
@@ -408,6 +408,28 @@ GhostInspector.executeTestOnDemand('[organization-id]', myTest, options, functio
   if (err) return console.error(err);
   console.log(`Passing: ${result.passing}`);
 });
+```
+
+#### GhostInspector.waitForTestResult(resultId, [options], [callback])
+Poll for a result execution's completion.
+```js
+// First, we execute a test using immediate=1 to get a result ID
+const result = await GhostInspector.executeTest('[test-id]', { immediate: true })
+const resultId = result._id
+
+const options = {
+  pollInterval: 2000 // default is 5000 (5 seconds)
+}
+// Example using await
+const result = await GhostInspector.waitForTestResult(resultId, options)
+console.log(result.passing)
+
+// Example using a callback
+GhostInspector.waitForTestResult(resultId, options, function (err, result) {
+  if (err) console.error(err);
+  console.log(`Passing: ${result.passing}`)
+})
+
 ```
 
 #### GhostInspector.downloadTestSeleniumHtml(testId, dest, [callback])
