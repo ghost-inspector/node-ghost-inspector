@@ -188,6 +188,17 @@ describe('Async: Execute test with immediate response ', function () {
   })
 })
 
+describe.only('Async: Execute on-demand test', function () {
+  this.timeout(0)
+  it('should execute an on-demand test and wait for completion', async () => {
+    const test = require('./test.json')
+    const organizationId = '547fc38c404e81ff79292e53'
+    const result = await GhostInspector.executeTestOnDemand(organizationId, test, { wait: true })
+    console.log(result)
+    assert.ok(result.passing)
+  })
+})
+
 describe('Async: Get test results that are in progress', function () {
   this.timeout(0)
   it('should return at least 1 result', async () => {

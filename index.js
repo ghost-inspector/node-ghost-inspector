@@ -93,14 +93,17 @@ class GhostInspector {
     }
     // Customize request based on GET or POST
     if (method === 'POST') {
-      // Add params as form data
-      options.formData = this.buildFormData(params)
-      // Check for special `dataFile` parameter (path to CSV file) and open read stream for it
-      if (params.dataFile) {
-        options.formData.dataFile = fs.createReadStream(params.dataFile.toString())
-      }
       if (params.body) {
         options.body = params.body
+        options.body.apiKey = this.apiKey
+        options.headers['Content-Type'] = 'application/json'
+      } else {
+        // Add params as form data
+        options.formData = this.buildFormData(params)
+        // Check for special `dataFile` parameter (path to CSV file) and open read stream for it
+        if (params.dataFile) {
+          options.formData.dataFile = fs.createReadStream(params.dataFile.toString())
+        }
       }
     } else {
       // Add params as query string
@@ -329,8 +332,14 @@ class GhostInspector {
     return result
   }
 
-  async executeTestOnDemand (organizationId, options = {}, callback) {
-    assert.ok(options && options.body, 'options.body must be provided.')
+  async executeTestOnDemand (organizationId, test, options, callback) {
+    assert.ok(test, 'test must be provided.')
+    if (typeof options === 'function') {
+      callback = options
+      options = {}
+    }
+    options = options || {}
+    options.body = test
     let result
     try {
       result = await this.request('POST', `/organizations/${organizationId}/on-demand/execute/`, options)
@@ -349,6 +358,17 @@ class GhostInspector {
       callback(null, result)
     }
     return result
+  }
+
+  async importTest (suiteId, test, callback) {
+    const options = {}
+    // check for HTML or JSON
+    if (typeof test === 'string') {
+      options.dataFile = test
+    } else {
+      options.body = test
+    }
+    return this.request('POST', `/suites/${suiteId}/import-test`, options, callback)
   }
 
   async downloadTestSeleniumHtml (testId, dest, callback) {

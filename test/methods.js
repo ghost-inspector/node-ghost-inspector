@@ -1033,4 +1033,22 @@ describe('API methods', function () {
     assert.deepEqual(this.callbackSpy.args[0], [null, { expected: 'data' }])
   })
 
+  describe.only('importTest()', function () {
+    it('should import an HTML test when file path provided', async function () {
+      const readFileStub = sinon.stub(fs, 'createReadStream')
+      readFileStub.returns('html-file-contents')
+      const response = await this.client.importTest('suite-123', './my-file-path.html', this.callbackSpy)
+      const requestOptions = this.requestStub.args[0][0]
+      assert.deepEqual(requestOptions.headers, { 'User-Agent': 'Ghost Inspector Node.js Client' })
+      assert.equal(requestOptions.body, undefined)
+      assert.deepEqual(requestOptions.formData, { apiKey: 'my-api-key', dataFile: 'html-file-contents' })
+      assert.equal(requestOptions.method, 'POST')
+      assert.equal(requestOptions.uri, 'https://api.ghostinspector.com/v1/suites/suite-123/import-test')
+      // assert async response
+      assert.equal(response.expected, 'data')
+      // assert callback called with (error, data)
+      assert.deepEqual(this.callbackSpy.args[0], [null, { expected: 'data' }])
+      readFileStub.restore()
+    })
+  })
 })
