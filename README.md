@@ -555,3 +555,17 @@ GhostInspector.cancelTestResult('[test-result-id]', function (err, result) {
     console.log(result);
 });
 ```
+## Running tests
+
+To run the unit tests:
+
+```
+npm run test-unit
+```
+
+You can also run the integration tests, however this will run against a Ghost Inspector suite (requires API key):
+
+```
+GHOST_INSPECTOR_API_KEY=xxx npm run test-integration
+```
+
