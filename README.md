@@ -232,6 +232,22 @@ GhostInspector.downloadSuiteSeleniumJson('[suite-id]', 'suite.zip', function (er
 });
 ```
 
+#### GhostInspector.importTest(suiteId, test, [callback])
+Import a test in JSON or HTML (Selenium IDE v1) format.
+```js
+// JSON example (using async)
+const myJsonTest = require('my-test.json')
+const importedTest = await GhostInspector.importTest('[suite-id]', myJsonTest)
+console.log(importedTest)
+
+// HTML example (using callback)
+const myHtmlTest = fs.readFileSync('/path/to/my-test.html', 'utf-8')
+GhostInspector.importTest('[suite-id]', myHtmlTest, function (err, importedTest) {
+  if (err) return console.error(err);
+  console.log(importedTest)
+})
+```
+
 #### GhostInspector.getTests([callback])
 Fetch an array of all the tests in your account.
 
