@@ -379,3 +379,5 @@ describe('Callback: Cancel test result ', function () {
     })
   })
 })
+
+it('Callback: Import a test')

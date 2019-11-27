@@ -188,7 +188,7 @@ describe('Async: Execute test with immediate response ', function () {
   })
 })
 
-describe.only('Async: Execute on-demand test', function () {
+describe('Async: Execute on-demand test', function () {
   this.timeout(0)
   it('should execute an on-demand test and wait for completion', async () => {
     const test = require('./test.json')
@@ -301,3 +301,5 @@ describe('Async: Cancel test result ', function () {
     assert.strictEqual(data.name, 'Google')
   })
 })
+
+it('Async: Import a test')

@@ -1033,7 +1033,7 @@ describe('API methods', function () {
     assert.deepEqual(this.callbackSpy.args[0], [null, { expected: 'data' }])
   })
 
-  describe.only('importTest()', function () {
+  describe('importTest()', function () {
     it('should import an HTML test when file path provided', async function () {
       const readFileStub = sinon.stub(fs, 'createReadStream')
       readFileStub.returns('html-file-contents')

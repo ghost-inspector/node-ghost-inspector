@@ -286,6 +286,12 @@ class GhostInspector {
       callback = options
       options = {}
     }
+    options = options || {}
+    // we can poll if there's no CSV and immediate=0
+    const canPoll = !options.immediate && !options.dataFile
+    if (canPoll) {
+      options.immediate = true
+    }
     // Execute API call
     let data
     try {
@@ -296,6 +302,9 @@ class GhostInspector {
         return
       }
       throw err
+    }
+    if (canPoll) {
+      data = await this.waitForResult(data._id, options)
     }
     // Check results, determine overall pass/fail
     const passing = this.getOverallResultOutcome(data)
