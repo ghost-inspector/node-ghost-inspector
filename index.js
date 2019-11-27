@@ -224,6 +224,12 @@ class GhostInspector {
       callback = options
       options = {}
     }
+    options = options || {}
+    // we can poll if there's no CSV and immediate=0
+    const canPoll = !options.immediate && !options.dataFile
+    if (canPoll) {
+      options.immediate = true
+    }
     // Execute API call
     let data
     try {
@@ -234,6 +240,12 @@ class GhostInspector {
         return
       }
       throw err
+    }
+    if (canPoll) {
+      // wait for the suite to finish
+      await this.waitForSuiteResult(data._id, options)
+      // fetch the test results for this execution
+      data = await this.getSuiteResultTestResults(data._id)
     }
     // Check results, determine overall pass/fail
     const passing = this.getOverallResultOutcome(data)
@@ -304,7 +316,7 @@ class GhostInspector {
       throw err
     }
     if (canPoll) {
-      data = await this.waitForResult(data._id, options)
+      data = await this.waitForTestResult(data._id, options)
     }
     // Check results, determine overall pass/fail
     const passing = this.getOverallResultOutcome(data)
@@ -325,7 +337,11 @@ class GhostInspector {
       let passing = null
       while (passing === null) {
         await wait(options.pollInterval)
-        result = await this.getTestResult(resultId)
+        let pollFunction = this.getTestResult
+        if (options.resultType === 'suite') {
+          pollFunction = this.getSuiteResult
+        }
+        result = await pollFunction.call(this, resultId)
         passing = result.passing
       }
     } catch (err) {
@@ -343,6 +359,15 @@ class GhostInspector {
 
   async waitForTestResult (resultId, options, callback) {
     return this.waitForResult(resultId, options, callback)
+  }
+
+  async waitForSuiteResult (suiteResultId, options, callback) {
+    if (typeof options === 'function') {
+      callback = options
+    }
+    options = options || {}
+    options.resultType = 'suite'
+    return this.waitForResult(suiteResultId, options, callback)
   }
 
   async executeTestOnDemand (organizationId, test, options, callback) {

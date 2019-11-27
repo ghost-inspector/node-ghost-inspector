@@ -53,7 +53,7 @@ describe('Async: Get suite tests', function () {
   })
 })
 
-describe('Async: Execute suite ', function () {
+describe.only('Async: Execute suite ', function () {
   this.timeout(0)
   it('should return 2 results and a passing status', async () => {
     const [data, passing] = await GhostInspector.executeSuite('53cf58c0350c6c41029a11be')
