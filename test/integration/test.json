@@ -1,0 +1,15 @@
+{
+  "name": "On-demand Test",
+  "startUrl": "https://www.google.com",
+  "steps": [
+    {
+      "condition": null,
+      "optional": false,
+      "private": false,
+      "command": "assertTextPresent",
+      "target": "title",
+      "value": "Google",
+      "variableName": ""
+    }
+  ]
+}
