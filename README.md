@@ -369,6 +369,31 @@ GhostInspector.executeTest('[test-id]', options, function (err, results, passing
 });
 ```
 
+#### GhostInspector.executeTestOnDemand(organizationId, test, [options], [callback])
+Execute an on-demand test against your organization.
+
+```js
+const myTest = require('./my-test.json');
+
+// wait for the result to finish execution before returning
+const options = {
+  wait: true
+};
+
+// example using await
+try {
+  const result = await GhostInspector.executeTestOnDemand('[organization-id]', myTest, options);
+} catch (err) {
+  console.error(err);
+}
+
+// Example using a callback
+GhostInspector.executeTestOnDemand('[organization-id]', myTest, options, function (err, result) {
+  if (err) return console.error(err);
+  console.log(`Passing: ${result.passing}`);
+});
+```
+
 #### GhostInspector.downloadTestSeleniumHtml(testId, dest, [callback])
 Download a single test in Selenium IDE .html format
 
