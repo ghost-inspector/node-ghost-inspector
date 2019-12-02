@@ -31,9 +31,9 @@ describe('Async: Get folder suites', function () {
 
 describe('Async: Get suites', function () {
   this.timeout(0)
-  it('should return 1 suite', async () => {
+  it('should return suites', async () => {
     const data = await GhostInspector.getSuites()
-    assert.strictEqual(data.length, 1)
+    assert.strictEqual(data.length, 2)
   })
 })
 
@@ -115,9 +115,9 @@ describe('Async: Download suite in (zipped) Selenium JSON format', function () {
 
 describe('Async: Get tests', function () {
   this.timeout(0)
-  it('should return 2 tests', async () => {
+  it('should return tests', async () => {
     const data = await GhostInspector.getTests()
-    assert.strictEqual(data.length, 2)
+    assert.ok(data.length > 0)
   })
 })
 

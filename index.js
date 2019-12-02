@@ -4,7 +4,8 @@ const request = require('request-promise-native')
 
 const DEFAULT_POLL_INTERVAL = 5000
 
-const wait = (time = DEFAULT_POLL_INTERVAL) => {
+// wait time default is set to `5` ms for testing
+const wait = (time = 5) => {
   return new Promise((resolve) => {
     setTimeout(() => {
       resolve()

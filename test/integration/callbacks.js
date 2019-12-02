@@ -40,10 +40,10 @@ describe('Callback: Get folder suites', function () {
 
 describe('Callback: Get suites', function () {
   this.timeout(0)
-  it('should return 1 suite', (done) => {
+  it('should return suites', (done) => {
     GhostInspector.getSuites((err, data) => {
       assert.strictEqual(err, null)
-      assert.strictEqual(data.length, 1)
+      assert.strictEqual(data.length, 2)
       done()
     })
   })
@@ -151,10 +151,10 @@ describe('Callback: Download suite in (zipped) Selenium JSON format', function (
 
 describe('Callback: Get tests', function () {
   this.timeout(0)
-  it('should return 2 tests', (done) => {
+  it('should return tests', (done) => {
     GhostInspector.getTests((err, data) => {
       assert.strictEqual(err, null)
-      assert.strictEqual(data.length, 2)
+      assert.ok(data.length > 0)
       done()
     })
   })
