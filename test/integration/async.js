@@ -188,6 +188,14 @@ describe('Async: Execute test with immediate response ', function () {
   })
 })
 
+describe('Async: Get test results that are in progress', function () {
+  this.timeout(0)
+  it('should return at least 1 result', async () => {
+    const data = await GhostInspector.getTestResultsRunning('53cf58fc350c6c41029a11bf')
+    assert.ok(data.length >= 1)
+  })
+})
+
 describe('Async: Execute on-demand test', function () {
   this.timeout(0)
   it('should execute an on-demand test and wait for completion', async () => {
@@ -195,14 +203,6 @@ describe('Async: Execute on-demand test', function () {
     const organizationId = '547fc38c404e81ff79292e53'
     const result = await GhostInspector.executeTestOnDemand(organizationId, test, { wait: true })
     assert.ok(result.passing)
-  })
-})
-
-describe('Async: Get test results that are in progress', function () {
-  this.timeout(0)
-  it('should return at least 1 result', async () => {
-    const data = await GhostInspector.getTestResultsRunning('53cf58fc350c6c41029a11bf')
-    assert.ok(data.length >= 1)
   })
 })
 
