@@ -1,6 +1,6 @@
 {
   "name": "ghost-inspector",
-  "version": "4.0.1",
+  "version": "4.1.0",
   "description": "Ghost Inspector API for Node.js",
   "homepage": "https://github.com/ghost-inspector/node-ghost-inspector",
   "author": {

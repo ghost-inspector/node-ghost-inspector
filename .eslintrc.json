@@ -8,10 +8,13 @@
       "files": [ "test/**/*" ],
       "globals": {
         "describe": true,
-        "it": true
+        "it": true,
+        "before": true,
+        "beforeEach": true,
+        "after": true,
+        "afterEach": true
       },
       "rules": {
-        "no-undef": "off",
         "no-unused-vars": "off",
         "no-unused-expressions": "off"
       }
