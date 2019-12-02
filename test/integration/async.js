@@ -194,7 +194,6 @@ describe('Async: Execute on-demand test', function () {
     const test = require('./test.json')
     const organizationId = '547fc38c404e81ff79292e53'
     const result = await GhostInspector.executeTestOnDemand(organizationId, test, { wait: true })
-    console.log(result)
     assert.ok(result.passing)
   })
 })
@@ -302,4 +301,14 @@ describe('Async: Cancel test result ', function () {
   })
 })
 
-it('Async: Import a test')
+describe('Async: Import a test', function () {
+  this.timeout(0)
+  it('should import a test', async function () {
+    const suiteId = '5de57382bbeff026afe7b025'
+    const timestamp = `${+new Date()}`
+    const test = require('./test.json')
+    test.name = `${test.name}-${timestamp}`
+    const result = await GhostInspector.importTest(suiteId, test)
+    assert.strictEqual(result.name, test.name)
+  })
+})

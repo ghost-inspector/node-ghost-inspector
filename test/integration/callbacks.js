@@ -380,4 +380,17 @@ describe('Callback: Cancel test result ', function () {
   })
 })
 
-it('Callback: Import a test')
+describe('Callback: Import a test', function () {
+  this.timeout(0)
+  it('should import a test', function (done) {
+    const suiteId = '5de57382bbeff026afe7b025'
+    const timestamp = `${+new Date()}`
+    const test = require('./test.json')
+    test.name = `${test.name}-${timestamp}`
+    const result = GhostInspector.importTest(suiteId, test, function (err, data) {
+      assert.strictEqual(err, null)
+      assert.strictEqual(data.name, test.name)
+      done()
+    })
+  })
+})
