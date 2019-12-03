@@ -4,15 +4,6 @@ const request = require('request-promise-native')
 
 const DEFAULT_POLL_INTERVAL = 5000
 
-// wait time default is set to `5` ms for testing
-const wait = (time = 5) => {
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      resolve()
-    }, time)
-  })
-}
-
 // Define GhostInspector class
 class GhostInspector {
   constructor (apiKey) {
@@ -20,6 +11,15 @@ class GhostInspector {
     this.host = 'https://api.ghostinspector.com'
     this.prefix = '/v1'
     this.apiKey = apiKey
+  }
+
+  // Used for polling
+  _wait (time = DEFAULT_POLL_INTERVAL) {
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        resolve()
+      }, time)
+    })
   }
 
   buildRequestUrl (path) {
@@ -328,21 +328,18 @@ class GhostInspector {
     return [data, passing]
   }
 
-  async waitForResult (resultId, options = { pollInterval: DEFAULT_POLL_INTERVAL }, callback) {
+  async waitForResult (pollFunction, options, callback) {
     if (typeof options === 'function') {
       callback = options
-      options = { pollInterval: DEFAULT_POLL_INTERVAL }
+      options = {}
     }
+    options.pollInterval = options.pollInterval || DEFAULT_POLL_INTERVAL
     let result
     try {
       let passing = null
       while (passing === null) {
-        await wait(options.pollInterval)
-        let pollFunction = this.getTestResult
-        if (options.resultType === 'suite') {
-          pollFunction = this.getSuiteResult
-        }
-        result = await pollFunction.call(this, resultId)
+        await this._wait(options.pollInterval)
+        result = await pollFunction()
         passing = result.passing
       }
     } catch (err) {
@@ -359,16 +356,13 @@ class GhostInspector {
   }
 
   async waitForTestResult (resultId, options, callback) {
-    return this.waitForResult(resultId, options, callback)
+    const pollFunction = () => this.getTestResult(resultId)
+    return this.waitForResult(pollFunction, options, callback)
   }
 
   async waitForSuiteResult (suiteResultId, options, callback) {
-    if (typeof options === 'function') {
-      callback = options
-    }
-    options = options || {}
-    options.resultType = 'suite'
-    return this.waitForResult(suiteResultId, options, callback)
+    const pollFunction = () => this.getSuiteResult(suiteResultId)
+    return this.waitForResult(pollFunction, options, callback)
   }
 
   async executeTestOnDemand (organizationId, test, options, callback) {
@@ -390,8 +384,8 @@ class GhostInspector {
       throw err
     }
     if (options.wait) {
-      const pollInterval = options.pollInterval || DEFAULT_POLL_INTERVAL
-      return this.waitForResult(result._id, { pollInterval }, callback)
+      const pollFunction = () => this.getTestResult(result._id)
+      return this.waitForResult(pollFunction, options, callback)
     }
     if (typeof callback === 'function') {
       callback(null, result)

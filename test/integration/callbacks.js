@@ -185,7 +185,7 @@ describe('Callback: Get test results', function () {
 describe('Callback: Get test results with options', function () {
   this.timeout(0)
   it('should return 1 result', (done) => {
-    GhostInspector.getTestResults('53cf58fc350c6c41029a11bf', { 'count': 1 }, (err, data) => {
+    GhostInspector.getTestResults('53cf58fc350c6c41029a11bf', { count: 1 }, (err, data) => {
       assert.strictEqual(err, null)
       assert.strictEqual(data.length, 1)
       done()

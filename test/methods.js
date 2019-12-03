@@ -198,8 +198,10 @@ describe('API methods', function () {
 
     it('should execute a suite', async function () {
       const outcomeStub = sinon.stub(this.client, 'getOverallResultOutcome')
+      const waitStub = sinon.stub(this.client, '_wait')
+      waitStub.resolves()
       outcomeStub.returns(true)
-      const response = await this.client.executeSuite('suite-123', {}, this.callbackSpy)
+      const response = await this.client.executeSuite('suite-123', { some: 'option' }, this.callbackSpy)
       // assert API call
       const requestOptions = this.requestStub.args[0][0]
       assert.deepEqual(requestOptions.headers, { 'User-Agent': 'Ghost Inspector Node.js Client' })
@@ -211,11 +213,14 @@ describe('API methods', function () {
       // assert callback called with (error, data, passing)
       assert.deepEqual(this.callbackSpy.args[0], [null, { expected: 'data' }, true])
       outcomeStub.restore()
+      waitStub.restore()
     })
 
     it('should use should use options-position callback', async function () {
       const outcomeStub = sinon.stub(this.client, 'getOverallResultOutcome')
       outcomeStub.returns(true)
+      const waitStub = sinon.stub(this.client, '_wait')
+      waitStub.resolves()
       // pass callback as second-position argument
       const response = await this.client.executeSuite('suite-123', this.callbackSpy)
       // assert async
@@ -223,6 +228,7 @@ describe('API methods', function () {
       // assert callback called with (error, data, passing)
       assert.deepEqual(this.callbackSpy.args[0], [null, { expected: 'data' }, true])
       outcomeStub.restore()
+      waitStub.restore()
     })
   })
 
@@ -539,6 +545,8 @@ describe('API methods', function () {
     it('should execute a test', async function () {
       const outcomeStub = sinon.stub(this.client, 'getOverallResultOutcome')
       outcomeStub.returns(true)
+      const waitStub = sinon.stub(this.client, '_wait')
+      waitStub.resolves()
       const response = await this.client.executeTest('test-123', {}, this.callbackSpy)
       // assert API call
       const requestOptions = this.requestStub.args[0][0]
@@ -552,11 +560,14 @@ describe('API methods', function () {
       // assert callback called with (error, data, passing)
       assert.deepEqual(this.callbackSpy.args[0], [null, { expected: 'data' }, true])
       outcomeStub.restore()
+      waitStub.restore()
     })
 
     it('should use should use options-position callback', async function () {
       const outcomeStub = sinon.stub(this.client, 'getOverallResultOutcome')
       outcomeStub.returns(true)
+      const waitStub = sinon.stub(this.client, '_wait')
+      waitStub.resolves()
       // pass callback as second-position argument
       const response = await this.client.executeTest('test-123', this.callbackSpy)
       // assert async
@@ -564,6 +575,7 @@ describe('API methods', function () {
       // assert callback called with (error, data, passing)
       assert.deepEqual(this.callbackSpy.args[0], [null, { expected: 'data' }, true])
       outcomeStub.restore()
+      waitStub.restore()
     })
 
     it('should execute a test with a CSV file', async function () {
@@ -573,6 +585,8 @@ describe('API methods', function () {
       // fudge the result
       const outcomeStub = sinon.stub(this.client, 'getOverallResultOutcome')
       outcomeStub.returns(true)
+      const waitStub = sinon.stub(this.client, '_wait')
+      waitStub.resolves()
       const response = await this.client.executeTest('test-123', { dataFile: './my-data-file.csv' }, this.callbackSpy)
       // assert API call
       const requestOptions = this.requestStub.args[0][0]
@@ -590,19 +604,21 @@ describe('API methods', function () {
       // restore stubs
       readFileStub.restore()
       outcomeStub.restore()
+      waitStub.restore()
     })
   })
 
   /**
-   * waitForResult() also falls outside the standard internal pattern of passing through the basic
-   * parameters to client.request(), we'll set up a few special tests around this specifically.
+   * waitForResult() is an internal function that abstracts polling for test
+   * and suite results.
    */
   describe('waitForResult()', function () {
     it('(async) should throw an error with ERROR response', async function () {
       const getTestResultStub = sinon.stub(this.client, 'getTestResult')
       getTestResultStub.throws(new Error('some error'))
+      const pollFunction = () => getTestResultStub()
       try {
-        await this.client.waitForResult('result-123', { pollInterval: 5 })
+        await this.client.waitForResult(pollFunction, { pollInterval: 5 })
       } catch (error) {
         assert.ok(error)
         assert.equal(error.message, 'some error')
@@ -615,7 +631,8 @@ describe('API methods', function () {
     it('(callback) should throw an error with ERROR response', async function () {
       const getTestResultStub = sinon.stub(this.client, 'getTestResult')
       getTestResultStub.throws(new Error('some error'))
-      this.client.waitForResult('result-123', { pollInterval: 5 }, this.callbackSpy)
+      const pollFunction = () => getTestResultStub()
+      this.client.waitForResult(pollFunction, { pollInterval: 5 }, this.callbackSpy)
       // allow callback to fire
       await wait()
       // first-position arg (error) should be non-null
@@ -631,7 +648,8 @@ describe('API methods', function () {
       getTestResultStub.onFirstCall().returns({ passing: null })
       getTestResultStub.onSecondCall().returns({ passing: null })
       getTestResultStub.onThirdCall().returns({ passing: true })
-      const result = await this.client.waitForResult('result-123', { pollInterval: 1 }, this.callbackSpy)
+      const pollFunction = () => getTestResultStub('result-123')
+      const result = await this.client.waitForResult(pollFunction, { pollInterval: 1 }, this.callbackSpy)
       await wait(5)
       // assert we polled
       assert.equal(getTestResultStub.callCount, 3)
@@ -640,6 +658,72 @@ describe('API methods', function () {
       // assert callback
       assert.deepEqual(this.callbackSpy.args[0], [null, { passing: true }])
       getTestResultStub.restore()
+    })
+  })
+
+  describe('waitForTestResult()', function () {
+    it('should poll for test result', async function () {
+      const getTestResultStub = sinon.stub(this.client, 'getTestResult')
+      getTestResultStub.resolves({ passing: true })
+      const waitStub = sinon.stub(this.client, '_wait')
+      waitStub.callThrough()
+      const result = await this.client.waitForTestResult('my-result-id', { pollInterval: 2 }, this.callbackSpy)
+      await wait()
+      assert.ok(result.passing)
+      // assert proper endpoint was called
+      assert.ok(getTestResultStub.called)
+      // check that our pollInterval was used
+      const waitArgs = waitStub.args[0]
+      assert.deepEqual(waitArgs[0], 2)
+      // assert callback
+      const callbackArgs = this.callbackSpy.args[0]
+      assert.deepEqual(callbackArgs, [null, { passing: true }])
+      getTestResultStub.restore()
+      waitStub.restore()
+    })
+
+    it('should use callback (in options position) and default pollInterval', async function () {
+      const getTestResultStub = sinon.stub(this.client, 'getTestResult')
+      const waitStub = sinon.stub(this.client, '_wait')
+      const result = await this.client.waitForTestResult('my-result-id', this.callbackSpy)
+      assert.ok(waitStub.called)
+      const waitArgs = waitStub.args[0]
+      assert.deepEqual(waitArgs, [5000])
+      getTestResultStub.restore()
+      waitStub.restore()
+    })
+  })
+
+  describe('waitForSuiteResult', function () {
+    it('should poll for suite result', async function () {
+      const getSuiteResultStub = sinon.stub(this.client, 'getSuiteResult')
+      getSuiteResultStub.resolves({ passing: true })
+      const waitStub = sinon.stub(this.client, '_wait')
+      waitStub.callThrough()
+      const result = await this.client.waitForSuiteResult('my-result-id', { pollInterval: 2 }, this.callbackSpy)
+      await wait()
+      assert.ok(result.passing)
+      // assert proper endpoint was called
+      assert.ok(getSuiteResultStub.called)
+      // check that our pollInterval was used
+      const waitArgs = waitStub.args[0]
+      assert.deepEqual(waitArgs[0], 2)
+      // assert callback
+      const callbackArgs = this.callbackSpy.args[0]
+      assert.deepEqual(callbackArgs, [null, { passing: true }])
+      getSuiteResultStub.restore()
+      waitStub.restore()
+    })
+
+    it('should use callback (in options position) and default pollInterval', async function () {
+      const getSuiteResultStub = sinon.stub(this.client, 'getSuiteResult')
+      const waitStub = sinon.stub(this.client, '_wait')
+      const result = await this.client.waitForTestResult('my-result-id', this.callbackSpy)
+      assert.ok(waitStub.called)
+      const waitArgs = waitStub.args[0]
+      assert.deepEqual(waitArgs, [5000])
+      getSuiteResultStub.restore()
+      waitStub.restore()
     })
   })
 
