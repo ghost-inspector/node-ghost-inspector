@@ -689,6 +689,7 @@ describe('API methods', function () {
       assert.ok(waitStub.called)
       const waitArgs = waitStub.args[0]
       assert.deepEqual(waitArgs, [5000])
+      assert.ok(getTestResultStub.called)
       getTestResultStub.restore()
       waitStub.restore()
     })
@@ -718,10 +719,11 @@ describe('API methods', function () {
     it('should use callback (in options position) and default pollInterval', async function () {
       const getSuiteResultStub = sinon.stub(this.client, 'getSuiteResult')
       const waitStub = sinon.stub(this.client, '_wait')
-      const result = await this.client.waitForTestResult('my-result-id', this.callbackSpy)
+      const result = await this.client.waitForSuiteResult('my-result-id', this.callbackSpy)
       assert.ok(waitStub.called)
       const waitArgs = waitStub.args[0]
       assert.deepEqual(waitArgs, [5000])
+      assert.ok(getSuiteResultStub.called)
       getSuiteResultStub.restore()
       waitStub.restore()
     })
