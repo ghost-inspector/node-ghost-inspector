@@ -232,6 +232,22 @@ GhostInspector.downloadSuiteSeleniumJson('[suite-id]', 'suite.zip', function (er
 });
 ```
 
+#### GhostInspector.importTest(suiteId, test, [callback])
+Import a test in JSON or HTML (Selenium IDE v1) format.
+```js
+// JSON example (using async)
+const myJsonTest = require('my-test.json')
+const importedTest = await GhostInspector.importTest('[suite-id]', myJsonTest)
+console.log(importedTest)
+
+// HTML example (using callback)
+const myHtmlTest = fs.readFileSync('/path/to/my-test.html', 'utf-8')
+GhostInspector.importTest('[suite-id]', myHtmlTest, function (err, importedTest) {
+  if (err) return console.error(err);
+  console.log(importedTest)
+})
+```
+
 #### GhostInspector.getTests([callback])
 Fetch an array of all the tests in your account.
 
@@ -367,6 +383,53 @@ GhostInspector.executeTest('[test-id]', options, function (err, results, passing
     console.log(passing === true ? 'Passed' : 'Failed');
     console.log(results);
 });
+```
+
+#### GhostInspector.executeTestOnDemand(organizationId, test, [options], [callback])
+Execute an on-demand test against your organization.
+
+```js
+const myTest = require('./my-test.json');
+
+// Wait for the result to finish execution before returning
+const options = {
+  wait: true
+};
+
+// Example using await
+try {
+  const result = await GhostInspector.executeTestOnDemand('[organization-id]', myTest, options);
+} catch (err) {
+  console.error(err);
+}
+
+// Example using a callback
+GhostInspector.executeTestOnDemand('[organization-id]', myTest, options, function (err, result) {
+  if (err) return console.error(err);
+  console.log(`Passing: ${result.passing}`);
+});
+```
+
+#### GhostInspector.waitForTestResult(resultId, [options], [callback])
+Poll for a result execution's completion.
+```js
+// First, we execute a test using immediate=1 to get a result ID
+const result = await GhostInspector.executeTest('[test-id]', { immediate: true })
+const resultId = result._id
+
+const options = {
+  pollInterval: 2000 // default is 5000 (5 seconds)
+}
+// Example using await
+const result = await GhostInspector.waitForTestResult(resultId, options)
+console.log(result.passing)
+
+// Example using a callback
+GhostInspector.waitForTestResult(resultId, options, function (err, result) {
+  if (err) console.error(err);
+  console.log(`Passing: ${result.passing}`)
+})
+
 ```
 
 #### GhostInspector.downloadTestSeleniumHtml(testId, dest, [callback])
@@ -530,3 +593,17 @@ GhostInspector.cancelTestResult('[test-result-id]', function (err, result) {
     console.log(result);
 });
 ```
+## Running tests
+
+To run the unit tests:
+
+```
+npm run test-unit
+```
+
+You can also run the integration tests, however this will run against a Ghost Inspector suite (requires API key):
+
+```
+GHOST_INSPECTOR_API_KEY=xxx npm run test-integration
+```
+

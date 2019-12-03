@@ -1,7 +1,7 @@
 // The API key and IDs used in this file belong to the official Ghost Inspector API testing account.
 const assert = require('assert')
 const fs = require('fs')
-const GhostInspector = require('../index')(process.env.GHOST_INSPECTOR_API_KEY)
+const GhostInspector = require('../../index')(process.env.GHOST_INSPECTOR_API_KEY)
 
 let suiteResultId, testResultId
 
@@ -31,9 +31,9 @@ describe('Async: Get folder suites', function () {
 
 describe('Async: Get suites', function () {
   this.timeout(0)
-  it('should return 1 suite', async () => {
+  it('should return suites', async () => {
     const data = await GhostInspector.getSuites()
-    assert.strictEqual(data.length, 1)
+    assert.strictEqual(data.length, 2)
   })
 })
 
@@ -115,9 +115,9 @@ describe('Async: Download suite in (zipped) Selenium JSON format', function () {
 
 describe('Async: Get tests', function () {
   this.timeout(0)
-  it('should return 2 tests', async () => {
+  it('should return tests', async () => {
     const data = await GhostInspector.getTests()
-    assert.strictEqual(data.length, 2)
+    assert.ok(data.length > 0)
   })
 })
 
@@ -176,7 +176,11 @@ describe('Async: Execute test with immediate response ', function () {
   this.timeout(0)
   it('should return success with a pending result and null passing value', async () => {
     const [data, passing] = await GhostInspector.executeTest('53cf58fc350c6c41029a11bf', { immediate: true })
-    assert.strictEqual(data.test, '53cf58fc350c6c41029a11bf')
+    assert.strictEqual(data.test._id, '53cf58fc350c6c41029a11bf')
+    assert.strictEqual(data.test.name, 'Google')
+    assert.strictEqual(data.test.organization, '547fc38c404e81ff79292e53')
+    assert.strictEqual(data.test.suite, '53cf58c0350c6c41029a11be')
+    assert.deepStrictEqual(Object.keys(data.test), ['_id', 'name', 'organization', 'suite'])
     assert.strictEqual(data.name, 'Google')
     assert.strictEqual(data.passing, null)
     assert.strictEqual(passing, null)
@@ -189,6 +193,16 @@ describe('Async: Get test results that are in progress', function () {
   it('should return at least 1 result', async () => {
     const data = await GhostInspector.getTestResultsRunning('53cf58fc350c6c41029a11bf')
     assert.ok(data.length >= 1)
+  })
+})
+
+describe('Async: Execute on-demand test', function () {
+  this.timeout(0)
+  it('should execute an on-demand test and wait for completion', async () => {
+    const test = require('./test.json')
+    const organizationId = '547fc38c404e81ff79292e53'
+    const result = await GhostInspector.executeTestOnDemand(organizationId, test, { wait: true })
+    assert.ok(result.passing)
   })
 })
 
@@ -284,5 +298,17 @@ describe('Async: Cancel test result ', function () {
   it('should return a test result that was triggered above', async () => {
     const data = await GhostInspector.cancelResult(testResultId)
     assert.strictEqual(data.name, 'Google')
+  })
+})
+
+describe('Async: Import a test', function () {
+  this.timeout(0)
+  it('should import a test', async function () {
+    const suiteId = '5de57382bbeff026afe7b025'
+    const timestamp = `${+new Date()}`
+    const test = require('./test.json')
+    test.name = `${test.name}-${timestamp}`
+    const result = await GhostInspector.importTest(suiteId, test)
+    assert.strictEqual(result.name, test.name)
   })
 })

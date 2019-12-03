@@ -1,7 +1,7 @@
 // The API key and IDs used in this file belong to the official Ghost Inspector API testing account.
 const assert = require('assert')
 const fs = require('fs')
-const GhostInspector = require('../index')(process.env.GHOST_INSPECTOR_API_KEY)
+const GhostInspector = require('../../index')(process.env.GHOST_INSPECTOR_API_KEY)
 
 let suiteResultId, testResultId
 
@@ -40,10 +40,10 @@ describe('Callback: Get folder suites', function () {
 
 describe('Callback: Get suites', function () {
   this.timeout(0)
-  it('should return 1 suite', (done) => {
+  it('should return suites', (done) => {
     GhostInspector.getSuites((err, data) => {
       assert.strictEqual(err, null)
-      assert.strictEqual(data.length, 1)
+      assert.strictEqual(data.length, 2)
       done()
     })
   })
@@ -151,10 +151,10 @@ describe('Callback: Download suite in (zipped) Selenium JSON format', function (
 
 describe('Callback: Get tests', function () {
   this.timeout(0)
-  it('should return 2 tests', (done) => {
+  it('should return tests', (done) => {
     GhostInspector.getTests((err, data) => {
       assert.strictEqual(err, null)
-      assert.strictEqual(data.length, 2)
+      assert.ok(data.length > 0)
       done()
     })
   })
@@ -185,7 +185,7 @@ describe('Callback: Get test results', function () {
 describe('Callback: Get test results with options', function () {
   this.timeout(0)
   it('should return 1 result', (done) => {
-    GhostInspector.getTestResults('53cf58fc350c6c41029a11bf', { 'count': 1 }, (err, data) => {
+    GhostInspector.getTestResults('53cf58fc350c6c41029a11bf', { count: 1 }, (err, data) => {
       assert.strictEqual(err, null)
       assert.strictEqual(data.length, 1)
       done()
@@ -234,7 +234,11 @@ describe('Callback: Execute test with immediate response ', function () {
   it('should return success with a pending result and null passing value', (done) => {
     GhostInspector.executeTest('53cf58fc350c6c41029a11bf', { immediate: true }, (err, data, passing) => {
       assert.strictEqual(err, null)
-      assert.strictEqual(data.test, '53cf58fc350c6c41029a11bf')
+      assert.strictEqual(data.test._id, '53cf58fc350c6c41029a11bf')
+      assert.strictEqual(data.test.name, 'Google')
+      assert.strictEqual(data.test.organization, '547fc38c404e81ff79292e53')
+      assert.strictEqual(data.test.suite, '53cf58c0350c6c41029a11be')
+      assert.deepStrictEqual(Object.keys(data.test), ['_id', 'name', 'organization', 'suite'])
       assert.strictEqual(data.name, 'Google')
       assert.strictEqual(data.passing, null)
       assert.strictEqual(passing, null)
@@ -371,6 +375,21 @@ describe('Callback: Cancel test result ', function () {
     GhostInspector.cancelResult(testResultId, (err, data) => {
       assert.strictEqual(err, null)
       assert.strictEqual(data.name, 'Google')
+      done()
+    })
+  })
+})
+
+describe('Callback: Import a test', function () {
+  this.timeout(0)
+  it('should import a test', function (done) {
+    const suiteId = '5de57382bbeff026afe7b025'
+    const timestamp = `${+new Date()}`
+    const test = require('./test.json')
+    test.name = `${test.name}-${timestamp}`
+    const result = GhostInspector.importTest(suiteId, test, function (err, data) {
+      assert.strictEqual(err, null)
+      assert.strictEqual(data.name, test.name)
       done()
     })
   })

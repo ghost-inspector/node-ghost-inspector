@@ -1,13 +1,25 @@
+const assert = require('assert')
 const fs = require('fs')
 const request = require('request-promise-native')
+
+const DEFAULT_POLL_INTERVAL = 5000
 
 // Define GhostInspector class
 class GhostInspector {
   constructor (apiKey) {
-    this.userAgent = 'Ghost Inspector Node.js Bindings'
+    this.userAgent = 'Ghost Inspector Node.js Client'
     this.host = 'https://api.ghostinspector.com'
     this.prefix = '/v1'
     this.apiKey = apiKey
+  }
+
+  // Used for polling
+  _wait (time = DEFAULT_POLL_INTERVAL) {
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        resolve()
+      }, time)
+    })
   }
 
   buildRequestUrl (path) {
@@ -17,11 +29,11 @@ class GhostInspector {
   buildQueryString (params = {}) {
     let queryString = '?'
     // Add params
-    for (let key in params) {
+    for (const key in params) {
       // handle array params
       const val = params[key]
       if (val instanceof Array) {
-        for (let item of val) {
+        for (const item of val) {
           queryString += key + '[]=' + encodeURIComponent(item) + '&'
         }
       } else {
@@ -42,7 +54,7 @@ class GhostInspector {
   buildFormData (params = {}) {
     // Copy over all fields and convert non-arrays to strings
     const formData = {}
-    for (let key in params) {
+    for (const key in params) {
       formData[key] = this.deepConvertParamToString(params[key])
     }
     return formData
@@ -51,7 +63,7 @@ class GhostInspector {
   getOverallResultOutcome (data) {
     if (data instanceof Array) {
       let passing = data.length ? true : null
-      for (let entry of data) {
+      for (const entry of data) {
         passing = passing && entry.passing
       }
       return passing
@@ -82,11 +94,17 @@ class GhostInspector {
     }
     // Customize request based on GET or POST
     if (method === 'POST') {
-      // Add params as form data
-      options.formData = this.buildFormData(params)
-      // Check for special `dataFile` parameter (path to CSV file) and open read stream for it
-      if (params.dataFile) {
-        options.formData.dataFile = fs.createReadStream(params.dataFile.toString())
+      if (params.body) {
+        options.body = params.body
+        options.body.apiKey = this.apiKey
+        options.headers['Content-Type'] = 'application/json'
+      } else {
+        // Add params as form data
+        options.formData = this.buildFormData(params)
+        // Check for special `dataFile` parameter (path to CSV file) and open read stream for it
+        if (params.dataFile) {
+          options.formData.dataFile = fs.createReadStream(params.dataFile.toString())
+        }
       }
     } else {
       // Add params as query string
@@ -95,7 +113,7 @@ class GhostInspector {
     // Send request to API
     let result
     try {
-      result = await request(options)
+      result = await this._request(options)
     } catch (err) {
       if (typeof callback === 'function') {
         callback(err)
@@ -139,7 +157,7 @@ class GhostInspector {
     // Send request to API
     let data
     try {
-      data = await request(options)
+      data = await this._request(options)
     } catch (err) {
       if (typeof callback === 'function') {
         callback(err)
@@ -166,32 +184,39 @@ class GhostInspector {
     }
   }
 
+  /**
+   * Wrapper for request-promise-native, used for testing.
+   */
+  async _request (options) {
+    return request(options)
+  }
+
   async getFolders (callback) {
-    return await this.request('GET', '/folders/', callback)
+    return this.request('GET', '/folders/', callback)
   }
 
   async getFolder (folderId, callback) {
-    return await this.request('GET', `/folders/${folderId}/`, callback)
+    return this.request('GET', `/folders/${folderId}/`, callback)
   }
 
   async getFolderSuites (folderId, callback) {
-    return await this.request('GET', `/folders/${folderId}/suites/`, callback)
+    return this.request('GET', `/folders/${folderId}/suites/`, callback)
   }
 
   async getSuites (callback) {
-    return await this.request('GET', '/suites/', callback)
+    return this.request('GET', '/suites/', callback)
   }
 
   async getSuite (suiteId, callback) {
-    return await this.request('GET', `/suites/${suiteId}/`, callback)
+    return this.request('GET', `/suites/${suiteId}/`, callback)
   }
 
   async getSuiteTests (suiteId, callback) {
-    return await this.request('GET', `/suites/${suiteId}/tests/`, callback)
+    return this.request('GET', `/suites/${suiteId}/tests/`, callback)
   }
 
   async getSuiteResults (suiteId, options, callback) {
-    return await this.request('GET', `/suites/${suiteId}/results/`, options, callback)
+    return this.request('GET', `/suites/${suiteId}/results/`, options, callback)
   }
 
   async executeSuite (suiteId, options, callback) {
@@ -199,6 +224,12 @@ class GhostInspector {
     if (typeof options === 'function') {
       callback = options
       options = {}
+    }
+    options = options || {}
+    // we can poll if there's no CSV and immediate=0
+    const canPoll = !options.immediate && !options.dataFile
+    if (canPoll) {
+      options.immediate = true
     }
     // Execute API call
     let data
@@ -210,7 +241,13 @@ class GhostInspector {
         return
       }
       throw err
-    }      
+    }
+    if (canPoll) {
+      // wait for the suite to finish
+      await this.waitForSuiteResult(data._id, options)
+      // fetch the test results for this execution
+      data = await this.getSuiteResultTestResults(data._id)
+    }
     // Check results, determine overall pass/fail
     const passing = this.getOverallResultOutcome(data)
     // Call back with extra pass/fail parameter
@@ -221,39 +258,39 @@ class GhostInspector {
   }
 
   async downloadSuiteSeleniumHtml (suiteId, dest, callback) {
-    return await this.download(`/suites/${suiteId}/export/selenium-html/`, dest, callback)
+    return this.download(`/suites/${suiteId}/export/selenium-html/`, dest, callback)
   }
 
   async downloadSuiteSeleniumJson (suiteId, dest, callback) {
-    return await this.download(`/suites/${suiteId}/export/selenium-json/`, dest, callback)
+    return this.download(`/suites/${suiteId}/export/selenium-json/`, dest, callback)
   }
 
   async downloadSuiteSeleniumSide (suiteId, dest, callback) {
-    return await this.download(`/suites/${suiteId}/export/selenium-side/`, dest, callback)
+    return this.download(`/suites/${suiteId}/export/selenium-side/`, dest, callback)
   }
 
   async getTests (callback) {
-    return await this.request('GET', '/tests/', callback)
+    return this.request('GET', '/tests/', callback)
   }
 
   async getTest (testId, callback) {
-    return await this.request('GET', `/tests/${testId}/`, callback)
+    return this.request('GET', `/tests/${testId}/`, callback)
   }
 
   async getTestResults (testId, options, callback) {
-    return await this.request('GET', `/tests/${testId}/results/`, options, callback)
+    return this.request('GET', `/tests/${testId}/results/`, options, callback)
   }
 
   async getTestResultsRunning (testId, callback) {
-    return await this.request('GET', `/tests/${testId}/running/`, callback)
+    return this.request('GET', `/tests/${testId}/running/`, callback)
   }
 
   async acceptTestScreenshot (testId, callback) {
-    return await this.request('POST', `/tests/${testId}/accept-screenshot/`, callback)
+    return this.request('POST', `/tests/${testId}/accept-screenshot/`, callback)
   }
 
   async duplicateTest (testId, callback) {
-    return await this.request('POST', `/tests/${testId}/duplicate/`, callback)
+    return this.request('POST', `/tests/${testId}/duplicate/`, callback)
   }
 
   async executeTest (testId, options, callback) {
@@ -261,6 +298,12 @@ class GhostInspector {
     if (typeof options === 'function') {
       callback = options
       options = {}
+    }
+    options = options || {}
+    // we can poll if there's no CSV and immediate=0
+    const canPoll = !options.immediate && !options.dataFile
+    if (canPoll) {
+      options.immediate = true
     }
     // Execute API call
     let data
@@ -273,6 +316,9 @@ class GhostInspector {
       }
       throw err
     }
+    if (canPoll) {
+      data = await this.waitForTestResult(data._id, options)
+    }
     // Check results, determine overall pass/fail
     const passing = this.getOverallResultOutcome(data)
     // Call back with extra pass/fail parameter
@@ -282,36 +328,112 @@ class GhostInspector {
     return [data, passing]
   }
 
+  async waitForResult (pollFunction, options, callback) {
+    if (typeof options === 'function') {
+      callback = options
+      options = {}
+    }
+    options.pollInterval = options.pollInterval || DEFAULT_POLL_INTERVAL
+    let result
+    try {
+      let passing = null
+      while (passing === null) {
+        await this._wait(options.pollInterval)
+        result = await pollFunction()
+        passing = result.passing
+      }
+    } catch (err) {
+      if (typeof callback === 'function') {
+        callback(err)
+        return
+      }
+      throw err
+    }
+    if (typeof callback === 'function') {
+      callback(null, result)
+    }
+    return result
+  }
+
+  async waitForTestResult (resultId, options, callback) {
+    const pollFunction = () => this.getTestResult(resultId)
+    return this.waitForResult(pollFunction, options, callback)
+  }
+
+  async waitForSuiteResult (suiteResultId, options, callback) {
+    const pollFunction = () => this.getSuiteResult(suiteResultId)
+    return this.waitForResult(pollFunction, options, callback)
+  }
+
+  async executeTestOnDemand (organizationId, test, options, callback) {
+    assert.ok(test, 'test must be provided.')
+    if (typeof options === 'function') {
+      callback = options
+      options = {}
+    }
+    options = options || {}
+    options.body = test
+    let result
+    try {
+      result = await this.request('POST', `/organizations/${organizationId}/on-demand/execute/`, options)
+    } catch (err) {
+      if (typeof callback === 'function') {
+        callback(err)
+        return
+      }
+      throw err
+    }
+    if (options.wait) {
+      const pollFunction = () => this.getTestResult(result._id)
+      return this.waitForResult(pollFunction, options, callback)
+    }
+    if (typeof callback === 'function') {
+      callback(null, result)
+    }
+    return result
+  }
+
+  async importTest (suiteId, test, callback) {
+    const options = {}
+    // check for HTML or JSON
+    if (typeof test === 'string') {
+      options.dataFile = test
+    } else {
+      options.body = test
+    }
+    return this.request('POST', `/suites/${suiteId}/import-test`, options, callback)
+  }
+
   async downloadTestSeleniumHtml (testId, dest, callback) {
-    return await this.download(`/tests/${testId}/export/selenium-html/`, dest, callback)
+    return this.download(`/tests/${testId}/export/selenium-html/`, dest, callback)
   }
 
   async downloadTestSeleniumJson (testId, dest, callback) {
-    return await this.download(`/tests/${testId}/export/selenium-json/`, dest, callback)
+    return this.download(`/tests/${testId}/export/selenium-json/`, dest, callback)
   }
 
   async downloadTestSeleniumSide (testId, dest, callback) {
-    return await this.download(`/tests/${testId}/export/selenium-side/`, dest, callback)
+    return this.download(`/tests/${testId}/export/selenium-side/`, dest, callback)
   }
 
   async getSuiteResult (suiteResultId, callback) {
-    return await this.request('GET', `/suite-results/${suiteResultId}/`, callback)
+    return this.request('GET', `/suite-results/${suiteResultId}/`, callback)
   }
 
   async getSuiteResultTestResults (suiteResultId, callback) {
-    return await this.request('GET', `/suite-results/${suiteResultId}/results/`, callback)
+    return this.request('GET', `/suite-results/${suiteResultId}/results/`, callback)
   }
 
   async getSuiteResultXUnit (suiteResultId, callback) {
-    return await this.request('GET', `/suite-results/${suiteResultId}/xunit/`, {}, callback, false)
+    return this.request('GET', `/suite-results/${suiteResultId}/xunit/`, {}, callback, false)
   }
 
   async cancelSuiteResult (suiteResultId, callback) {
-    return await this.request('POST', `/suite-results/${suiteResultId}/cancel/`, callback)
+    return this.request('POST', `/suite-results/${suiteResultId}/cancel/`, callback)
   }
 
   async getTestResult (testResultId, callback) {
-    return await this.request('GET', `/results/${testResultId}/`, callback)
+    return this.request('GET', `/results/${testResultId}/`, callback)
   }
 
   // Legacy alias for getTestResult()
@@ -320,7 +442,7 @@ class GhostInspector {
   }
 
   async cancelTestResult (testResultId, callback) {
-    return await this.request('POST', `/results/${testResultId}/cancel/`, callback)
+    return this.request('POST', `/results/${testResultId}/cancel/`, callback)
   }
 
   // Legacy alias for cancelTestResult()
