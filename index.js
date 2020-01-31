@@ -219,13 +219,14 @@ class GhostInspector {
     return this.request('GET', `/suites/${suiteId}/results/`, options, callback)
   }
 
-  async executeSuite (suiteId, options, callback) {
+  async executeSuite (suiteId, providedOptions, callback) {
+    let options = {}
     // Sort out options and callback
-    if (typeof options === 'function') {
-      callback = options
-      options = {}
+    if (typeof providedOptions === 'function') {
+      callback = providedOptions
+    } else if (providedOptions && typeof providedOptions === 'object') {
+      options = JSON.parse(JSON.stringify(providedOptions))
     }
-    options = options || {}
     // we can poll if there's no CSV and immediate=0
     const canPoll = !options.immediate && !options.dataFile
     if (canPoll) {
@@ -293,13 +294,14 @@ class GhostInspector {
     return this.request('POST', `/tests/${testId}/duplicate/`, callback)
   }
 
-  async executeTest (testId, options, callback) {
+  async executeTest (testId, providedOptions, callback) {
+    let options = {}
     // Sort out options and callback
-    if (typeof options === 'function') {
-      callback = options
-      options = {}
+    if (typeof providedOptions === 'function') {
+      callback = providedOptions
+    } else if (providedOptions && typeof providedOptions === 'object') {
+      options = JSON.parse(JSON.stringify(providedOptions))
     }
-    options = options || {}
     // we can poll if there's no CSV and immediate=0
     const canPoll = !options.immediate && !options.dataFile
     if (canPoll) {
