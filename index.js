@@ -423,7 +423,27 @@ class GhostInspector {
   }
 
   async getSuiteResultTestResults (suiteResultId, callback) {
-    return this.request('GET', `/suite-results/${suiteResultId}/results/`, callback)
+    const count = 50
+    let data = [], resultCount = 50, offset = 0
+    while (resultCount >= count) {
+      let results
+      try {
+        results = await this.request('GET', `/suite-results/${suiteResultId}/results/`, { count, offset })
+      } catch (err) {
+        if (typeof callback === 'function') {
+          callback(err)
+          return
+        }
+        throw err
+      }
+      data = data.concat(results)
+      resultCount = results.length
+      offset += count
+    }
+    if (typeof callback === 'function') {
+      callback(null, data)
+    }
+    return data
   }
 
   async getSuiteResultXUnit (suiteResultId, callback) {
