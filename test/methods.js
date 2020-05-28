@@ -209,9 +209,9 @@ describe('API methods', function () {
       assert.equal(requestOptions.method, 'POST')
       assert.equal(requestOptions.uri, 'https://api.ghostinspector.com/v1/suites/suite-123/execute/')
       // assert async
-      assert.deepEqual(response, [{ expected: 'data' }, true])
+      assert.deepEqual(response, [[{ expected: 'data' }], true])
       // assert callback called with (error, data, passing)
-      assert.deepEqual(this.callbackSpy.args[0], [null, { expected: 'data' }, true])
+      assert.deepEqual(this.callbackSpy.args[0], [null, [{ expected: 'data' }], true])
       outcomeStub.restore()
       waitStub.restore()
     })
@@ -224,9 +224,9 @@ describe('API methods', function () {
       // pass callback as second-position argument
       const response = await this.client.executeSuite('suite-123', this.callbackSpy)
       // assert async
-      assert.deepEqual(response, [{ expected: 'data' }, true])
+      assert.deepEqual(response, [[{ expected: 'data' }], true])
       // assert callback called with (error, data, passing)
-      assert.deepEqual(this.callbackSpy.args[0], [null, { expected: 'data' }, true])
+      assert.deepEqual(this.callbackSpy.args[0], [null, [{ expected: 'data' }], true])
       outcomeStub.restore()
       waitStub.restore()
     })
@@ -1027,11 +1027,11 @@ describe('API methods', function () {
     assert.deepEqual(requestOptions.headers, { 'User-Agent': 'Ghost Inspector Node.js Client' })
     assert.equal(requestOptions.json, true)
     assert.equal(requestOptions.method, 'GET')
-    assert.equal(requestOptions.uri, 'https://api.ghostinspector.com/v1/suite-results/test-123/results/?apiKey=my-api-key&')
+    assert.equal(requestOptions.uri, 'https://api.ghostinspector.com/v1/suite-results/test-123/results/?count=50&offset=0&apiKey=my-api-key&')
     // assert async
-    assert.equal(response.expected, 'data')
+    assert.equal(response[0].expected, 'data')
     // assert callback called with (error, data)
-    assert.deepEqual(this.callbackSpy.args[0], [null, { expected: 'data' }])
+    assert.deepEqual(this.callbackSpy.args[0], [null, [{ expected: 'data' }]])
   })
 
   it('getSuiteResultXUnit()', async function () {
