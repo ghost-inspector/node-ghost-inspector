@@ -10,7 +10,7 @@ commands:
       - restore_cache:
           keys:
             - v{{ .Environment.CIRCLE_CACHE_VERSION }}-{{ arch }}-npm-cache-{{ .Branch }}-{{ .Environment.CIRCLE_JOB }}
-            - v{{ .Environment.CIRCLE_CACHE_VERSION }}-{{ arch }}-npm-cache-master-{{ .Environment.CIRCLE_JOB }}
+            - v{{ .Environment.CIRCLE_CACHE_VERSION }}-{{ arch }}-npm-cache-stable-{{ .Environment.CIRCLE_JOB }}
       - run:
           name: Install dependencies
           command: npm ci
