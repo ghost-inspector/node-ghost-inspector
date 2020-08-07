@@ -270,6 +270,14 @@ class GhostInspector {
     return this.download(`/suites/${suiteId}/export/selenium-side/`, dest, callback)
   }
 
+  async downloadSuiteGhostJson (suiteId, dest, callback) {
+    return this.download(`/suites/${suiteId}/export/json/`, dest, callback)
+  }
+
+  async downloadTestGhostJson (testId, dest, callback) {
+    return this.download(`/tests/${testId}/export/json/`, dest, callback)
+  }
+
   async getTests (callback) {
     return this.request('GET', '/tests/', callback)
   }
