@@ -232,6 +232,42 @@ GhostInspector.downloadSuiteSeleniumJson('[suite-id]', 'suite.zip', function (er
 });
 ```
 
+#### GhostInspector.downloadSuiteGhostJson(suiteId, dest, [callback])
+Download a file of all tests in this suite in Ghostinspector JSON format
+
+```js
+// Example using await
+try {
+    await GhostInspector.downloadSuiteGhostJson('[suite-id]', 'suite.json');
+} catch (err) {
+    console.error(err);
+}
+
+// Example using a callback
+GhostInspector.downloadSuiteGhostJson('[suite-id]', 'suite.json', function (err) {
+    if (err) return console.error(err);
+    console.log('File saved to suite.json.');
+});
+```
+
+#### GhostInspector.downloadTestGhostJson(testId, dest, [callback])
+Download a file of a single tests in Ghostinspector JSON format
+
+```js
+// Example using await
+try {
+    await GhostInspector.downloadTestGhostJson('[test-id]', 'test.json');
+} catch (err) {
+    console.error(err);
+}
+
+// Example using a callback
+GhostInspector.downloadTestGhostJson('[test-id]', 'test.json', function (err) {
+    if (err) return console.error(err);
+    console.log('File saved to test.json.');
+});
+```
+
 #### GhostInspector.importTest(suiteId, test, [callback])
 Import a test in JSON or HTML (Selenium IDE v1) format.
 ```js
