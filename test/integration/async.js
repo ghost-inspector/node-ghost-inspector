@@ -113,6 +113,16 @@ describe('Async: Download suite in (zipped) Selenium JSON format', function () {
   })
 })
 
+describe('Async: Download suite in (zipped) Ghost Inspector JSON format', function () {
+  this.timeout(0)
+  const dest = '/tmp/json.zip'
+  it('should save a zip file', async () => {
+    await GhostInspector.downloadSuiteJson('53cf58c0350c6c41029a11be', dest)
+    assert.ok(fs.existsSync(dest))
+    fs.unlinkSync(dest)
+  })
+})
+
 describe('Async: Get tests', function () {
   this.timeout(0)
   it('should return tests', async () => {
@@ -246,6 +256,18 @@ describe('Async: Download test in Selenium JSON format', function () {
   const dest = '/tmp/test.json'
   it('should save a JSON file', async () => {
     await GhostInspector.downloadTestSeleniumJson('53cf58fc350c6c41029a11bf', dest)
+    assert.ok(fs.existsSync(dest))
+    const data = fs.readFileSync(dest)
+    assert.ok(data.toString().includes('Google'))
+    fs.unlinkSync(dest)
+  })
+})
+
+describe('Async: Download test in Ghost Inspector JSON format', function () {
+  this.timeout(0)
+  const dest = '/tmp/test.json'
+  it('should save a JSON file', async () => {
+    await GhostInspector.downloadTestJson('53cf58fc350c6c41029a11bf', dest)
     assert.ok(fs.existsSync(dest))
     const data = fs.readFileSync(dest)
     assert.ok(data.toString().includes('Google'))
