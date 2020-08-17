@@ -149,6 +149,19 @@ describe('Callback: Download suite in (zipped) Selenium JSON format', function (
   })
 })
 
+describe('Callback: Download suite in (zipped) Ghost Inspector JSON format', function () {
+  this.timeout(0)
+  const dest = '/tmp/suite-json.zip'
+  it('should save a zip file', (done) => {
+    GhostInspector.downloadSuiteJson('53cf58c0350c6c41029a11be', dest, (err) => {
+      assert.strictEqual(err, null)
+      assert.ok(fs.existsSync(dest))
+      fs.unlinkSync(dest)
+      done()
+    })
+  })
+})
+
 describe('Callback: Get tests', function () {
   this.timeout(0)
   it('should return tests', (done) => {
@@ -304,6 +317,21 @@ describe('Callback: Download test in Selenium JSON format', function () {
   const dest = '/tmp/test.json'
   it('should save a JSON file', (done) => {
     GhostInspector.downloadTestSeleniumJson('53cf58fc350c6c41029a11bf', dest, (err) => {
+      assert.strictEqual(err, null)
+      assert.ok(fs.existsSync(dest))
+      const data = fs.readFileSync(dest)
+      assert.ok(data.toString().includes('Google'))
+      fs.unlinkSync(dest)
+      done()
+    })
+  })
+})
+
+describe('Callback: Download test in Ghost Inspector JSON format', function () {
+  this.timeout(0)
+  const dest = '/tmp/test.json'
+  it('should save a JSON file', (done) => {
+    GhostInspector.downloadTestJson('53cf58fc350c6c41029a11bf', dest, (err) => {
       assert.strictEqual(err, null)
       assert.ok(fs.existsSync(dest))
       const data = fs.readFileSync(dest)

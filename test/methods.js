@@ -355,6 +355,59 @@ describe('API methods', function () {
   })
 
   /**
+   * downloadSuiteJson() also falls outside the standard internal pattern of passing through the basic
+   * parameters to client.request(), we'll set up a few special tests around this specifically.
+   */
+  describe('downloadSuiteJson()', function () {
+    beforeEach(function () {
+      this.requestStub.resolves(successResponse)
+      this.writeFileStub = sinon.stub(fs, 'writeFile')
+      this.writeFileStub.callsFake(function (_dest, _data, cb) {
+        cb(null)
+      })
+    })
+
+    afterEach(function () {
+      this.writeFileStub.restore()
+    })
+
+    it('(async) it should throw an error with ERROR response', async function () {
+      this.requestStub.throws(new Error('some error'))
+      try {
+        await this.client.downloadSuiteJson('suite-123', '/some/dest')
+      } catch (error) {
+        assert.ok(error)
+        assert.equal(error.message, 'some error')
+        return true
+      }
+      throw new assert.AssertionError({ message: 'Missing expected exception.' })
+    })
+
+    it('(callback) should return an error with ERROR response', async function () {
+      this.requestStub.throws(new Error('some error'))
+      this.client.downloadSuiteJson('suite-123', '/some/place', this.callbackSpy)
+      const callbackArgs = this.callbackSpy.args
+      // give the callback a second to fire
+      await wait()
+      // first-position arg (error) should be non-null
+      const error = callbackArgs[0][0]
+      assert.ok(error)
+      assert.equal(error.message, 'some error')
+    })
+
+    it('should download JSON', async function () {
+      this.requestStub.resolves('{"some": "json"}')
+      const response = await this.client.downloadSuiteJson('suite-123', '/foo.json', this.callbackSpy)
+      // assert API call
+      const requestOptions = this.requestStub.args[0][0]
+      assert.deepEqual(requestOptions.headers, { 'User-Agent': 'Ghost Inspector Node.js Client' })
+      assert.equal(requestOptions.json, undefined)
+      assert.equal(requestOptions.method, 'GET')
+      assert.equal(requestOptions.uri, 'https://api.ghostinspector.com/v1/suites/suite-123/export/json/?apiKey=my-api-key&')
+    })
+  })
+
+  /**
    * downloadSuiteSeleniumSide() also falls outside the standard internal pattern of passing through the basic
    * parameters to client.request(), we'll set up a few special tests around this specifically.
    */
@@ -942,6 +995,59 @@ describe('API methods', function () {
       assert.ok(this.writeFileStub.called)
       assert.deepEqual(this.writeFileStub.args[0][0], '/foo.json')
       assert.deepEqual(this.writeFileStub.args[0][1], '{"some": "json"}')
+    })
+  })
+
+  /**
+   * downloadTestJson() also falls outside the standard internal pattern of passing through the basic
+   * parameters to client.request(), we'll set up a few special tests around this specifically.
+   */
+  describe('downloadTestJson()', function () {
+    beforeEach(function () {
+      this.requestStub.resolves(successResponse)
+      this.writeFileStub = sinon.stub(fs, 'writeFile')
+      this.writeFileStub.callsFake(function (_dest, _data, cb) {
+        cb(null)
+      })
+    })
+
+    afterEach(function () {
+      this.writeFileStub.restore()
+    })
+
+    it('(async) it should throw an error with ERROR response', async function () {
+      this.requestStub.throws(new Error('some error'))
+      try {
+        await this.client.downloadTestJson('test-123', '/some/dest')
+      } catch (error) {
+        assert.ok(error)
+        assert.equal(error.message, 'some error')
+        return true
+      }
+      throw new assert.AssertionError({ message: 'Missing expected exception.' })
+    })
+
+    it('(callback) should return an error with ERROR response', async function () {
+      this.requestStub.throws(new Error('some error'))
+      this.client.downloadTestJson('test-123', '/some/place', this.callbackSpy)
+      const callbackArgs = this.callbackSpy.args
+      // give the callback a second to fire
+      await wait()
+      // first-position arg (error) should be non-null
+      const error = callbackArgs[0][0]
+      assert.ok(error)
+      assert.equal(error.message, 'some error')
+    })
+
+    it('should download JSON', async function () {
+      this.requestStub.resolves('{"some": "json"}')
+      const response = await this.client.downloadTestJson('test-123', '/foo.json', this.callbackSpy)
+      // assert API call
+      const requestOptions = this.requestStub.args[0][0]
+      assert.deepEqual(requestOptions.headers, { 'User-Agent': 'Ghost Inspector Node.js Client' })
+      assert.equal(requestOptions.json, undefined)
+      assert.equal(requestOptions.method, 'GET')
+      assert.equal(requestOptions.uri, 'https://api.ghostinspector.com/v1/tests/test-123/export/json/?apiKey=my-api-key&')
     })
   })
 
