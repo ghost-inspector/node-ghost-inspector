@@ -53,10 +53,18 @@ describe('Async: Get suite tests', function () {
   })
 })
 
-describe('Async: Execute suite ', function () {
+describe.only('Async: Execute suite - wait', function () {
   this.timeout(0)
   it('should return 2 results and a passing status', async () => {
     const [data, passing] = await GhostInspector.executeSuite('53cf58c0350c6c41029a11be')
+    assert.strictEqual(data.length, 2)
+    assert.strictEqual(passing, true)
+  })
+  it.only('should execute with multiple browsers', async () => {
+    const [data, passing] = await GhostInspector.executeSuite('53cf58c0350c6c41029a11be', {
+      browser: ['chrome', 'firefox']
+    })
+    console.log(data)
     assert.strictEqual(data.length, 2)
     assert.strictEqual(passing, true)
   })

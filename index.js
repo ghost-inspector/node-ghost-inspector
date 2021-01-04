@@ -243,14 +243,27 @@ class GhostInspector {
       }
       throw err
     }
+
+    if (!Array.isArray(data)) {
+      data = [data]
+    }
+
     if (canPoll) {
+      // TODO: integration test for this
       // wait for the suite to finish
-      await this.waitForSuiteResult(data._id, options)
-      // fetch the test results for this execution
-      data = await this.getSuiteResultTestResults(data._id)
+      data = await Promise.all(data.map((item) => {
+        return this.waitForSuiteResult(item._id, options)
+      }))
+
+      // TODO: integration test for this
+      // fetch the test results for this execution when executing single suite
+      if (data.length === 1) {
+        data = await this.getSuiteResultTestResults(data._id)
+      }
     }
     // Check results, determine overall pass/fail
     const passing = this.getOverallResultOutcome(data)
+
     // Call back with extra pass/fail parameter
     if (typeof callback === 'function') {
       callback(null, data, passing)
@@ -326,11 +339,23 @@ class GhostInspector {
       }
       throw err
     }
-    if (canPoll) {
-      data = await this.waitForTestResult(data._id, options)
+
+    if (!Array.isArray(data)) {
+      data = [data]
     }
+    
+    if (canPoll) {
+      data = await Promise.all(data.map((item) => {
+        return this.waitForTestResult(item._id, options)
+      }))
+    }
+    
     // Check results, determine overall pass/fail
     const passing = this.getOverallResultOutcome(data)
+
+    // map back the single data item
+    data = data.length === 1 ? data[0] : data
+
     // Call back with extra pass/fail parameter
     if (typeof callback === 'function') {
       callback(null, data, passing)
