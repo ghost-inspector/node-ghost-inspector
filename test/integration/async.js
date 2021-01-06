@@ -53,20 +53,30 @@ describe('Async: Get suite tests', function () {
   })
 })
 
-describe.only('Async: Execute suite - wait', function () {
+describe('Async: Execute suite - wait', function () {
   this.timeout(0)
-  it('should return 2 results and a passing status', async () => {
+  it('should return 2 TEST results and a passing status', async () => {
     const [data, passing] = await GhostInspector.executeSuite('53cf58c0350c6c41029a11be')
+
     assert.strictEqual(data.length, 2)
     assert.strictEqual(passing, true)
+
+    // make sure that these results are test results
+    assert.strictEqual(data[0].name, 'Google')
+    assert.strictEqual(data[1].name, 'Yahoo')
   })
-  it.only('should execute with multiple browsers', async () => {
+
+  it('should execute with multiple browsers and return SUITE results', async function() {
     const [data, passing] = await GhostInspector.executeSuite('53cf58c0350c6c41029a11be', {
       browser: ['chrome', 'firefox']
     })
-    console.log(data)
+
     assert.strictEqual(data.length, 2)
     assert.strictEqual(passing, true)
+
+    // make sure that these results are suite results
+    assert.strictEqual(data[0].name, 'Test Suite')
+    assert.strictEqual(data[1].name, 'Test Suite')
   })
 })
 
@@ -79,6 +89,20 @@ describe('Async: Execute suite with immediate response ', function () {
     assert.strictEqual(data.passing, null)
     assert.strictEqual(passing, null)
     suiteResultId = data._id
+  })
+
+  it('should execute with multiple browser and return SUITE results', async function () {
+    const [data, passing] = await GhostInspector.executeSuite('53cf58c0350c6c41029a11be', {
+      browser: ['chrome', 'firefox'],
+      immediate: true
+    })
+
+    assert.strictEqual(data.length, 2)
+    assert.strictEqual(passing, null)
+
+    // make sure that these results are suite results
+    assert.strictEqual(data[0].name, 'Test Suite')
+    assert.strictEqual(data[1].name, 'Test Suite')
   })
 })
 

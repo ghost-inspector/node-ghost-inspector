@@ -216,25 +216,39 @@ describe('API methods', function () {
       waitStub.restore()
     })
 
-    // it('should execute a suite and handle multiple results', async function () {
-    //   const outcomeStub = sinon.stub(this.client, 'getOverallResultOutcome')
-    //   const waitStub = sinon.stub(this.client, '_wait')
-    //   waitStub.resolves()
-    //   outcomeStub.returns(true)
-    //   const response = await this.client.executeSuite('suite-123', { some: 'option' }, this.callbackSpy)
-    //   // assert API call
-    //   const requestOptions = this.requestStub.args[0][0]
-    //   assert.deepEqual(requestOptions.headers, { 'User-Agent': 'Ghost Inspector Node.js Client' })
-    //   assert.equal(requestOptions.json, true)
-    //   assert.equal(requestOptions.method, 'POST')
-    //   assert.equal(requestOptions.uri, 'https://api.ghostinspector.com/v1/suites/suite-123/execute/')
-    //   // assert async
-    //   assert.deepEqual(response, [[{ expected: 'data' }], true])
-    //   // assert callback called with (error, data, passing)
-    //   assert.deepEqual(this.callbackSpy.args[0], [null, [{ expected: 'data' }], true])
-    //   outcomeStub.restore()
-    //   waitStub.restore()
-    // })
+    it('should execute a suite and handle multiple results', async function () {
+      const outcomeStub = sinon.stub(this.client, 'getOverallResultOutcome')
+      outcomeStub.returns(true)
+      const waitStub = sinon.stub(this.client, '_wait')
+      waitStub.resolves()
+
+      // won't reflect actual response, but shows that we can handle an array of results
+      const responseData = [{ expected: 'data' }, { expected: 'data' }, { expected: 'data' }, { expected: 'data' }]
+      this.requestStub.onFirstCall().resolves({
+        code: 'SUCCESS',
+        data: responseData
+      })
+
+      const response = await this.client.executeSuite('suite-123', {
+        browser: ['chrome', 'firefox'],
+        region: ['us-east-1', 'us-east-2'],
+        viewport: ['800x600', '1024x768']
+      }, this.callbackSpy)
+
+      // assert API call
+      const requestOptions = this.requestStub.args[0][0]
+      assert.deepEqual(requestOptions.headers, { 'User-Agent': 'Ghost Inspector Node.js Client' })
+      assert.equal(requestOptions.json, true)
+      assert.equal(requestOptions.method, 'POST')
+      assert.equal(requestOptions.uri, 'https://api.ghostinspector.com/v1/suites/suite-123/execute/')
+
+      // check response
+      assert.deepEqual(response, [responseData, true])
+      // assert callback called with (error, data, passing)
+      assert.deepEqual(this.callbackSpy.args[0], [null, responseData, true])
+      outcomeStub.restore()
+      waitStub.restore()
+    })
 
     it('should use should use options-position callback', async function () {
       const outcomeStub = sinon.stub(this.client, 'getOverallResultOutcome')
@@ -654,6 +668,7 @@ describe('API methods', function () {
         region: ['us-east-1', 'us-east-2'],
         viewport: ['800x600', '1024x768']
       }, this.callbackSpy)
+
       // assert API call
       const requestOptions = this.requestStub.args[0][0]
       assert.deepEqual(requestOptions.headers, { 'User-Agent': 'Ghost Inspector Node.js Client' })

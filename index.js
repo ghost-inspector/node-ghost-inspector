@@ -249,16 +249,18 @@ class GhostInspector {
     }
 
     if (canPoll) {
-      // TODO: integration test for this
       // wait for the suite to finish
       data = await Promise.all(data.map((item) => {
         return this.waitForSuiteResult(item._id, options)
       }))
 
-      // TODO: integration test for this
       // fetch the test results for this execution when executing single suite
       if (data.length === 1) {
-        data = await this.getSuiteResultTestResults(data._id)
+        data = await this.getSuiteResultTestResults(data[0]._id)
+      }
+    } else {
+      if (data.length === 1) {
+        data = data[0]
       }
     }
     // Check results, determine overall pass/fail
