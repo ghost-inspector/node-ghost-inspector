@@ -1,6 +1,7 @@
 // The API key and IDs used in this file belong to the official Ghost Inspector API testing account.
 const assert = require('assert')
 const fs = require('fs')
+const path = require('path')
 const GhostInspector = require('../../index')(process.env.GHOST_INSPECTOR_API_KEY)
 
 let suiteResultId, testResultId
@@ -66,9 +67,9 @@ describe('Async: Execute suite - wait', function () {
     assert.strictEqual(data[1].name, 'Yahoo')
   })
 
-  it('should execute with multiple browsers and return SUITE results', async function() {
+  it('should execute with multiple browsers and return SUITE results', async function () {
     const [data, passing] = await GhostInspector.executeSuite('53cf58c0350c6c41029a11be', {
-      browser: ['chrome', 'firefox']
+      browser: ['chrome', 'firefox'],
     })
 
     assert.strictEqual(data.length, 2)
@@ -83,7 +84,9 @@ describe('Async: Execute suite - wait', function () {
 describe('Async: Execute suite with immediate response ', function () {
   this.timeout(0)
   it('should return success with a pending suite result and null passing value', async () => {
-    const [data, passing] = await GhostInspector.executeSuite('53cf58c0350c6c41029a11be', { immediate: true })
+    const [data, passing] = await GhostInspector.executeSuite('53cf58c0350c6c41029a11be', {
+      immediate: true,
+    })
     assert.strictEqual(data.suite, '53cf58c0350c6c41029a11be')
     assert.strictEqual(data.name, 'Test Suite')
     assert.strictEqual(data.passing, null)
@@ -94,7 +97,7 @@ describe('Async: Execute suite with immediate response ', function () {
   it('should execute with multiple browser and return SUITE results', async function () {
     const [data, passing] = await GhostInspector.executeSuite('53cf58c0350c6c41029a11be', {
       browser: ['chrome', 'firefox'],
-      immediate: true
+      immediate: true,
     })
 
     assert.strictEqual(data.length, 2)
@@ -109,7 +112,7 @@ describe('Async: Execute suite with immediate response ', function () {
 describe('Async: Get suite results', function () {
   this.timeout(0)
   it('should return 1 suite result with a suite name of "Test Suite"', async () => {
-    const data = await GhostInspector.getSuiteResults('53cf58c0350c6c41029a11be', { 'count': 1 })
+    const data = await GhostInspector.getSuiteResults('53cf58c0350c6c41029a11be', { count: 1 })
     assert.strictEqual(data.length, 1)
     assert.ok(data[0].name === 'Test Suite')
   })
@@ -182,7 +185,7 @@ describe('Async: Get test results', function () {
 describe('Async: Get test results with options', function () {
   this.timeout(0)
   it('should return 1 result', async () => {
-    const data = await GhostInspector.getTestResults('53cf58fc350c6c41029a11bf', { 'count': 1 })
+    const data = await GhostInspector.getTestResults('53cf58fc350c6c41029a11bf', { count: 1 })
     assert.strictEqual(data.length, 1)
   })
 })
@@ -199,7 +202,9 @@ describe('Async: Execute test ', function () {
 describe('Async: Execute test overriding start URL ', function () {
   this.timeout(0)
   it('should return a start URL of "https://www.google.com.br"', async () => {
-    const [data, passing] = await GhostInspector.executeTest('53cf58fc350c6c41029a11bf', { startUrl: 'https://www.google.com.br' })
+    const [data, passing] = await GhostInspector.executeTest('53cf58fc350c6c41029a11bf', {
+      startUrl: 'https://www.google.com.br',
+    })
     assert.strictEqual(data.startUrl, 'https://www.google.com.br')
     assert.strictEqual(passing, true)
   })
@@ -208,7 +213,9 @@ describe('Async: Execute test overriding start URL ', function () {
 describe('Async: Execute test with CSV file ', function () {
   this.timeout(0)
   it('should return a single result in an array with the "foo" value from the CSV used in step #2', async () => {
-    const [data, passing] = await GhostInspector.executeTest('53cf58fc350c6c41029a11bf', { dataFile: `${__dirname}/sample.csv` })
+    const [data, passing] = await GhostInspector.executeTest('53cf58fc350c6c41029a11bf', {
+      dataFile: path.join(__dirname, 'sample.csv'),
+    })
     assert.strictEqual(data[0].steps[1].value, 'foo')
     assert.strictEqual(passing, true)
   })
@@ -217,7 +224,9 @@ describe('Async: Execute test with CSV file ', function () {
 describe('Async: Execute test with immediate response ', function () {
   this.timeout(0)
   it('should return success with a pending result and null passing value', async () => {
-    const [data, passing] = await GhostInspector.executeTest('53cf58fc350c6c41029a11bf', { immediate: true })
+    const [data, passing] = await GhostInspector.executeTest('53cf58fc350c6c41029a11bf', {
+      immediate: true,
+    })
     assert.strictEqual(data.test._id, '53cf58fc350c6c41029a11bf')
     assert.strictEqual(data.test.name, 'Google')
     assert.strictEqual(data.test.organization, '547fc38c404e81ff79292e53')
