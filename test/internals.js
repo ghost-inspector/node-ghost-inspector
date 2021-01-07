@@ -4,7 +4,7 @@ const params = {
   a: 1,
   b: true,
   c: 'c',
-  d: ['x', 'y', 'z']
+  d: ['x', 'y', 'z'],
 }
 
 describe('constructor()', function () {
@@ -38,7 +38,7 @@ describe('buildFormData()', function () {
       a: '1',
       b: 'true',
       c: 'c',
-      d: ['x', 'y', 'z']
+      d: ['x', 'y', 'z'],
     })
   })
 })
@@ -57,7 +57,7 @@ describe('getOverallResultOutcome()', function () {
     assert.strictEqual(passing, null)
   })
   it('should return null for a single result without a passing field', async () => {
-    const passing = GhostInspector.getOverallResultOutcome({ })
+    const passing = GhostInspector.getOverallResultOutcome({})
     assert.strictEqual(passing, null)
   })
   it('should return true for multiple results all passing', async () => {
