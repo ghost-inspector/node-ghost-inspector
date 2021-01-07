@@ -1,6 +1,7 @@
 // The API key and IDs used in this file belong to the official Ghost Inspector API testing account.
 const assert = require('assert')
 const fs = require('fs')
+const path = require('path')
 const GhostInspector = require('../../index')(process.env.GHOST_INSPECTOR_API_KEY)
 
 let suiteResultId, testResultId
@@ -243,7 +244,7 @@ describe('Callback: Execute test with CSV file ', function () {
   it('should return a single result in an array with the "foo" value from the CSV used in step #2', (done) => {
     GhostInspector.executeTest(
       '53cf58fc350c6c41029a11bf',
-      { dataFile: `${__dirname}/sample.csv` },
+      { dataFile: path.join(__dirname, 'sample.csv') },
       (err, data, passing) => {
         assert.strictEqual(err, null)
         assert.strictEqual(data[0].steps[1].value, 'foo')

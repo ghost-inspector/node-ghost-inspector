@@ -467,9 +467,9 @@ class GhostInspector {
 
   async getSuiteResultTestResults(suiteResultId, callback) {
     const count = 50
-    let data = [],
-      resultCount = 50,
-      offset = 0
+    let data = []
+    let resultCount = 50
+    let offset = 0
     while (resultCount >= count) {
       let results
       try {
