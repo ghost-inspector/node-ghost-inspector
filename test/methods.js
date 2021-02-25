@@ -231,7 +231,6 @@ describe('API methods', function () {
 
     it('should execute a suite', async function () {
       this.sandbox.stub(this.client, 'getOverallResultOutcome').returns(true)
-      this.sandbox.stub(this.client, 'getOverallScreenshotOutcome').returns(true)
       this.sandbox.stub(this.client, '_wait').resolves()
 
       const response = await this.client.executeSuite(
@@ -256,7 +255,6 @@ describe('API methods', function () {
 
     it('should execute a suite and handle multiple results', async function () {
       this.sandbox.stub(this.client, 'getOverallResultOutcome').returns(true)
-      this.sandbox.stub(this.client, 'getOverallScreenshotOutcome').returns(true)
       this.sandbox.stub(this.client, '_wait').resolves()
 
       // won't reflect actual response, but shows that we can handle an array of results
@@ -307,8 +305,10 @@ describe('API methods', function () {
       // mock out reading the file
       this.sandbox.stub(fs, 'createReadStream').returns('file-contents')
       // fudge the result
-      this.sandbox.stub(this.client, 'getOverallResultOutcome').returns(true)
-      this.sandbox.stub(this.client, 'getOverallScreenshotOutcome').returns(false)
+      this.sandbox.stub(this.client, 'getOverallResultOutcome')
+        .returns(true)
+        .onSecondCall()
+        .returns(false)
       this.sandbox.stub(this.client, '_wait').resolves()
       const response = await this.client.executeSuite(
         'suite-123',
@@ -332,8 +332,10 @@ describe('API methods', function () {
     })
 
     it('should use should use options-position callback', async function () {
-      this.sandbox.stub(this.client, 'getOverallResultOutcome').returns(true)
-      this.sandbox.stub(this.client, 'getOverallScreenshotOutcome').returns(false)
+      this.sandbox.stub(this.client, 'getOverallResultOutcome')
+        .returns(true)
+        .onSecondCall()
+        .returns(false)
       this.sandbox.stub(this.client, '_wait').resolves()
 
       // pass callback as second-position argument
@@ -765,7 +767,6 @@ describe('API methods', function () {
 
     it('should execute a test', async function () {
       this.sandbox.stub(this.client, 'getOverallResultOutcome').returns(true)
-      this.sandbox.stub(this.client, 'getOverallScreenshotOutcome').returns(true)
       this.sandbox.stub(this.client, '_wait').resolves()
 
       const response = await this.client.executeTest('test-123', {}, this.callbackSpy)
@@ -784,7 +785,6 @@ describe('API methods', function () {
 
     it('should execute a test with multiple browser/region/viewport', async function () {
       this.sandbox.stub(this.client, 'getOverallResultOutcome').returns(true)
-      this.sandbox.stub(this.client, 'getOverallScreenshotOutcome').returns(true)
       this.sandbox.stub(this.client, '_wait').resolves()
 
       // won't reflect actual response, but shows that we can handle an array of results
@@ -826,8 +826,10 @@ describe('API methods', function () {
     })
 
     it('should use should use options-position callback', async function () {
-      this.sandbox.stub(this.client, 'getOverallResultOutcome').returns(true)
-      this.sandbox.stub(this.client, 'getOverallScreenshotOutcome').returns(false)
+      this.sandbox.stub(this.client, 'getOverallResultOutcome')
+        .returns(true)
+        .onSecondCall()
+        .returns(false)
       this.sandbox.stub(this.client, '_wait').resolves()
       // pass callback as second-position argument
       const response = await this.client.executeTest('test-123', this.callbackSpy)
@@ -842,8 +844,10 @@ describe('API methods', function () {
       this.sandbox.stub(fs, 'createReadStream').returns('file-contents')
 
       // fudge the result
-      this.sandbox.stub(this.client, 'getOverallResultOutcome').returns(true)
-      this.sandbox.stub(this.client, 'getOverallScreenshotOutcome').returns(true)
+      this.sandbox.stub(this.client, 'getOverallResultOutcome')
+        .returns(true)
+        .onSecondCall()
+        .returns(true)
       this.sandbox.stub(this.client, '_wait').resolves()
 
       const responseData = [
@@ -892,8 +896,10 @@ describe('API methods', function () {
       // mock out reading the file
       this.sandbox.stub(fs, 'createReadStream').returns('file-contents')
       // fudge the result
-      this.sandbox.stub(this.client, 'getOverallResultOutcome').returns(true)
-      this.sandbox.stub(this.client, 'getOverallScreenshotOutcome').returns(false)
+      this.sandbox.stub(this.client, 'getOverallResultOutcome')
+        .returns(true)
+        .onSecondCall()
+        .returns(false)
       this.sandbox.stub(this.client, '_wait').resolves()
       const response = await this.client.executeTest(
         'test-123',
@@ -925,8 +931,11 @@ describe('API methods', function () {
       // mock out reading the file
       this.sandbox.stub(fs, 'createReadStream').returns('file-contents')
       // fudge the result
-      this.sandbox.stub(this.client, 'getOverallResultOutcome').returns(true)
-      this.sandbox.stub(this.client, 'getOverallScreenshotOutcome').returns(false)
+      this.sandbox.stub(this.client, 'getOverallResultOutcome')
+        .returns(true)
+        .onSecondCall()
+        .returns(false)
+
       this.sandbox.stub(this.client, '_wait').resolves()
       const response = await this.client.executeTest(
         'test-123',

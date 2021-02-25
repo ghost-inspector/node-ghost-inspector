@@ -60,27 +60,15 @@ class GhostInspector {
     return formData
   }
 
-  getOverallResultOutcome(data) {
+  getOverallResultOutcome(data, field='passing') {
     if (data instanceof Array) {
       let passing = data.length ? true : null
       for (const entry of data) {
-        passing = passing && entry.passing
+        passing = passing && entry[field]
       }
       return passing
     } else {
-      return data.passing === undefined ? null : data.passing
-    }
-  }
-
-  getOverallScreenshotOutcome(data) {
-    if (data instanceof Array) {
-      let passing = data.length ? true : null
-      for (const entry of data) {
-        passing = passing && entry.screenshotComparePassing
-      }
-      return passing
-    } else {
-      return data.screenshotComparePassing === undefined ? null : data.screenshotComparePassing
+      return data[field] === undefined ? null : data[field]
     }
   }
 
@@ -284,7 +272,7 @@ class GhostInspector {
     }
     // Check results, determine overall pass/fail
     const passing = this.getOverallResultOutcome(data)
-    const screenshotPassing = this.getOverallScreenshotOutcome(data)
+    const screenshotPassing = this.getOverallResultOutcome(data, 'screenshotComparePassing')
 
     // Call back with extra pass/fail parameter
     if (typeof callback === 'function') {
@@ -381,7 +369,7 @@ class GhostInspector {
 
     // Check results, determine overall pass/fail
     const passing = this.getOverallResultOutcome(data)
-    const screenshotPassing = this.getOverallScreenshotOutcome(data)
+    const screenshotPassing = this.getOverallResultOutcome(data, 'screenshotComparePassing')
 
     // map back the single data item
     data = (data.length === 1 && returnSingleResult) ? data[0] : data
