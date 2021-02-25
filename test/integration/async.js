@@ -210,9 +210,9 @@ describe('Async: Execute test overriding start URL ', function () {
   })
 })
 
-describe.only('Async: Execute test with CSV file ', function () {
+describe('Async: Execute test with CSV file ', function () {
   this.timeout(0)
-  it.only('should return a single result in an array with the "foo" value from the CSV used in step #2', async () => {
+  it('should return a single result in an array with the "foo" value from the CSV used in step #2', async () => {
     const [data, passing] = await GhostInspector.executeTest('53cf58fc350c6c41029a11bf', {
       dataFile: path.join(__dirname, 'sample.csv'),
     })
