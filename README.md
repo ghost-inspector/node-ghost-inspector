@@ -160,7 +160,8 @@ Execute all the tests in a suite and returns an array of results.
 ```js
 // Optionally override the start URL of all tests in this suite (for this run only) 
 const options = {
-    startUrl: 'http://alternate.yourcompany.com'
+    startUrl: 'http://alternate.yourcompany.com',
+    useScreenshotForPassingStatus: true, // optional
 };
 
 // Example using await
@@ -404,7 +405,8 @@ Execute a single test in your account and return the result.
 ```js
 // Optionally override the start URL of the test (for this run only) 
 const options = {
-    startUrl: 'http://alternate.yourcompany.com'
+    startUrl: 'http://alternate.yourcompany.com',
+    useScreenshotForPassingStatus: true, // optional
 };
 
 // Example using await
