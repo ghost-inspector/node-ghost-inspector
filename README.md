@@ -160,19 +160,18 @@ Execute all the tests in a suite and returns an array of results.
 ```js
 // Optionally override the start URL of all tests in this suite (for this run only) 
 const options = {
-    startUrl: 'http://alternate.yourcompany.com',
-    useScreenshotForPassingStatus: true, // optional
+    startUrl: 'http://alternate.yourcompany.com'
 };
 
 // Example using await
 try {
-    const [results, passing] = await GhostInspector.executeSuite('[suite-id]', options);
+    const [results, passing, screenshotPassing] = await GhostInspector.executeSuite('[suite-id]', options);
 } catch (err) {
     console.error(err);
 }
 
 // Example using a callback
-GhostInspector.executeSuite('[suite-id]', options, function (err, results, passing) {
+GhostInspector.executeSuite('[suite-id]', options, function (err, results, passing, screenshotPassing) {
     if (err) return console.error(err);
     console.log(passing === true ? 'Passed' : 'Failed');
     console.log(results);
@@ -405,19 +404,18 @@ Execute a single test in your account and return the result.
 ```js
 // Optionally override the start URL of the test (for this run only) 
 const options = {
-    startUrl: 'http://alternate.yourcompany.com',
-    useScreenshotForPassingStatus: true, // optional
+    startUrl: 'http://alternate.yourcompany.com'
 };
 
 // Example using await
 try {
-    const [results, passing] = await GhostInspector.executeTest('[test-id]', options);
+    const [results, passing, screenshotPassing] = await GhostInspector.executeTest('[test-id]', options);
 } catch (err) {
     console.error(err);
 }
 
 // Example using a callback
-GhostInspector.executeTest('[test-id]', options, function (err, results, passing) {
+GhostInspector.executeTest('[test-id]', options, function (err, results, passing, screenshotPassing) {
     if (err) return console.error(err);
     console.log(passing === true ? 'Passed' : 'Failed');
     console.log(results);
