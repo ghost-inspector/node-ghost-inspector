@@ -278,17 +278,14 @@ class GhostInspector {
       }
     }
     // Check results, determine overall pass/fail
-    let passing = this.getOverallResultOutcome(data)
-
-    if (passing && options.useScreenshotForPassingStatus) {
-      passing = this.getOverallScreenshotOutcome(data)
-    }
+    const passing = this.getOverallResultOutcome(data)
+    const screenshotPassing = this.getOverallScreenshotOutcome(data)
 
     // Call back with extra pass/fail parameter
     if (typeof callback === 'function') {
-      callback(null, data, passing)
+      callback(null, data, passing, screenshotPassing)
     }
-    return [data, passing]
+    return [data, passing, screenshotPassing]
   }
 
   async downloadSuiteSeleniumHtml(suiteId, dest, callback) {
@@ -373,20 +370,17 @@ class GhostInspector {
     }
 
     // Check results, determine overall pass/fail
-    let passing = this.getOverallResultOutcome(data)
-
-    if (passing && options.useScreenshotForPassingStatus) {
-      passing = this.getOverallScreenshotOutcome(data)
-    }
+    const passing = this.getOverallResultOutcome(data)
+    const screenshotPassing = this.getOverallScreenshotOutcome(data)
 
     // map back the single data item
     data = data.length === 1 ? data[0] : data
 
     // Call back with extra pass/fail parameter
     if (typeof callback === 'function') {
-      callback(null, data, passing)
+      callback(null, data, passing, screenshotPassing)
     }
-    return [data, passing]
+    return [data, passing, screenshotPassing]
   }
 
   async waitForResult(pollFunction, options, callback) {
