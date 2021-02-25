@@ -72,6 +72,18 @@ class GhostInspector {
     }
   }
 
+  getOverallScreenshotOutcome(data) {
+    if (data instanceof Array) {
+      let passing = data.length ? true : null
+      for (const entry of data) {
+        passing = passing && entry.screenshotComparePassing
+      }
+      return passing
+    } else {
+      return data.screenshotComparePassing === undefined ? null : data.screenshotComparePassing
+    }
+  }
+
   async request(method, path, params, callback, json = true) {
     // Sort out params and callback
     if (typeof params === 'function') {
@@ -266,7 +278,11 @@ class GhostInspector {
       }
     }
     // Check results, determine overall pass/fail
-    const passing = this.getOverallResultOutcome(data)
+    let passing = this.getOverallResultOutcome(data)
+
+    if (passing && options.useScreenshotForPassingStatus) {
+      passing = this.getOverallScreenshotOutcome(data)
+    }
 
     // Call back with extra pass/fail parameter
     if (typeof callback === 'function') {
@@ -357,7 +373,11 @@ class GhostInspector {
     }
 
     // Check results, determine overall pass/fail
-    const passing = this.getOverallResultOutcome(data)
+    let passing = this.getOverallResultOutcome(data)
+
+    if (passing && options.useScreenshotForPassingStatus) {
+      passing = this.getOverallScreenshotOutcome(data)
+    }
 
     // map back the single data item
     data = data.length === 1 ? data[0] : data

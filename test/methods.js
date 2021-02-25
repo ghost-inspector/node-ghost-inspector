@@ -197,6 +197,14 @@ describe('API methods', function () {
    * parameters to client.request(), we'll set up a few special tests around this specifically.
    */
   describe('executeSuite()', function () {
+    before(function () {
+      this.sandbox = sinon.createSandbox()
+    })
+
+    afterEach(function () {
+      this.sandbox.restore()
+    })
+
     it('(async) should throw an error with ERROR response', async function () {
       this.requestStub.throws(new Error('some error'))
       try {
@@ -307,6 +315,51 @@ describe('API methods', function () {
       assert.deepEqual(this.callbackSpy.args[0], [null, [{ expected: 'data' }], true])
       outcomeStub.restore()
       waitStub.restore()
+    })
+
+    it('should use screenshotComparePassing for passing status', async function () {
+      const outcomeStub = this.sandbox.stub(this.client, 'getOverallResultOutcome').returns(true)
+      const screenshotStub = this.sandbox.stub(this.client, 'getOverallScreenshotOutcome').returns(true)
+      this.sandbox.stub(this.client, '_wait').resolves()
+
+      const response = await this.client.executeSuite(
+        'suite-123',
+        { some: 'option', useScreenshotForPassingStatus: true },
+      )
+
+      assert.deepEqual(response, [[{ expected: 'data' }], true])
+      assert.ok(outcomeStub.called)
+      assert.ok(screenshotStub.called)
+    })
+
+    it('should fail using screenshotComparePassing for passing status', async function () {
+      const outcomeStub = this.sandbox.stub(this.client, 'getOverallResultOutcome').returns(true)
+      const screenshotStub = this.sandbox.stub(this.client, 'getOverallScreenshotOutcome').returns(false)
+      this.sandbox.stub(this.client, '_wait').resolves()
+
+      const response = await this.client.executeSuite(
+        'suite-123',
+        { some: 'option', useScreenshotForPassingStatus: true },
+      )
+
+      assert.deepEqual(response, [[{ expected: 'data' }], false])
+      assert.ok(outcomeStub.called)
+      assert.ok(screenshotStub.called)
+    })
+
+    it('should ignore using screenshotComparePassing for passing status when suite fails', async function () {
+      const outcomeStub = this.sandbox.stub(this.client, 'getOverallResultOutcome').returns(false)
+      const screenshotStub = this.sandbox.stub(this.client, 'getOverallScreenshotOutcome').returns(true)
+      this.sandbox.stub(this.client, '_wait').resolves()
+
+      const response = await this.client.executeSuite(
+        'suite-123',
+        { some: 'option', useScreenshotForPassingStatus: true },
+      )
+
+      assert.deepEqual(response, [[{ expected: 'data' }], false])
+      assert.ok(outcomeStub.called)
+      assert.equal(screenshotStub.called, false)
     })
   })
 
@@ -696,6 +749,14 @@ describe('API methods', function () {
    * parameters to client.request(), we'll set up a few special tests around this specifically.
    */
   describe('executeTest()', function () {
+    before(function () {
+      this.sandbox = sinon.createSandbox()
+    })
+
+    afterEach(function () {
+      this.sandbox.restore()
+    })
+
     it('(async) should throw an error with ERROR response', async function () {
       this.requestStub.throws(new Error('some error'))
       try {
@@ -891,6 +952,51 @@ describe('API methods', function () {
       readFileStub.restore()
       outcomeStub.restore()
       waitStub.restore()
+    })
+
+    it('should use screenshotComparePassing for passing status', async function () {
+      const outcomeStub = this.sandbox.stub(this.client, 'getOverallResultOutcome').returns(true)
+      const screenshotStub = this.sandbox.stub(this.client, 'getOverallScreenshotOutcome').returns(true)
+      this.sandbox.stub(this.client, '_wait').resolves()
+
+      const response = await this.client.executeTest(
+        'test-123',
+        { useScreenshotForPassingStatus: true },
+      )
+
+      assert.deepEqual(response, [{ expected: 'data' }, true])
+      assert.ok(outcomeStub.called)
+      assert.ok(screenshotStub.called)
+    })
+
+    it('should fail using screenshotComparePassing for passing status', async function () {
+      const outcomeStub = this.sandbox.stub(this.client, 'getOverallResultOutcome').returns(true)
+      const screenshotStub = this.sandbox.stub(this.client, 'getOverallScreenshotOutcome').returns(false)
+      this.sandbox.stub(this.client, '_wait').resolves()
+
+      const response = await this.client.executeTest(
+        'test-123',
+        { useScreenshotForPassingStatus: true },
+      )
+
+      assert.deepEqual(response, [{ expected: 'data' }, false])
+      assert.ok(outcomeStub.called)
+      assert.ok(screenshotStub.called)
+    })
+
+    it('should ignore using screenshotComparePassing for passing status when test fails', async function () {
+      const outcomeStub = this.sandbox.stub(this.client, 'getOverallResultOutcome').returns(false)
+      const screenshotStub = this.sandbox.stub(this.client, 'getOverallScreenshotOutcome').returns(true)
+      this.sandbox.stub(this.client, '_wait').resolves()
+
+      const response = await this.client.executeTest(
+        'test-123',
+        { useScreenshotForPassingStatus: true },
+      )
+
+      assert.deepEqual(response, [{ expected: 'data' }, false])
+      assert.ok(outcomeStub.called)
+      assert.equal(screenshotStub.called, false)
     })
   })
 
