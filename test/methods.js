@@ -297,6 +297,40 @@ describe('API methods', function () {
       assert.deepEqual(this.callbackSpy.args[0], [null, responseData, true, true])
     })
 
+    it('should return an array when CSV has one row', async function () {
+      // adjust the response
+      this.requestStub.resolves({
+        code: 'SUCCESS',
+        data: [{ expected: 'data' }],
+      })
+
+      // mock out reading the file
+      this.sandbox.stub(fs, 'createReadStream').returns('file-contents')
+      // fudge the result
+      this.sandbox.stub(this.client, 'getOverallResultOutcome').returns(true)
+      this.sandbox.stub(this.client, 'getOverallScreenshotOutcome').returns(false)
+      this.sandbox.stub(this.client, '_wait').resolves()
+      const response = await this.client.executeSuite(
+        'suite-123',
+        { dataFile: './my-data-file.csv' },
+        this.callbackSpy,
+      )
+      // assert API call
+      const requestOptions = this.requestStub.args[0][0]
+      assert.deepEqual(requestOptions.headers, { 'User-Agent': 'Ghost Inspector Node.js Client' })
+      assert.equal(requestOptions.json, true)
+      assert.equal(requestOptions.method, 'POST')
+      assert.equal(requestOptions.uri, 'https://api.ghostinspector.com/v1/suites/suite-123/execute/')
+      assert.equal(requestOptions.formData.apiKey, 'my-api-key')
+      assert.equal(requestOptions.formData.dataFile, 'file-contents')
+      assert.equal(requestOptions.body, undefined)
+
+      // assert async -- note the data is an array
+      assert.deepEqual(response, [[{ expected: 'data' }], true, false])
+      // assert callback called with (error, data, passing)
+      assert.deepEqual(this.callbackSpy.args[0], [null, [{ expected: 'data' }], true, false])
+    })
+
     it('should use should use options-position callback', async function () {
       this.sandbox.stub(this.client, 'getOverallResultOutcome').returns(true)
       this.sandbox.stub(this.client, 'getOverallScreenshotOutcome').returns(false)
@@ -879,6 +913,40 @@ describe('API methods', function () {
       assert.deepEqual(response, [{ expected: 'data' }, true, false])
       // assert callback called with (error, data, passing)
       assert.deepEqual(this.callbackSpy.args[0], [null, { expected: 'data' }, true, false])
+    })
+
+    it('should return an array when CSV has one row', async function () {
+      // adjust the response
+      this.requestStub.resolves({
+        code: 'SUCCESS',
+        data: [{ expected: 'data' }],
+      })
+
+      // mock out reading the file
+      this.sandbox.stub(fs, 'createReadStream').returns('file-contents')
+      // fudge the result
+      this.sandbox.stub(this.client, 'getOverallResultOutcome').returns(true)
+      this.sandbox.stub(this.client, 'getOverallScreenshotOutcome').returns(false)
+      this.sandbox.stub(this.client, '_wait').resolves()
+      const response = await this.client.executeTest(
+        'test-123',
+        { dataFile: './my-data-file.csv' },
+        this.callbackSpy,
+      )
+      // assert API call
+      const requestOptions = this.requestStub.args[0][0]
+      assert.deepEqual(requestOptions.headers, { 'User-Agent': 'Ghost Inspector Node.js Client' })
+      assert.equal(requestOptions.json, true)
+      assert.equal(requestOptions.method, 'POST')
+      assert.equal(requestOptions.uri, 'https://api.ghostinspector.com/v1/tests/test-123/execute/')
+      assert.equal(requestOptions.formData.apiKey, 'my-api-key')
+      assert.equal(requestOptions.formData.dataFile, 'file-contents')
+      assert.equal(requestOptions.body, undefined)
+
+      // assert async -- note the data is an array
+      assert.deepEqual(response, [[{ expected: 'data' }], true, false])
+      // assert callback called with (error, data, passing)
+      assert.deepEqual(this.callbackSpy.args[0], [null, [{ expected: 'data' }], true, false])
     })
   })
 

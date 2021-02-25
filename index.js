@@ -256,8 +256,13 @@ class GhostInspector {
       throw err
     }
 
+    // Keep track of whether or not we need to return a single result within an Array, this
+    // makes sure that if a CSV gets executed with 1 row, we still return the result in a list
+    let returnSingleResult = true
     if (!Array.isArray(data)) {
       data = [data]
+    } else {
+      returnSingleResult = false
     }
 
     if (canPoll) {
@@ -273,7 +278,7 @@ class GhostInspector {
         data = await this.getSuiteResultTestResults(data[0]._id)
       }
     } else {
-      if (data.length === 1) {
+      if (data.length === 1 && returnSingleResult) {
         data = data[0]
       }
     }
@@ -357,8 +362,13 @@ class GhostInspector {
       throw err
     }
 
+    // Keep track of whether or not we need to return a single result within an Array, this
+    // makes sure that if a CSV gets executed with 1 row, we still return the result in a list
+    let returnSingleResult = true
     if (!Array.isArray(data)) {
       data = [data]
+    } else {
+      returnSingleResult = false
     }
 
     if (canPoll) {
@@ -374,7 +384,7 @@ class GhostInspector {
     const screenshotPassing = this.getOverallScreenshotOutcome(data)
 
     // map back the single data item
-    data = data.length === 1 ? data[0] : data
+    data = (data.length === 1 && returnSingleResult) ? data[0] : data
 
     // Call back with extra pass/fail parameter
     if (typeof callback === 'function') {
