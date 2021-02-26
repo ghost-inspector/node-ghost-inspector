@@ -216,6 +216,7 @@ describe('Async: Execute test with CSV file ', function () {
     const [data, passing] = await GhostInspector.executeTest('53cf58fc350c6c41029a11bf', {
       dataFile: path.join(__dirname, 'sample.csv'),
     })
+    // Since the CSV only has one row, the single test will be returned instead of a list
     assert.strictEqual(data[0].steps[1].value, 'foo')
     assert.strictEqual(passing, true)
   })

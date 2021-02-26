@@ -197,6 +197,14 @@ describe('API methods', function () {
    * parameters to client.request(), we'll set up a few special tests around this specifically.
    */
   describe('executeSuite()', function () {
+    before(function () {
+      this.sandbox = sinon.createSandbox()
+    })
+
+    afterEach(function () {
+      this.sandbox.restore()
+    })
+
     it('(async) should throw an error with ERROR response', async function () {
       this.requestStub.throws(new Error('some error'))
       try {
@@ -222,10 +230,9 @@ describe('API methods', function () {
     })
 
     it('should execute a suite', async function () {
-      const outcomeStub = sinon.stub(this.client, 'getOverallResultOutcome')
-      const waitStub = sinon.stub(this.client, '_wait')
-      waitStub.resolves()
-      outcomeStub.returns(true)
+      this.sandbox.stub(this.client, 'getOverallResultOutcome').returns(true)
+      this.sandbox.stub(this.client, '_wait').resolves()
+
       const response = await this.client.executeSuite(
         'suite-123',
         { some: 'option' },
@@ -241,18 +248,14 @@ describe('API methods', function () {
         'https://api.ghostinspector.com/v1/suites/suite-123/execute/',
       )
       // assert async
-      assert.deepEqual(response, [[{ expected: 'data' }], true])
+      assert.deepEqual(response, [[{ expected: 'data' }], true, true])
       // assert callback called with (error, data, passing)
-      assert.deepEqual(this.callbackSpy.args[0], [null, [{ expected: 'data' }], true])
-      outcomeStub.restore()
-      waitStub.restore()
+      assert.deepEqual(this.callbackSpy.args[0], [null, [{ expected: 'data' }], true, true])
     })
 
     it('should execute a suite and handle multiple results', async function () {
-      const outcomeStub = sinon.stub(this.client, 'getOverallResultOutcome')
-      outcomeStub.returns(true)
-      const waitStub = sinon.stub(this.client, '_wait')
-      waitStub.resolves()
+      this.sandbox.stub(this.client, 'getOverallResultOutcome').returns(true)
+      this.sandbox.stub(this.client, '_wait').resolves()
 
       // won't reflect actual response, but shows that we can handle an array of results
       const responseData = [
@@ -287,26 +290,60 @@ describe('API methods', function () {
       )
 
       // check response
-      assert.deepEqual(response, [responseData, true])
+      assert.deepEqual(response, [responseData, true, true])
       // assert callback called with (error, data, passing)
-      assert.deepEqual(this.callbackSpy.args[0], [null, responseData, true])
-      outcomeStub.restore()
-      waitStub.restore()
+      assert.deepEqual(this.callbackSpy.args[0], [null, responseData, true, true])
+    })
+
+    it('should return an array when CSV has one row', async function () {
+      // adjust the response
+      this.requestStub.resolves({
+        code: 'SUCCESS',
+        data: [{ expected: 'data' }],
+      })
+
+      // mock out reading the file
+      this.sandbox.stub(fs, 'createReadStream').returns('file-contents')
+      // fudge the result
+      this.sandbox.stub(this.client, 'getOverallResultOutcome')
+        .returns(true)
+        .onSecondCall()
+        .returns(false)
+      this.sandbox.stub(this.client, '_wait').resolves()
+      const response = await this.client.executeSuite(
+        'suite-123',
+        { dataFile: './my-data-file.csv' },
+        this.callbackSpy,
+      )
+      // assert API call
+      const requestOptions = this.requestStub.args[0][0]
+      assert.deepEqual(requestOptions.headers, { 'User-Agent': 'Ghost Inspector Node.js Client' })
+      assert.equal(requestOptions.json, true)
+      assert.equal(requestOptions.method, 'POST')
+      assert.equal(requestOptions.uri, 'https://api.ghostinspector.com/v1/suites/suite-123/execute/')
+      assert.equal(requestOptions.formData.apiKey, 'my-api-key')
+      assert.equal(requestOptions.formData.dataFile, 'file-contents')
+      assert.equal(requestOptions.body, undefined)
+
+      // assert async -- note the data is an array
+      assert.deepEqual(response, [[{ expected: 'data' }], true, false])
+      // assert callback called with (error, data, passing)
+      assert.deepEqual(this.callbackSpy.args[0], [null, [{ expected: 'data' }], true, false])
     })
 
     it('should use should use options-position callback', async function () {
-      const outcomeStub = sinon.stub(this.client, 'getOverallResultOutcome')
-      outcomeStub.returns(true)
-      const waitStub = sinon.stub(this.client, '_wait')
-      waitStub.resolves()
+      this.sandbox.stub(this.client, 'getOverallResultOutcome')
+        .returns(true)
+        .onSecondCall()
+        .returns(false)
+      this.sandbox.stub(this.client, '_wait').resolves()
+
       // pass callback as second-position argument
       const response = await this.client.executeSuite('suite-123', this.callbackSpy)
       // assert async
-      assert.deepEqual(response, [[{ expected: 'data' }], true])
+      assert.deepEqual(response, [[{ expected: 'data' }], true, false])
       // assert callback called with (error, data, passing)
-      assert.deepEqual(this.callbackSpy.args[0], [null, [{ expected: 'data' }], true])
-      outcomeStub.restore()
-      waitStub.restore()
+      assert.deepEqual(this.callbackSpy.args[0], [null, [{ expected: 'data' }], true, false])
     })
   })
 
@@ -696,6 +733,14 @@ describe('API methods', function () {
    * parameters to client.request(), we'll set up a few special tests around this specifically.
    */
   describe('executeTest()', function () {
+    before(function () {
+      this.sandbox = sinon.createSandbox()
+    })
+
+    afterEach(function () {
+      this.sandbox.restore()
+    })
+
     it('(async) should throw an error with ERROR response', async function () {
       this.requestStub.throws(new Error('some error'))
       try {
@@ -721,10 +766,9 @@ describe('API methods', function () {
     })
 
     it('should execute a test', async function () {
-      const outcomeStub = sinon.stub(this.client, 'getOverallResultOutcome')
-      outcomeStub.returns(true)
-      const waitStub = sinon.stub(this.client, '_wait')
-      waitStub.resolves()
+      this.sandbox.stub(this.client, 'getOverallResultOutcome').returns(true)
+      this.sandbox.stub(this.client, '_wait').resolves()
+
       const response = await this.client.executeTest('test-123', {}, this.callbackSpy)
       // assert API call
       const requestOptions = this.requestStub.args[0][0]
@@ -734,18 +778,14 @@ describe('API methods', function () {
       assert.equal(requestOptions.uri, 'https://api.ghostinspector.com/v1/tests/test-123/execute/')
       assert.equal(requestOptions.formData.apiKey, 'my-api-key')
       // assert async
-      assert.deepEqual(response, [{ expected: 'data' }, true])
+      assert.deepEqual(response, [{ expected: 'data' }, true, true])
       // assert callback called with (error, data, passing)
-      assert.deepEqual(this.callbackSpy.args[0], [null, { expected: 'data' }, true])
-      outcomeStub.restore()
-      waitStub.restore()
+      assert.deepEqual(this.callbackSpy.args[0], [null, { expected: 'data' }, true, true])
     })
 
     it('should execute a test with multiple browser/region/viewport', async function () {
-      const outcomeStub = sinon.stub(this.client, 'getOverallResultOutcome')
-      outcomeStub.returns(true)
-      const waitStub = sinon.stub(this.client, '_wait')
-      waitStub.resolves()
+      this.sandbox.stub(this.client, 'getOverallResultOutcome').returns(true)
+      this.sandbox.stub(this.client, '_wait').resolves()
 
       // won't reflect actual response, but shows that we can handle an array of results
       const responseData = [
@@ -780,39 +820,35 @@ describe('API methods', function () {
       assert.deepEqual(requestOptions.formData.region, ['us-east-1', 'us-east-2'])
       assert.deepEqual(requestOptions.formData.viewport, ['800x600', '1024x768'])
       // assert async
-      assert.deepEqual(response, [responseData, true])
+      assert.deepEqual(response, [responseData, true, true])
       // assert callback called with (error, data, passing)
-      assert.deepEqual(this.callbackSpy.args[0], [null, responseData, true])
-      outcomeStub.restore()
-      waitStub.restore()
+      assert.deepEqual(this.callbackSpy.args[0], [null, responseData, true, true])
     })
 
     it('should use should use options-position callback', async function () {
-      const outcomeStub = sinon.stub(this.client, 'getOverallResultOutcome')
-      outcomeStub.returns(true)
-      const waitStub = sinon.stub(this.client, '_wait')
-      waitStub.resolves()
+      this.sandbox.stub(this.client, 'getOverallResultOutcome')
+        .returns(true)
+        .onSecondCall()
+        .returns(false)
+      this.sandbox.stub(this.client, '_wait').resolves()
       // pass callback as second-position argument
       const response = await this.client.executeTest('test-123', this.callbackSpy)
       // assert async
-      assert.deepEqual(response, [{ expected: 'data' }, true])
+      assert.deepEqual(response, [{ expected: 'data' }, true, false])
       // assert callback called with (error, data, passing)
-      assert.deepEqual(this.callbackSpy.args[0], [null, { expected: 'data' }, true])
-      outcomeStub.restore()
-      waitStub.restore()
+      assert.deepEqual(this.callbackSpy.args[0], [null, { expected: 'data' }, true, false])
     })
 
     it('should execute a test with a CSV file with multiple browser/region/viewport', async function () {
       // mock out reading the file
-      const readFileStub = sinon.stub(fs, 'createReadStream')
-      readFileStub.returns('file-contents')
+      this.sandbox.stub(fs, 'createReadStream').returns('file-contents')
 
       // fudge the result
-      const outcomeStub = sinon.stub(this.client, 'getOverallResultOutcome')
-      outcomeStub.returns(true)
-
-      const waitStub = sinon.stub(this.client, '_wait')
-      waitStub.resolves()
+      this.sandbox.stub(this.client, 'getOverallResultOutcome')
+        .returns(true)
+        .onSecondCall()
+        .returns(true)
+      this.sandbox.stub(this.client, '_wait').resolves()
 
       const responseData = [
         { expected: 'data' },
@@ -850,25 +886,21 @@ describe('API methods', function () {
       assert.equal(requestOptions.body, undefined)
 
       // assert async response
-      assert.deepEqual(response, [responseData, true])
+      assert.deepEqual(response, [responseData, true, true])
 
       // assert callback called with (error, data, passing)
-      assert.deepEqual(this.callbackSpy.args[0], [null, responseData, true])
-      // restore stubs
-      readFileStub.restore()
-      outcomeStub.restore()
-      waitStub.restore()
+      assert.deepEqual(this.callbackSpy.args[0], [null, responseData, true, true])
     })
 
     it('should execute a test with a CSV file', async function () {
       // mock out reading the file
-      const readFileStub = sinon.stub(fs, 'createReadStream')
-      readFileStub.returns('file-contents')
+      this.sandbox.stub(fs, 'createReadStream').returns('file-contents')
       // fudge the result
-      const outcomeStub = sinon.stub(this.client, 'getOverallResultOutcome')
-      outcomeStub.returns(true)
-      const waitStub = sinon.stub(this.client, '_wait')
-      waitStub.resolves()
+      this.sandbox.stub(this.client, 'getOverallResultOutcome')
+        .returns(true)
+        .onSecondCall()
+        .returns(false)
+      this.sandbox.stub(this.client, '_wait').resolves()
       const response = await this.client.executeTest(
         'test-123',
         { dataFile: './my-data-file.csv' },
@@ -884,13 +916,46 @@ describe('API methods', function () {
       assert.equal(requestOptions.formData.dataFile, 'file-contents')
       assert.equal(requestOptions.body, undefined)
       // assert async
-      assert.deepEqual(response, [{ expected: 'data' }, true])
+      assert.deepEqual(response, [{ expected: 'data' }, true, false])
       // assert callback called with (error, data, passing)
-      assert.deepEqual(this.callbackSpy.args[0], [null, { expected: 'data' }, true])
-      // restore stubs
-      readFileStub.restore()
-      outcomeStub.restore()
-      waitStub.restore()
+      assert.deepEqual(this.callbackSpy.args[0], [null, { expected: 'data' }, true, false])
+    })
+
+    it('should return an array when CSV has one row', async function () {
+      // adjust the response
+      this.requestStub.resolves({
+        code: 'SUCCESS',
+        data: [{ expected: 'data' }],
+      })
+
+      // mock out reading the file
+      this.sandbox.stub(fs, 'createReadStream').returns('file-contents')
+      // fudge the result
+      this.sandbox.stub(this.client, 'getOverallResultOutcome')
+        .returns(true)
+        .onSecondCall()
+        .returns(false)
+
+      this.sandbox.stub(this.client, '_wait').resolves()
+      const response = await this.client.executeTest(
+        'test-123',
+        { dataFile: './my-data-file.csv' },
+        this.callbackSpy,
+      )
+      // assert API call
+      const requestOptions = this.requestStub.args[0][0]
+      assert.deepEqual(requestOptions.headers, { 'User-Agent': 'Ghost Inspector Node.js Client' })
+      assert.equal(requestOptions.json, true)
+      assert.equal(requestOptions.method, 'POST')
+      assert.equal(requestOptions.uri, 'https://api.ghostinspector.com/v1/tests/test-123/execute/')
+      assert.equal(requestOptions.formData.apiKey, 'my-api-key')
+      assert.equal(requestOptions.formData.dataFile, 'file-contents')
+      assert.equal(requestOptions.body, undefined)
+
+      // assert async -- note the data is an array
+      assert.deepEqual(response, [[{ expected: 'data' }], true, false])
+      // assert callback called with (error, data, passing)
+      assert.deepEqual(this.callbackSpy.args[0], [null, [{ expected: 'data' }], true, false])
     })
   })
 

@@ -60,15 +60,15 @@ class GhostInspector {
     return formData
   }
 
-  getOverallResultOutcome(data) {
+  getOverallResultOutcome(data, field='passing') {
     if (data instanceof Array) {
       let passing = data.length ? true : null
       for (const entry of data) {
-        passing = passing && entry.passing
+        passing = passing && entry[field]
       }
       return passing
     } else {
-      return data.passing === undefined ? null : data.passing
+      return data[field] === undefined ? null : data[field]
     }
   }
 
@@ -244,8 +244,13 @@ class GhostInspector {
       throw err
     }
 
+    // Keep track of whether or not we need to return a single result within an Array, this
+    // makes sure that if a CSV gets executed with 1 row, we still return the result in a list
+    let returnSingleResult = true
     if (!Array.isArray(data)) {
       data = [data]
+    } else {
+      returnSingleResult = false
     }
 
     if (canPoll) {
@@ -261,18 +266,19 @@ class GhostInspector {
         data = await this.getSuiteResultTestResults(data[0]._id)
       }
     } else {
-      if (data.length === 1) {
+      if (data.length === 1 && returnSingleResult) {
         data = data[0]
       }
     }
     // Check results, determine overall pass/fail
     const passing = this.getOverallResultOutcome(data)
+    const screenshotPassing = this.getOverallResultOutcome(data, 'screenshotComparePassing')
 
     // Call back with extra pass/fail parameter
     if (typeof callback === 'function') {
-      callback(null, data, passing)
+      callback(null, data, passing, screenshotPassing)
     }
-    return [data, passing]
+    return [data, passing, screenshotPassing]
   }
 
   async downloadSuiteSeleniumHtml(suiteId, dest, callback) {
@@ -344,8 +350,13 @@ class GhostInspector {
       throw err
     }
 
+    // Keep track of whether or not we need to return a single result within an Array, this
+    // makes sure that if a CSV gets executed with 1 row, we still return the result in a list
+    let returnSingleResult = true
     if (!Array.isArray(data)) {
       data = [data]
+    } else {
+      returnSingleResult = false
     }
 
     if (canPoll) {
@@ -358,15 +369,16 @@ class GhostInspector {
 
     // Check results, determine overall pass/fail
     const passing = this.getOverallResultOutcome(data)
+    const screenshotPassing = this.getOverallResultOutcome(data, 'screenshotComparePassing')
 
     // map back the single data item
-    data = data.length === 1 ? data[0] : data
+    data = (data.length === 1 && returnSingleResult) ? data[0] : data
 
     // Call back with extra pass/fail parameter
     if (typeof callback === 'function') {
-      callback(null, data, passing)
+      callback(null, data, passing, screenshotPassing)
     }
-    return [data, passing]
+    return [data, passing, screenshotPassing]
   }
 
   async waitForResult(pollFunction, options, callback) {

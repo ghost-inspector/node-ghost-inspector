@@ -165,13 +165,13 @@ const options = {
 
 // Example using await
 try {
-    const [results, passing] = await GhostInspector.executeSuite('[suite-id]', options);
+    const [results, passing, screenshotPassing] = await GhostInspector.executeSuite('[suite-id]', options);
 } catch (err) {
     console.error(err);
 }
 
 // Example using a callback
-GhostInspector.executeSuite('[suite-id]', options, function (err, results, passing) {
+GhostInspector.executeSuite('[suite-id]', options, function (err, results, passing, screenshotPassing) {
     if (err) return console.error(err);
     console.log(passing === true ? 'Passed' : 'Failed');
     console.log(results);
@@ -409,13 +409,13 @@ const options = {
 
 // Example using await
 try {
-    const [results, passing] = await GhostInspector.executeTest('[test-id]', options);
+    const [results, passing, screenshotPassing] = await GhostInspector.executeTest('[test-id]', options);
 } catch (err) {
     console.error(err);
 }
 
 // Example using a callback
-GhostInspector.executeTest('[test-id]', options, function (err, results, passing) {
+GhostInspector.executeTest('[test-id]', options, function (err, results, passing, screenshotPassing) {
     if (err) return console.error(err);
     console.log(passing === true ? 'Passed' : 'Failed');
     console.log(results);
