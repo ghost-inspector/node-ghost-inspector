@@ -60,7 +60,7 @@ class GhostInspector {
     return formData
   }
 
-  getOverallResultOutcome(data, field='passing') {
+  getOverallResultOutcome(data, field = 'passing') {
     if (data instanceof Array) {
       let passing = data.length ? true : null
       for (const entry of data) {
@@ -372,7 +372,7 @@ class GhostInspector {
     const screenshotPassing = this.getOverallResultOutcome(data, 'screenshotComparePassing')
 
     // map back the single data item
-    data = (data.length === 1 && returnSingleResult) ? data[0] : data
+    data = data.length === 1 && returnSingleResult ? data[0] : data
 
     // Call back with extra pass/fail parameter
     if (typeof callback === 'function') {

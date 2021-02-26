@@ -305,7 +305,8 @@ describe('API methods', function () {
       // mock out reading the file
       this.sandbox.stub(fs, 'createReadStream').returns('file-contents')
       // fudge the result
-      this.sandbox.stub(this.client, 'getOverallResultOutcome')
+      this.sandbox
+        .stub(this.client, 'getOverallResultOutcome')
         .returns(true)
         .onSecondCall()
         .returns(false)
@@ -320,7 +321,10 @@ describe('API methods', function () {
       assert.deepEqual(requestOptions.headers, { 'User-Agent': 'Ghost Inspector Node.js Client' })
       assert.equal(requestOptions.json, true)
       assert.equal(requestOptions.method, 'POST')
-      assert.equal(requestOptions.uri, 'https://api.ghostinspector.com/v1/suites/suite-123/execute/')
+      assert.equal(
+        requestOptions.uri,
+        'https://api.ghostinspector.com/v1/suites/suite-123/execute/',
+      )
       assert.equal(requestOptions.formData.apiKey, 'my-api-key')
       assert.equal(requestOptions.formData.dataFile, 'file-contents')
       assert.equal(requestOptions.body, undefined)
@@ -332,7 +336,8 @@ describe('API methods', function () {
     })
 
     it('should use should use options-position callback', async function () {
-      this.sandbox.stub(this.client, 'getOverallResultOutcome')
+      this.sandbox
+        .stub(this.client, 'getOverallResultOutcome')
         .returns(true)
         .onSecondCall()
         .returns(false)
@@ -826,7 +831,8 @@ describe('API methods', function () {
     })
 
     it('should use should use options-position callback', async function () {
-      this.sandbox.stub(this.client, 'getOverallResultOutcome')
+      this.sandbox
+        .stub(this.client, 'getOverallResultOutcome')
         .returns(true)
         .onSecondCall()
         .returns(false)
@@ -844,7 +850,8 @@ describe('API methods', function () {
       this.sandbox.stub(fs, 'createReadStream').returns('file-contents')
 
       // fudge the result
-      this.sandbox.stub(this.client, 'getOverallResultOutcome')
+      this.sandbox
+        .stub(this.client, 'getOverallResultOutcome')
         .returns(true)
         .onSecondCall()
         .returns(true)
@@ -896,7 +903,8 @@ describe('API methods', function () {
       // mock out reading the file
       this.sandbox.stub(fs, 'createReadStream').returns('file-contents')
       // fudge the result
-      this.sandbox.stub(this.client, 'getOverallResultOutcome')
+      this.sandbox
+        .stub(this.client, 'getOverallResultOutcome')
         .returns(true)
         .onSecondCall()
         .returns(false)
@@ -931,7 +939,8 @@ describe('API methods', function () {
       // mock out reading the file
       this.sandbox.stub(fs, 'createReadStream').returns('file-contents')
       // fudge the result
-      this.sandbox.stub(this.client, 'getOverallResultOutcome')
+      this.sandbox
+        .stub(this.client, 'getOverallResultOutcome')
         .returns(true)
         .onSecondCall()
         .returns(false)
