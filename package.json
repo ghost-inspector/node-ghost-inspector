@@ -22,7 +22,7 @@
   },
   "main": "./index.js",
   "bin": {
-    "ghost": "./bin/cli.js"
+    "ghost-inspector": "./bin/cli.js"
   },
   "dependencies": {
     "request": "^2.88.2",

@@ -21,6 +21,8 @@ module.exports = {
     const apiKey = args.apiKey
     delete args['apiKey']
 
+
+    // TODO: test with data-source and --region --region etc, what does the output look like?
     // execute
     try {
       const client = require('../../index')(apiKey)
