@@ -178,7 +178,7 @@ describe('API methods', function () {
   })
 
   it('updateSuite()', async function () {
-    const response = await this.client.updateSuite('suite-id', 'new-suite-name', this.callbackSpy)
+    const response = await this.client.updateSuite('suite-id', {name: 'new-suite-name'}, this.callbackSpy)
     // assert API call
     const requestOptions = this.requestStub.args[0][0]
     assert.deepEqual(requestOptions.headers, { 'User-Agent': 'Ghost Inspector Node.js Client' })
