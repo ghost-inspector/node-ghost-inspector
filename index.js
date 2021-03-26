@@ -333,6 +333,10 @@ class GhostInspector {
     return this.request('DELETE', `/tests/${testId}/`, callback)
   }
 
+  async updateTest(testId, updates, callback) {
+    return this.request('POST', `/tests/${testId}/`, updates, callback)
+  }
+
   async getTestResults(testId, options, callback) {
     return this.request('GET', `/tests/${testId}/results/`, options, callback)
   }
