@@ -3,7 +3,7 @@ const helpers = require('../helpers')
 
 module.exports = {
   command: 'test-runner-ips',
-  desc: 'Fetch the list of IP addresses used by Ghost Inspector test runners, by region.',
+  desc: 'Fetch a list of test runner IP addresses by region.',
   builder: {},
   handler: async function (argv) {
     try {
