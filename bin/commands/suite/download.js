@@ -14,8 +14,6 @@ module.exports = {
         choices: ['json', 'html', 'side'],
         default: 'json',
       },
-      // TODO: node client doesn't yet support this
-      // TODO: should we provide bundling imports for other formats?
       'include-imports': {
         description: 'Bundle imported suites in the export when provided (currenlty for .json exports only)',
         type: 'boolean',
@@ -40,7 +38,11 @@ module.exports = {
           downloadMethod = 'downloadSuiteSeleniumSide'
         break;
         default:
-          downloadMethod = 'downloadSuiteJson'
+          if (argv.includeImports) {
+            downloadMethod = 'downloadSuiteJsonBundled'
+          } else {
+            downloadMethod = 'downloadSuiteJson'
+          }
       }
 
       let destination
