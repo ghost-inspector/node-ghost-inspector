@@ -736,6 +736,23 @@ describe('API methods', function () {
     assert.deepEqual(this.callbackSpy.args[0], [null, { expected: 'data' }])
   })
 
+  it('deleteTest()', async function () {
+    const response = await this.client.deleteTest('test-123', this.callbackSpy)
+    // assert API call
+    const requestOptions = this.requestStub.args[0][0]
+    assert.deepEqual(requestOptions.headers, { 'User-Agent': 'Ghost Inspector Node.js Client' })
+    assert.equal(requestOptions.json, true)
+    assert.equal(requestOptions.method, 'DELETE')
+    assert.equal(
+      requestOptions.uri,
+      'https://api.ghostinspector.com/v1/tests/test-123/?apiKey=my-api-key&',
+    )
+    // assert async
+    assert.equal(response.expected, 'data')
+    // assert callback called with (error, data)
+    assert.deepEqual(this.callbackSpy.args[0], [null, { expected: 'data' }])
+  })
+
   it('getTestResults()', async function () {
     const response = await this.client.getTestResults(
       'test-123',
