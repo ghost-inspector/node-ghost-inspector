@@ -1,13 +1,17 @@
-
 const helpers = require('../../helpers')
 
-// TODO
 module.exports = {
-  command: 'create <suite-id>',
+  command: 'create <organization-id> <suite-name>',
   desc: 'Create a suite.',
   builder: {},
   handler: async function (argv) {
-    console.log('ERROR: createSuite() not yet implemented in node-ghost-inspector')
-    process.exit(1)
+    try {
+      const client = require('../../../index')(argv.apiKey)
+      const result = await client.createSuite(argv.organizationId, argv.suiteName)
+      helpers.print(result)
+    } catch (error) {
+      throw new Error(error.message)
+    }
+    process.exit(0)
   }
 }
