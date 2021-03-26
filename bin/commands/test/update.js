@@ -1,13 +1,37 @@
 
 const helpers = require('../../helpers')
 
-// TODO
+// TODO - test this out
 module.exports = {
   command: 'update <test-id>',
   desc: 'Update a test.',
-  builder: {},
+  builder: (yargs) => {
+    yargs.options({
+      // TODO: list all possible values?
+      '[attribute]': {
+        description: 'Pass "--[attribute] value" to update your test (eg: --name "My test")',
+      },
+    })
+    return yargs
+  },
   handler: async function (argv) {
-    console.log('ERROR: updateTest() not yet implemented in node-ghost-inspector')
-    process.exit(1)
+    // clean up yargs-related stuff
+    const args = helpers.cleanArgs(argv)
+
+    const testId = args.testId
+    delete args['testId']
+
+    const apiKey = args.apiKey
+    delete args['apiKey']
+
+    try {
+      const client = require('../../../index')(argv.apiKey)
+      const result = await client.updateTest(argv.testId, args)
+      helpers.print(result)
+    } catch (error) {
+      throw new Error(error.message)
+    }
+
+    process.exit(0)
   }
 }
