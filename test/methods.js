@@ -55,6 +55,23 @@ describe('API methods', function () {
     })
   })
 
+  it('getAllRunningTests()', async function () {
+    const response = await this.client.getAllRunningTests('org-123', this.callbackSpy)
+    // assert API call
+    const requestOptions = this.requestStub.args[0][0]
+    assert.deepEqual(requestOptions.headers, { 'User-Agent': 'Ghost Inspector Node.js Client' })
+    assert.equal(requestOptions.json, true)
+    assert.equal(requestOptions.method, 'GET')
+    assert.equal(
+      requestOptions.uri,
+      'https://api.ghostinspector.com/v1/organizations/org-123/running/?apiKey=my-api-key&',
+    )
+    // assert async
+    assert.equal(response.expected, 'data')
+    // assert callback called with (error, data)
+    assert.deepEqual(this.callbackSpy.args[0], [null, { expected: 'data' }])
+  })
+
   it('createFolder()', async function () {
     const response = await this.client.createFolder('org-id', 'folder-name', this.callbackSpy)
     // assert API call

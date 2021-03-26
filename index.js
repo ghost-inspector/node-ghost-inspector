@@ -541,6 +541,11 @@ class GhostInspector {
   async cancelResult(testResultId, callback) {
     return this.cancelTestResult(testResultId, callback)
   }
+
+  // Fetch a list of the currently-executing results for the entire organization and return the results.
+  async getAllRunningTests(organizationId, callback) {
+    return this.request('GET', `/organizations/${organizationId}/running/`, callback)
+  }
 }
 
 // Export new GhostInspector instance
