@@ -635,6 +635,24 @@ describe('API methods', function () {
         'https://api.ghostinspector.com/v1/suites/suite-123/export/json/?apiKey=my-api-key&',
       )
     })
+
+    it('should download JSON bundled', async function () {
+      this.requestStub.resolves('{"some": "json"}')
+      const response = await this.client.downloadSuiteJsonBundled(
+        'suite-123',
+        '/foo.json',
+        this.callbackSpy,
+      )
+      // assert API call
+      const requestOptions = this.requestStub.args[0][0]
+      assert.deepEqual(requestOptions.headers, { 'User-Agent': 'Ghost Inspector Node.js Client' })
+      assert.equal(requestOptions.json, undefined)
+      assert.equal(requestOptions.method, 'GET')
+      assert.equal(
+        requestOptions.uri,
+        'https://api.ghostinspector.com/v1/suites/suite-123/export/json/?apiKey=my-api-key&includeImports=true&',
+      )
+    })
   })
 
   /**
@@ -1523,6 +1541,20 @@ describe('API methods', function () {
       assert.equal(
         requestOptions.uri,
         'https://api.ghostinspector.com/v1/tests/test-123/export/json/?apiKey=my-api-key&',
+      )
+    })
+
+    it('should download JSON with imports', async function () {
+      this.requestStub.resolves('{"some": "json"}')
+      const response = await this.client.downloadTestJsonBundled('test-123', '/foo.json', this.callbackSpy)
+      // assert API call
+      const requestOptions = this.requestStub.args[0][0]
+      assert.deepEqual(requestOptions.headers, { 'User-Agent': 'Ghost Inspector Node.js Client' })
+      assert.equal(requestOptions.json, undefined)
+      assert.equal(requestOptions.method, 'GET')
+      assert.equal(
+        requestOptions.uri,
+        'https://api.ghostinspector.com/v1/tests/test-123/export/json/?apiKey=my-api-key&includeImports=true&',
       )
     })
   })

@@ -142,10 +142,11 @@ class GhostInspector {
     }
   }
 
-  async download(path, dest, callback) {
+  async download(path, dest, callback, includeImports = false) {
     // Add API key to params
     const params = {
       apiKey: this.apiKey,
+      includeImports
     }
     const options = {
       method: 'GET',
@@ -317,8 +318,16 @@ class GhostInspector {
     return this.download(`/suites/${suiteId}/export/json/`, dest, callback)
   }
 
+  async downloadSuiteJsonBundled(suiteId, dest, callback) {
+    return this.download(`/suites/${suiteId}/export/json/`, dest, callback, true)
+  }
+
   async downloadTestJson(testId, dest, callback) {
     return this.download(`/tests/${testId}/export/json/`, dest, callback)
+  }
+
+  async downloadTestJsonBundled(testId, dest, callback) {
+    return this.download(`/tests/${testId}/export/json/`, dest, callback, true)
   }
 
   async getTests(callback) {
