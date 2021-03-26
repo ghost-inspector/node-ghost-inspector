@@ -177,6 +177,24 @@ describe('API methods', function () {
     assert.deepEqual(this.callbackSpy.args[0], [null, { expected: 'data' }])
   })
 
+  it('updateSuite()', async function () {
+    const response = await this.client.updateSuite('suite-id', 'new-suite-name', this.callbackSpy)
+    // assert API call
+    const requestOptions = this.requestStub.args[0][0]
+    assert.deepEqual(requestOptions.headers, { 'User-Agent': 'Ghost Inspector Node.js Client' })
+    assert.deepEqual(requestOptions.formData, { name: 'new-suite-name', apiKey: 'my-api-key' })
+    assert.equal(requestOptions.json, true)
+    assert.equal(requestOptions.method, 'POST')
+    assert.equal(
+      requestOptions.uri,
+      'https://api.ghostinspector.com/v1/suites/suite-id/',
+    )
+    // assert async
+    assert.equal(response.expected, 'data')
+    // assert callback called with (error, data)
+    assert.deepEqual(this.callbackSpy.args[0], [null, { expected: 'data' }])
+  })
+
   it('getSuites()', async function () {
     const response = await this.client.getSuites(this.callbackSpy)
     // assert API call

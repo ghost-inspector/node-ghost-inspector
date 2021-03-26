@@ -222,6 +222,11 @@ class GhostInspector {
     return this.request('POST', '/suites/', options, callback)
   }
 
+  async updateSuite(suiteId, suiteName, callback) {
+    const options = { name: suiteName }
+    return this.request('POST', `/suites/${suiteId}/`, options, callback)
+  }
+
   async getSuite(suiteId, callback) {
     return this.request('GET', `/suites/${suiteId}/`, callback)
   }
