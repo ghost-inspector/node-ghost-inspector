@@ -191,6 +191,11 @@ class GhostInspector {
     return request(options)
   }
 
+  async createFolder(organizationId, folderName, callback) {
+    const options = { organization: organizationId, name: folderName }
+    return this.request('POST', '/folders/', options, callback)
+  }
+
   async getFolders(callback) {
     return this.request('GET', '/folders/', callback)
   }
