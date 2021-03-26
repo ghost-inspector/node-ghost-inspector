@@ -204,6 +204,11 @@ class GhostInspector {
     return this.request('GET', `/folders/${folderId}/`, callback)
   }
 
+  async updateFolder(folderId, folderName, callback) {
+    const options = { name: folderName }
+    return this.request('POST', `/folders/${folderId}/`, options, callback)
+  }
+
   async getFolderSuites(folderId, callback) {
     return this.request('GET', `/folders/${folderId}/suites/`, callback)
   }
