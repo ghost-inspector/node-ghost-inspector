@@ -1,12 +1,18 @@
 
-const helpers = require('../helpers')
+const helpers = require('../../helpers')
 
 module.exports = {
-  command: 'execute-test <testId> [options]',
+  command: 'execute <test-id> [options]',
   desc: 'Execute a test with the provided options.',
 
   builder: (yargs) => {
-    helpers.addExecutionArgs(yargs)
+    yargs.options({
+      ...helpers.getCommonExecutionOptions(),
+      // execute-test only
+      'screenshot-compare-baseline-result': {
+        description: 'The ID of any completed test result across your organization to use as the baseline for the screenshot comparison Will be ignored if screenshot comparison or visual capture is disabled.',
+      }
+    })
     return yargs
   },
 
@@ -21,18 +27,12 @@ module.exports = {
     const apiKey = args.apiKey
     delete args['apiKey']
 
-
-    // TODO: test with data-source and --region --region etc, what does the output look like?
     // execute
     try {
-      const client = require('../../index')(apiKey)
+      const client = require('../../../index')(apiKey)
       const [result, passing, screenshotPassing] = await client.executeTest(testId, args)
       // print out result, regardless
-      console.log(result)
-      // fail the process if not passing
-      if (!args.immediate && !passing) {
-        process.exit(1)
-      }
+      helpers.print(result)
     } catch (error) {
       throw new Error(error.message)
     }
