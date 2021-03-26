@@ -1,13 +1,18 @@
 
 const helpers = require('../../helpers')
 
-// TODO
 module.exports = {
-  command: 'update <folder-id>',
-  desc: 'Update a folder.',
+  command: 'update <folder-id> <folder-name>',
+  desc: 'Update a folder with new <folder-name>.',
   builder: {},
   handler: async function (argv) {
-    console.log('ERROR: updateFolder() not yet implemented in node-ghost-inspector')
-    process.exit(1)
+    try {
+      const client = require('../../../index')(argv.apiKey)
+      const result = await client.updateFolder(argv.folderId, argv.folderName)
+      helpers.print(result)
+    } catch (error) {
+      throw new Error(error.message)
+    }
+    process.exit(0)
   }
 }
