@@ -217,6 +217,11 @@ class GhostInspector {
     return this.request('GET', '/suites/', callback)
   }
 
+  async createSuite(organizationId, suiteName, callback) {
+    const options = { organization: organizationId, name: suiteName }
+    return this.request('POST', '/suites/', options, callback)
+  }
+
   async getSuite(suiteId, callback) {
     return this.request('GET', `/suites/${suiteId}/`, callback)
   }
