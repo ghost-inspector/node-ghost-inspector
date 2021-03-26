@@ -146,8 +146,12 @@ class GhostInspector {
     // Add API key to params
     const params = {
       apiKey: this.apiKey,
-      includeImports
     }
+
+    if (includeImports) {
+      params.includeImports = true
+    }
+
     const options = {
       method: 'GET',
       uri: this.buildRequestUrl(path) + this.buildQueryString(params),
