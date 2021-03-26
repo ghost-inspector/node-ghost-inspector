@@ -14,7 +14,6 @@ module.exports = {
         choices: ['json', 'html', 'side'],
         default: 'json',
       },
-      // TODO: node client doesn't yet support this
       'include-imports': {
         description: 'Bundle imported tests in the export when provided (currenlty for .json exports only)',
         type: 'boolean',
