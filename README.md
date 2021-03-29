@@ -121,7 +121,6 @@ Jump to...
     * [`getSuiteResultXUnit()`](#ghostinspectorgetsuiteresultxunitsuiteresultid-callback)
  * Tests
     * [`acceptTestScreenshot()`](#ghostinspectoraccepttestscreenshottestid-callback)
-    * [`downloadTestJson()`](#ghostinspectordownloadtestjson-dest-callback)
     * [`deleteTest()`](#ghostinspectordeletetesttestid-callback)
     * [`downloadTestJson()`](#ghostinspectordownloadtestjsontestid-dest-callback)
     * [`downloadTestSeleniumHtml()`](#ghostinspectordownloadtestseleniumhtmltestid-dest-callback)
@@ -454,14 +453,18 @@ Download a file of all tests in this suite in Ghostinspector JSON format
 
 ```js
 // Example using await
+const options = {
+  includeImports: true
+}
+
 try {
-  await GhostInspector.downloadSuiteJson('[suite-id]', 'suite.zip')
+  await GhostInspector.downloadSuiteJson('[suite-id]', 'suite.zip', options)
 } catch (err) {
   console.error(err)
 }
 
 // Example using a callback
-GhostInspector.downloadSuiteJson('[suite-id]', 'suite.zip', function (err) {
+GhostInspector.downloadSuiteJson('[suite-id]', 'suite.zip', options, function (err) {
   if (err) return console.error(err)
   console.log('File saved to suite.zip.')
 })
@@ -472,15 +475,19 @@ GhostInspector.downloadSuiteJson('[suite-id]', 'suite.zip', function (err) {
 Download a single test in Ghostinspector JSON format
 
 ```js
+const options = {
+  includeImports: true
+}
+
 // Example using await
 try {
-  await GhostInspector.downloadTestJson('[test-id]', 'test.json')
+  await GhostInspector.downloadTestJson('[test-id]', 'test.json', options)
 } catch (err) {
   console.error(err)
 }
 
 // Example using a callback
-GhostInspector.downloadTestJson('[test-id]', 'test.json', function (err) {
+GhostInspector.downloadTestJson('[test-id]', 'test.json', options, function (err) {
   if (err) return console.error(err)
   console.log('File saved to test.json.')
 })
