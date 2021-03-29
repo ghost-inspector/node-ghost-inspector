@@ -1,6 +1,5 @@
 const helpers = require('../../helpers')
 
-// TODO: node.js client says imports still support Selenium IDE v1 format, should we remove this?
 module.exports = {
   command: 'import-test <suite-id> <file>',
   desc: 'Import a test in JSON format. <file> must be local path on-disk to JSON test file.',
