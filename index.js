@@ -142,17 +142,21 @@ class GhostInspector {
     }
   }
 
-  async download(path, dest, callback, includeImports = false) {
+  async download(path, dest, options, callback) {
+    if (typeof options === 'function') {
+      callback = options
+    }
+    
     // Add API key to params
     const params = {
       apiKey: this.apiKey,
     }
 
-    if (includeImports) {
+    if (options && options.includeImports) {
       params.includeImports = true
     }
 
-    const options = {
+    const requestOptions = {
       method: 'GET',
       uri: this.buildRequestUrl(path) + this.buildQueryString(params),
       headers: {
@@ -162,7 +166,7 @@ class GhostInspector {
     // Send request to API
     let data
     try {
-      data = await this._request(options)
+      data = await this._request(requestOptions)
     } catch (err) {
       if (typeof callback === 'function') {
         callback(err)
@@ -317,20 +321,12 @@ class GhostInspector {
     return this.download(`/suites/${suiteId}/export/selenium-side/`, dest, callback)
   }
 
-  async downloadSuiteJson(suiteId, dest, callback) {
-    return this.download(`/suites/${suiteId}/export/json/`, dest, callback)
+  async downloadSuiteJson(suiteId, dest, options, callback) {
+    return this.download(`/suites/${suiteId}/export/json/`, dest, options, callback)
   }
 
-  async downloadSuiteJsonBundled(suiteId, dest, callback) {
-    return this.download(`/suites/${suiteId}/export/json/`, dest, callback, true)
-  }
-
-  async downloadTestJson(testId, dest, callback) {
-    return this.download(`/tests/${testId}/export/json/`, dest, callback)
-  }
-
-  async downloadTestJsonBundled(testId, dest, callback) {
-    return this.download(`/tests/${testId}/export/json/`, dest, callback, true)
+  async downloadTestJson(testId, dest, options, callback) {
+    return this.download(`/tests/${testId}/export/json/`, dest, options, callback)
   }
 
   async getTests(callback) {

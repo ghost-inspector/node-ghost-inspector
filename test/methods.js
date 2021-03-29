@@ -178,7 +178,7 @@ describe('API methods', function () {
   })
 
   it('updateSuite()', async function () {
-    const response = await this.client.updateSuite('suite-id', {name: 'new-suite-name'}, this.callbackSpy)
+    const response = await this.client.updateSuite('suite-id', { name: 'new-suite-name' }, this.callbackSpy)
     // assert API call
     const requestOptions = this.requestStub.args[0][0]
     assert.deepEqual(requestOptions.headers, { 'User-Agent': 'Ghost Inspector Node.js Client' })
@@ -638,9 +638,10 @@ describe('API methods', function () {
 
     it('should download JSON bundled', async function () {
       this.requestStub.resolves('{"some": "json"}')
-      const response = await this.client.downloadSuiteJsonBundled(
+      const response = await this.client.downloadSuiteJson(
         'suite-123',
         '/foo.json',
+        { includeImports: true },
         this.callbackSpy,
       )
       // assert API call
@@ -1546,7 +1547,7 @@ describe('API methods', function () {
 
     it('should download JSON with imports', async function () {
       this.requestStub.resolves('{"some": "json"}')
-      const response = await this.client.downloadTestJsonBundled('test-123', '/foo.json', this.callbackSpy)
+      const response = await this.client.downloadTestJson('test-123', '/foo.json', { includeImports: true }, this.callbackSpy)
       // assert API call
       const requestOptions = this.requestStub.args[0][0]
       assert.deepEqual(requestOptions.headers, { 'User-Agent': 'Ghost Inspector Node.js Client' })
