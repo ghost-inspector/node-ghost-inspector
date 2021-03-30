@@ -262,6 +262,10 @@ class GhostInspector {
     return this.request('GET', `/suites/${suiteId}/results/`, options, callback)
   }
 
+  async duplicateSuite(suiteId, callback) {
+    return this.request('POST', `/suites/${suiteId}/duplicate/`, callback)
+  }
+
   async executeSuite(suiteId, providedOptions, callback) {
     let options = {}
     // Sort out options and callback

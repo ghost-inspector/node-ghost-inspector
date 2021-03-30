@@ -107,6 +107,7 @@ Jump to...
     * [`downloadSuiteSeleniumHtml()`](#ghostinspectordownloadsuiteseleniumhtmlsuiteid-dest-callback)
     * [`downloadSuiteSeleniumSide()`](#ghostinspectordownloadsuiteseleniumsidesuiteid-dest-callback)
     * [`downloadSuiteSeleniumJson()`](#ghostinspectordownloadsuiteseleniumjsonsuiteid-dest-callback)
+    * [`duplicateSuite()`](#ghostinspectorduplicatesuitesuiteid-options-callback)
     * [`executeSuite()`](#ghostinspectorexecutesuitesuiteid-options-callback)
     * [`getSuite()`](#ghostinspectorgetsuitesuiteid-callback)
     * [`getSuites()`](#ghostinspectorgetsuites-callback)
@@ -386,6 +387,28 @@ GhostInspector.executeSuite(
     if (err) return console.error(err)
     console.log(passing === true ? 'Passed' : 'Failed')
     console.log(results)
+  },
+)
+```
+
+#### `GhostInspector.duplicateSuite(suiteId, [options], [callback])`
+
+Execute all the tests in a suite and returns an array of results.
+
+```js
+// Example using await
+try {
+  const newSuite = await GhostInspector.duplicateSuite('[suite-id]')
+} catch (err) {
+  console.error(err)
+}
+
+// Example using a callback
+GhostInspector.duplicateSuite(
+  '[suite-id]',
+  function (err, newSuite) {
+    if (err) return console.error(err)
+    console.log(newSuite)
   },
 )
 ```
