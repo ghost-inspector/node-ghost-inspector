@@ -179,6 +179,15 @@ class GhostInspector {
       }
       throw err
     }
+    // check the response for API key issues
+    if (data.indexOf('{"code":"ERROR"') > -1) {
+      let message = JSON.parse(data).message
+      if (typeof callback === 'function') {
+        callback(message)
+        return
+      }
+      throw new Error(message)
+    }
     // Save response into file
     const err = await new Promise((resolve) => {
       fs.writeFile(dest, data, { encoding }, resolve)
@@ -315,6 +324,7 @@ class GhostInspector {
     return [data, passing, screenshotPassing]
   }
 
+  // TODO: resulting file appears to be broken on suites with >1 test
   async downloadSuiteSeleniumHtml(suiteId, dest, callback) {
     return this.download(`/suites/${suiteId}/export/selenium-html/`, dest, { encoding: 'binary' }, callback)
   }

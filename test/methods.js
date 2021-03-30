@@ -461,6 +461,42 @@ describe('API methods', function () {
     })
   })
 
+  describe('download* API Error', function () {
+    beforeEach(function () {
+      this.requestStub.resolves(successResponse)
+      this.writeFileStub = sinon.stub(fs, 'writeFile')
+    })
+
+    afterEach(function () {
+      this.writeFileStub.restore()
+    })
+
+    it('should throw and error with API error', async function () {
+      this.requestStub.resolves('{"code":"ERROR","message":"Some API error"}')
+      const response = await this.client.downloadSuiteSeleniumHtml(
+        'suite-123',
+        '/foo.html',
+        this.callbackSpy,
+      )
+      // assert callback called with (error, html)
+      assert.equal(this.callbackSpy.args[0][0], "Some API error")
+      // assert file was not written
+      assert.equal(this.writeFileStub.called, false)
+    })
+
+    it('(async) it should throw an error with API error', async function () {
+      this.requestStub.resolves('{"code":"ERROR","message":"Some API error"}')
+      try {
+        await this.client.downloadSuiteSeleniumHtml('suite-123', '/some/dest')
+      } catch (error) {
+        assert.ok(error)
+        assert.equal(error.message, 'Some API error')
+        return true
+      }
+      throw new assert.AssertionError({ message: 'Missing expected exception.' })
+    })
+  })
+
   /**
    * downloadSuiteSeleniumHtml() also falls outside the standard internal pattern of passing through the basic
    * parameters to client.request(), we'll set up a few special tests around this specifically.
