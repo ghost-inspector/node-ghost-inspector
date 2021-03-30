@@ -156,6 +156,11 @@ class GhostInspector {
       params.includeImports = true
     }
 
+    let encoding = 'utf8'
+    if (options && options.encoding) {
+      encoding = options.encoding
+    }
+
     const requestOptions = {
       method: 'GET',
       uri: this.buildRequestUrl(path) + this.buildQueryString(params),
@@ -176,7 +181,7 @@ class GhostInspector {
     }
     // Save response into file
     const err = await new Promise((resolve) => {
-      fs.writeFile(dest, data, resolve)
+      fs.writeFile(dest, data, { encoding }, resolve)
     })
     // Process response
     if (err) {
@@ -201,7 +206,7 @@ class GhostInspector {
   }
 
   async createFolder(organizationId, folderName, callback) {
-    const options = { organization: organizationId, name: folderName }
+    const options = { body: { organization: organizationId, name: folderName } }
     return this.request('POST', '/folders/', options, callback)
   }
 
@@ -214,7 +219,7 @@ class GhostInspector {
   }
 
   async updateFolder(folderId, folderName, callback) {
-    const options = { name: folderName }
+    const options = { body: { name: folderName } }
     return this.request('POST', `/folders/${folderId}/`, options, callback)
   }
 
@@ -227,11 +232,12 @@ class GhostInspector {
   }
 
   async createSuite(organizationId, suiteName, callback) {
-    const options = { organization: organizationId, name: suiteName }
+    const options = { body: { organization: organizationId, name: suiteName } }
     return this.request('POST', '/suites/', options, callback)
   }
 
   async updateSuite(suiteId, updates, callback) {
+    updates = { body: { ...updates } }
     return this.request('POST', `/suites/${suiteId}/`, updates, callback)
   }
 
@@ -310,22 +316,28 @@ class GhostInspector {
   }
 
   async downloadSuiteSeleniumHtml(suiteId, dest, callback) {
-    return this.download(`/suites/${suiteId}/export/selenium-html/`, dest, callback)
+    return this.download(`/suites/${suiteId}/export/selenium-html/`, dest, { encoding: 'binary' }, callback)
   }
 
   async downloadSuiteSeleniumJson(suiteId, dest, callback) {
-    return this.download(`/suites/${suiteId}/export/selenium-json/`, dest, callback)
+    return this.download(`/suites/${suiteId}/export/selenium-json/`, dest, { encoding: 'binary' }, callback)
   }
 
   async downloadSuiteSeleniumSide(suiteId, dest, callback) {
-    return this.download(`/suites/${suiteId}/export/selenium-side/`, dest, callback)
+    return this.download(`/suites/${suiteId}/export/selenium-side/`, dest, { encoding: 'binary' }, callback)
   }
 
   async downloadSuiteJson(suiteId, dest, options, callback) {
-    return this.download(`/suites/${suiteId}/export/json/`, dest, options, callback)
+    if (typeof options === 'function') {
+      callback = options
+    }
+    return this.download(`/suites/${suiteId}/export/json/`, dest, { ...options, encoding: 'binary' }, callback)
   }
 
   async downloadTestJson(testId, dest, options, callback) {
+    if (typeof options === 'function') {
+      callback = options
+    }
     return this.download(`/tests/${testId}/export/json/`, dest, options, callback)
   }
 

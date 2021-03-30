@@ -17,8 +17,8 @@ module.exports = {
     // clean up yargs-related stuff
     const args = helpers.cleanArgs(argv)
 
-    const testId = args.testId
-    delete args['testId']
+    const suiteId = args.suiteId
+    delete args['suiteId']
 
     const apiKey = args.apiKey
     delete args['apiKey']

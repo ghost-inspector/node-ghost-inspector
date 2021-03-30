@@ -14,6 +14,7 @@ module.exports = {
         choices: ['json', 'html', 'side'],
         default: 'json',
       },
+      // TODO: this is not added yet
       'include-imports': {
         description: 'Bundle imported suites in the export when provided (currenlty for .json exports only)',
         type: 'boolean',

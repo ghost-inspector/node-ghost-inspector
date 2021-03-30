@@ -1,7 +1,6 @@
 
 const helpers = require('../../helpers')
 
-// TODO - test this out
 module.exports = {
   command: 'update <test-id>',
   desc: 'Update a test.',
