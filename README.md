@@ -2,13 +2,84 @@
 
 [![CircleCI](https://circleci.com/gh/ghost-inspector/node-ghost-inspector/tree/stable.svg?style=svg)](https://circleci.com/gh/ghost-inspector/node-ghost-inspector/tree/stable)
 
-The official Node.js package for interacting with [Ghost Inspector's API](https://ghostinspector.com/docs/api/).
+The official Node.js package and CLI for interacting with [Ghost Inspector's API](https://ghostinspector.com/docs/api/).
 
-## Installing with [npm](https://www.npmjs.com/)
+## Jump to...
 
-`npm install ghost-inspector`
+ * [Installation](#installation)
+ * [Quick Start](#quick-start)
+ * [CLI Usage](#cli-usage)
+ * [Node.js Client Usage](#nodejs-client-usage)
+ * [Contributing](#contributing)
 
-## Usage
+## Installation
+
+Our official Node.js package is available from [npm](https://www.npmjs.com/), you can install it with the following command:
+
+```
+npm install ghost-inspector
+```
+
+In order to use the CLI, install the package globally:
+
+```
+npm install -g ghost-inspector
+```
+
+## Quick Start
+
+```js
+const GhostInspector = require('ghost-inspector')('[api-key]')
+
+// execute a test
+try {
+  const [results, passing, screenshotPassing] = await GhostInspector.executeTest(
+    '[test-id]',
+    options,
+  )
+  console.log('Passing: ', passing)
+} catch (err) {
+  console.error(err)
+}
+
+```
+
+## CLI Usage
+
+View all available commands for the CLI:
+```
+❯ ghost-inspector --help
+ghost-inspector <command>
+
+Commands:
+  ghost-inspector folder <command>        Manage folders within your Ghost Inspector account.
+  ghost-inspector organization <command>  Access organization details.
+  ghost-inspector suite-result <command>  Manage suite results within your Ghost Inspector account.
+  ghost-inspector suite <command>         Manage suites within your Ghost Inspector account.
+  ghost-inspector test-result <command>   Manage test results within your Ghost Inspector account.
+  ghost-inspector test-runner-ips         Fetch a list of test runner IP addresses by region.
+  ghost-inspector test <command>          Manage tests within your Ghost Inspector account.
+
+Options:
+  --version  Show version number                                                           [boolean]
+  --apiKey   Your Ghost Inspector API key.                                                [required]
+  --help     Show help                                                                     [boolean]
+```
+
+You can also view usage help for each sub-command:
+
+```
+❯ ghost-inspector test --help
+...
+
+❯ ghost-inspector test execute --help
+...
+```
+**Note:** your API key may be passed in through the environment (`GHOST_INSPECTOR_API_KEY`) or as a parameter (`--apiKey xxx`).
+
+<br />
+
+## Node.js Client Usage
 
 Every method is accessed via your `GhostInspector` instance. Your API Key is passed in when the instance is created:
 
@@ -18,9 +89,62 @@ const GhostInspector = require('ghost-inspector')('[api-key]')
 
 This package supports both callbacks and `await` to receive data back from the method call. Note that when an error is encountered, it will be return as the first argument in the callback. However, if no callback is passed in, it is assumed that `await` is being used and the method will throw an exception. This means that when using `await` you should wrap your calls in a `try/catch` block.
 
-## Methods
+<br />
 
-#### GhostInspector.getFolders([callback])
+### Methods
+
+Jump to...
+
+ * Folders
+    * [`createFolder()`](#ghostinspectorcreatefolderorganizationid-foldername-callback)
+    * [`getFolder()`](#ghostinspectorgetfolderfolderid-callback)
+    * [`getFolders()`](#ghostinspectorgetfolderscallback)
+    * [`getFolderSuites()`](#ghostinspectorgetfoldersuitesfolderid-callback)
+    * [`updateFolder()`](#ghostinspectorupdatefolderfolderid-foldername-callback)
+ * Suites
+    * [`createSuite()`](#ghostinspectorcreatesuiteorganizationid-suitename-callback)
+    * [`downloadSuiteJson()`](#ghostinspectordownloadsuitejsonsuiteid-dest-callback)
+    * [`downloadSuiteSeleniumHtml()`](#ghostinspectordownloadsuiteseleniumhtmlsuiteid-dest-callback)
+    * [`downloadSuiteSeleniumSide()`](#ghostinspectordownloadsuiteseleniumsidesuiteid-dest-callback)
+    * [`downloadSuiteSeleniumJson()`](#ghostinspectordownloadsuiteseleniumjsonsuiteid-dest-callback)
+    * [`executeSuite()`](#ghostinspectorexecutesuitesuiteid-options-callback)
+    * [`getSuite()`](#ghostinspectorgetsuitesuiteid-callback)
+    * [`getSuites()`](#ghostinspectorgetsuites-callback)
+    * [`getSuiteResults()`](#ghostinspectorgetsuiteresultssuiteid-callback)
+    * [`getSuiteTests()`](#ghostinspectorgetsuitetestssuiteid-callback)
+    * [`importTest()`](#ghostinspectorimporttestsuiteid-test-callback)
+    * [`updateSuite()`](#ghostinspectorupdatesuitesuiteid-updates-callback)
+ * Suite Results
+    * [`cancelSuiteResult()`](#ghostinspectorcancelsuiteresultsuiteresultid-callback)
+    * [`getSuiteResult()`](#ghostinspectorgetsuiteresultssuiteresultid-callback)
+    * [`getSuiteResultTestResults()`](#ghostinspectorgetsuiteresulttestresultssuiteresultid-callback)
+    * [`getSuiteResultXUnit()`](#ghostinspectorgetsuiteresultxunitsuiteresultid-callback)
+ * Tests
+    * [`acceptTestScreenshot()`](#ghostinspectoraccepttestscreenshottestid-callback)
+    * [`deleteTest()`](#ghostinspectordeletetesttestid-callback)
+    * [`downloadTestJson()`](#ghostinspectordownloadtestjsontestid-dest-callback)
+    * [`downloadTestSeleniumHtml()`](#ghostinspectordownloadtestseleniumhtmltestid-dest-callback)
+    * [`downloadTestSeleniumSide()`](#ghostinspectordownloadtestseleniumsidetestid-dest-callback)
+    * [`downloadTestSeleniumJson()`](#ghostinspectordownloadtestseleniumjsontestid-dest-callback)
+    * [`duplicateTest()`](#ghostinspectorduplicatetesttestid-callback)
+    * [`executeTest()`](#ghostinspectorexecutetesttestid-options-callback)
+    * [`executeTestOnDemand()`](#ghostinspectorexecutetestondemandorganizationid-test-options-callback)
+    * [`getTest()`](#ghostinspectorgettesttestid-callback)
+    * [`getTestResults()`](#ghostinspectorgettestresultstestid-options-callback)
+    * [`getTestResultsRunning()`](#ghostinspectorgettestresultsrunningtestid-callback)
+    * [`updateTest()`](#ghostinspectorupdatetesttestid-updates-callback)
+    * [`waitForTestResult()`](#ghostinspectorwaitfortestresultresultid-options-callback)
+ * Test Results
+    * [`cancelTestResult()`](#ghostinspectorcanceltestresulttestresultid-callback)
+    * [`getTestResult()`](#ghostinspectorgettestresulttestresultid-callback)
+ * Organization
+    * [`getAllRunningTests()`](#ghostinspectorgetallrunningtestsorganizationid-callback)
+    * [`getTests()`](#ghostinspectorgettests-callback)
+    
+
+<br />
+
+#### `GhostInspector.getFolders([callback])`
 
 Fetch an array of all the folders in your account.
 
@@ -39,7 +163,45 @@ GhostInspector.getFolders(function (err, folders) {
 })
 ```
 
-#### GhostInspector.getFolder(folderId, [callback])
+#### `GhostInspector.createFolder(organizationId, folderName, [callback]`
+
+Create a folder within your organization.
+
+```js
+// Example using await
+try {
+  const folder = await GhostInspector.createFolder('[organization-id]', '[folder-name]')
+} catch (err) {
+  console.error(err)
+}
+
+// Example using a callback
+GhostInspector.createFolder('[organization-id]', '[folder-name]', function (err, folder) {
+  if (err) return console.error(err)
+  console.log(folder)
+})
+```
+
+#### `GhostInspector.updateFolder(folderId, folderName, [callback])`
+
+Create a folder name.
+
+```js
+// Example using await
+try {
+  const folder = await GhostInspector.updateFolder('[folder-id]', '[folder-name]')
+} catch (err) {
+  console.error(err)
+}
+
+// Example using a callback
+GhostInspector.updateFolder('[folder-id]', '[folder-name]', function (err, folder) {
+  if (err) return console.error(err)
+  console.log(folder)
+})
+```
+
+#### `GhostInspector.getFolder(folderId, [callback])`
 
 Fetch a single folder from your account.
 
@@ -58,7 +220,7 @@ GhostInspector.getFolder('[folder-id]', function (err, folder) {
 })
 ```
 
-#### GhostInspector.getFolderSuites(folderId, [callback])
+#### `GhostInspector.getFolderSuites(folderId, [callback])`
 
 Fetch an array of all the suites in a folder.
 
@@ -77,7 +239,45 @@ GhostInspector.getFolderSuites('[folder-id]', function (err, suites) {
 })
 ```
 
-#### GhostInspector.getSuites([callback])
+#### `GhostInspector.createSuite(organizationId, suiteName, [callback])`
+
+Create a suite.
+
+```js
+// Example using await
+try {
+  const suites = await GhostInspector.createSuite('[organization-id]', '[suite-name]')
+} catch (err) {
+  console.error(err)
+}
+
+// Example using a callback
+GhostInspector.createSuite('[organization-id]', '[suite-name]', function (err, suites) {
+  if (err) return console.error(err)
+  console.log(suites)
+})
+```
+
+#### `GhostInspector.updateSuite(suiteId, updates, [callback])`
+
+Update a suite.
+
+```js
+// Example using await
+try {
+  const suites = await GhostInspector.updateSuite('[suite-id]', { name: 'My new suite name' })
+} catch (err) {
+  console.error(err)
+}
+
+// Example using a callback
+GhostInspector.updateSuite('[suite-id]', { name: 'My new suite name' }, function (err, suites) {
+  if (err) return console.error(err)
+  console.log(suites)
+})
+```
+
+#### `GhostInspector.getSuites([callback])`
 
 Fetch an array of all the suites in your account.
 
@@ -96,7 +296,7 @@ GhostInspector.getSuites(function (err, suites) {
 })
 ```
 
-#### GhostInspector.getSuite(suiteId, [callback])
+#### `GhostInspector.getSuite(suiteId, [callback])`
 
 Fetch a single suite from your account.
 
@@ -115,7 +315,7 @@ GhostInspector.getSuite('[suite-id]', function (err, suite) {
 })
 ```
 
-#### GhostInspector.getSuiteTests(suiteId, [callback])
+#### `GhostInspector.getSuiteTests(suiteId, [callback])`
 
 Fetch an array of all the tests in a suite.
 
@@ -134,7 +334,7 @@ GhostInspector.getSuiteTests('[suite-id]', function (err, tests) {
 })
 ```
 
-#### GhostInspector.getSuiteResults(suiteId, [options], [callback])
+#### `GhostInspector.getSuiteResults(suiteId, [options], [callback])`
 
 Fetch an array of suite results for a suite.
 
@@ -158,7 +358,7 @@ GhostInspector.getSuiteResults('[suite-id]', options, function (err, results) {
 })
 ```
 
-#### GhostInspector.executeSuite(suiteId, [options], [callback])
+#### `GhostInspector.executeSuite(suiteId, [options], [callback])`
 
 Execute all the tests in a suite and returns an array of results.
 
@@ -190,7 +390,7 @@ GhostInspector.executeSuite(
 )
 ```
 
-#### GhostInspector.downloadSuiteSeleniumHtml(suiteId, dest, [callback])
+#### `GhostInspector.downloadSuiteSeleniumHtml(suiteId, dest, [callback])`
 
 Download a zip file of all tests in this suite in Selenium IDE .html format
 
@@ -209,7 +409,7 @@ GhostInspector.downloadSuiteSeleniumHtml('[suite-id]', 'suite.zip', function (er
 })
 ```
 
-#### GhostInspector.downloadSuiteSeleniumSide(suiteId, dest, [callback])
+#### `GhostInspector.downloadSuiteSeleniumSide(suiteId, dest, [callback])`
 
 Download a file of all tests in this suite in Selenium IDE .side format
 
@@ -228,7 +428,7 @@ GhostInspector.downloadSuiteSeleniumSide('[suite-id]', 'suite.side', function (e
 })
 ```
 
-#### GhostInspector.downloadSuiteSeleniumJson(suiteId, dest, [callback])
+#### `GhostInspector.downloadSuiteSeleniumJson(suiteId, dest, [callback])`
 
 Download a zip file of all tests in this suite in Selenium JSON format
 
@@ -247,45 +447,53 @@ GhostInspector.downloadSuiteSeleniumJson('[suite-id]', 'suite.zip', function (er
 })
 ```
 
-#### GhostInspector.downloadSuiteJson(suiteId, dest, [callback])
+#### `GhostInspector.downloadSuiteJson(suiteId, dest, [callback])`
 
 Download a file of all tests in this suite in Ghostinspector JSON format
 
 ```js
 // Example using await
+const options = {
+  includeImports: true
+}
+
 try {
-  await GhostInspector.downloadSuiteJson('[suite-id]', 'suite.zip')
+  await GhostInspector.downloadSuiteJson('[suite-id]', 'suite.zip', options)
 } catch (err) {
   console.error(err)
 }
 
 // Example using a callback
-GhostInspector.downloadSuiteJson('[suite-id]', 'suite.zip', function (err) {
+GhostInspector.downloadSuiteJson('[suite-id]', 'suite.zip', options, function (err) {
   if (err) return console.error(err)
   console.log('File saved to suite.zip.')
 })
 ```
 
-#### GhostInspector.downloadTestJson(testId, dest, [callback])
+#### `GhostInspector.downloadTestJson(testId, dest, [callback])`
 
-Download a file of a single tests in Ghostinspector JSON format
+Download a single test in Ghostinspector JSON format
 
 ```js
+const options = {
+  includeImports: true
+}
+
 // Example using await
 try {
-  await GhostInspector.downloadTestJson('[test-id]', 'test.json')
+  await GhostInspector.downloadTestJson('[test-id]', 'test.json', options)
 } catch (err) {
   console.error(err)
 }
 
 // Example using a callback
-GhostInspector.downloadTestJson('[test-id]', 'test.json', function (err) {
+GhostInspector.downloadTestJson('[test-id]', 'test.json', options, function (err) {
   if (err) return console.error(err)
   console.log('File saved to test.json.')
 })
 ```
 
-#### GhostInspector.importTest(suiteId, test, [callback])
+#### `GhostInspector.importTest(suiteId, test, [callback])`
 
 Import a test in JSON or HTML (Selenium IDE v1) format.
 
@@ -303,7 +511,7 @@ GhostInspector.importTest('[suite-id]', myHtmlTest, function (err, importedTest)
 })
 ```
 
-#### GhostInspector.getTests([callback])
+#### `GhostInspector.getTests([callback])`
 
 Fetch an array of all the tests in your account.
 
@@ -322,7 +530,7 @@ GhostInspector.getTests(function (err, tests) {
 })
 ```
 
-#### GhostInspector.getTest(testId, [callback])
+#### `GhostInspector.getTest(testId, [callback])`
 
 Fetch a single test from your account.
 
@@ -341,7 +549,46 @@ GhostInspector.getTest('[test-id]', function (err, test) {
 })
 ```
 
-#### GhostInspector.getTestResults(testId, [options], [callback])
+#### `GhostInspector.deleteTest(testId, [callback])`
+
+Delete a test.
+
+```js
+// Example using await
+try {
+  const tests = await GhostInspector.deleteTest('[test-id]')
+} catch (err) {
+  console.error(err)
+}
+
+// Example using a callback
+GhostInspector.deleteTest('[test-id]', function (err, tests) {
+  if (err) return console.error(err)
+  console.log(tests)
+})
+```
+
+#### `GhostInspector.updateTest(testId, updates, [callback])`
+
+Update a test.
+
+```js
+// Example using await
+try {
+  const tests = await GhostInspector.updateTest('[test-id]', { name: 'My new test name' })
+} catch (err) {
+  console.error(err)
+}
+
+// Example using a callback
+GhostInspector.updateTest('[test-id]', { name: 'My new test name' }, function (err, tests) {
+  if (err) return console.error(err)
+  console.log(tests)
+})
+```
+
+
+#### `GhostInspector.getTestResults(testId, [options], [callback])`
 
 Fetch an array of test results for a test.
 
@@ -365,7 +612,7 @@ GhostInspector.getTestResults('[test-id]', options, function (err, results) {
 })
 ```
 
-#### GhostInspector.getTestResultsRunning(testId, [callback])
+#### `GhostInspector.getTestResultsRunning(testId, [callback])`
 
 Fetch an array of test results that are in progress for a test.
 
@@ -384,7 +631,7 @@ GhostInspector.getTestResultsRunning('[test-id]', function (err, results) {
 })
 ```
 
-#### GhostInspector.acceptTestScreenshot(testId, [callback])
+#### `GhostInspector.acceptTestScreenshot(testId, [callback])`
 
 Accept the current screenshot as the new baseline for a test. (Note: _This method will throw/return an error if the test's screenshot is already passing, or if screenshot comparison is disabled._)
 
@@ -403,7 +650,7 @@ GhostInspector.acceptTestScreenshot('[test-id]', function (err, test) {
 })
 ```
 
-#### GhostInspector.duplicateTest(testId, [callback])
+#### `GhostInspector.duplicateTest(testId, [callback])`
 
 Create a duplicate copy of a test.
 
@@ -422,7 +669,7 @@ GhostInspector.duplicateTest('[test-id]', function (err, newTest) {
 })
 ```
 
-#### GhostInspector.executeTest(testId, [options], [callback])
+#### `GhostInspector.executeTest(testId, [options], [callback])`
 
 Execute a single test in your account and return the result.
 
@@ -454,7 +701,7 @@ GhostInspector.executeTest(
 )
 ```
 
-#### GhostInspector.executeTestOnDemand(organizationId, test, [options], [callback])
+#### `GhostInspector.executeTestOnDemand(organizationId, test, [options], [callback])`
 
 Execute an on-demand test against your organization.
 
@@ -480,7 +727,7 @@ GhostInspector.executeTestOnDemand('[organization-id]', myTest, options, functio
 })
 ```
 
-#### GhostInspector.waitForTestResult(resultId, [options], [callback])
+#### `GhostInspector.waitForTestResult(resultId, [options], [callback])`
 
 Poll for a result execution's completion.
 
@@ -503,7 +750,7 @@ GhostInspector.waitForTestResult(resultId, options, function (err, result) {
 })
 ```
 
-#### GhostInspector.downloadTestSeleniumHtml(testId, dest, [callback])
+#### `GhostInspector.downloadTestSeleniumHtml(testId, dest, [callback])`
 
 Download a single test in Selenium IDE .html format
 
@@ -522,7 +769,7 @@ GhostInspector.downloadTestSeleniumHtml('[test-id]', 'test.html', function (err)
 })
 ```
 
-#### GhostInspector.downloadTestSeleniumSide(testId, dest, [callback])
+#### `GhostInspector.downloadTestSeleniumSide(testId, dest, [callback])`
 
 Download a single test in Selenium IDE .side format
 
@@ -541,7 +788,7 @@ GhostInspector.downloadTestSeleniumSide('[test-id]', 'test.side', function (err)
 })
 ```
 
-#### GhostInspector.downloadTestSeleniumJson(testId, dest, [callback])
+#### `GhostInspector.downloadTestSeleniumJson(testId, dest, [callback])`
 
 Download a single test in Selenium JSON format
 
@@ -560,7 +807,7 @@ GhostInspector.downloadTestSeleniumJson('[test-id]', 'test.json', function (err)
 })
 ```
 
-#### GhostInspector.getSuiteResult(suiteResultId, [callback])
+#### `GhostInspector.getSuiteResult(suiteResultId, [callback])`
 
 Fetch a single suite result.
 
@@ -579,7 +826,7 @@ GhostInspector.getSuiteResult('[suite-result-id]', function (err, result) {
 })
 ```
 
-#### GhostInspector.getSuiteResultTestResults(suiteResultId, [callback])
+#### `GhostInspector.getSuiteResultTestResults(suiteResultId, [callback])`
 
 Fetch the test results in a single suite result.
 
@@ -598,7 +845,7 @@ GhostInspector.getSuiteResultTestResults('[suite-result-id]', function (err, res
 })
 ```
 
-#### GhostInspector.getSuiteResultXUnit(suiteResultId, [callback])
+#### `GhostInspector.getSuiteResultXUnit(suiteResultId, [callback])`
 
 Fetch an XML report (XUnit v2) for a single suite result.
 
@@ -617,7 +864,7 @@ GhostInspector.getSuiteResultXUnit('[suite-result-id]', function (err, xml) {
 })
 ```
 
-#### GhostInspector.cancelSuiteResult(suiteResultId, [callback])
+#### `GhostInspector.cancelSuiteResult(suiteResultId, [callback])`
 
 Cancel an in-progress suite result.
 
@@ -636,7 +883,7 @@ GhostInspector.cancelSuiteResult('[suite-result-id]', function (err, result) {
 })
 ```
 
-#### GhostInspector.getTestResult(testResultId, [callback])
+#### `GhostInspector.getTestResult(testResultId, [callback])`
 
 Fetch a single test result.
 
@@ -655,7 +902,7 @@ GhostInspector.getTestResult('[test-result-id]', function (err, result) {
 })
 ```
 
-#### GhostInspector.cancelTestResult(testResultId, [callback])
+#### `GhostInspector.cancelTestResult(testResultId, [callback])`
 
 Cancel an in-progress test result.
 
@@ -674,7 +921,30 @@ GhostInspector.cancelTestResult('[test-result-id]', function (err, result) {
 })
 ```
 
-## Running tests
+#### `GhostInspector.getAllRunningTests(organizationId, [callback])`
+
+Fetch a list of the currently-executing results for the entire organization.
+
+```js
+// Example using await
+try {
+  const result = await GhostInspector.getAllRunningTests('[organization-id]')
+} catch (err) {
+  console.error(err)
+}
+
+// Example using a callback
+GhostInspector.getAllRunningTests('[organization-id]', function (err, result) {
+  if (err) return console.error(err)
+  console.log(result)
+})
+```
+
+## Contributing
+
+If you've found that a feature is missing or you've found an issue, feel free to open a pull request or [submit an issue](https://github.com/ghost-inspector/node-ghost-inspector/issues).
+
+### Running tests
 
 To run the unit tests:
 
