@@ -7,7 +7,7 @@ module.exports = {
   builder: {},
   handler: async function (argv) {
     try {
-      const client = require('../../../index')(argv.apiKey)
+      const client = helpers.getClient(argv)
       const result = await client.acceptTestScreenshot(argv.testId)
       helpers.print(result)
     } catch (error) {

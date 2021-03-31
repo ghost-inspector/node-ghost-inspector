@@ -6,7 +6,7 @@ module.exports = {
   builder: {},
   handler: async function (argv) {
     try {
-      const client = require('../../../index')(argv.apiKey)
+      const client = helpers.getClient(argv)
       const result = await client.cancelSuiteResult(argv.suiteResultId)
       helpers.print(result)
     } catch (error) {

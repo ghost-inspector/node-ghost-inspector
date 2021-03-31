@@ -6,7 +6,7 @@ module.exports = {
   builder: {},
   handler: async function (argv) {
     try {
-      const client = require('../../../index')(argv.apiKey)
+      const client = helpers.getClient(argv)
       // TODO: resolve path
       const test = require(argv.file)
       const result = await client.importTest(argv.suiteId, test)

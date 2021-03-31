@@ -26,7 +26,7 @@ module.exports = {
     const testId = args.testId
     delete args['testid']
     try {
-      const client = require('../../../index')(argv.apiKey)
+      const client = helpers.getClient(argv)
       const [result, passing, screenshotPassing] = await client.executeTest(testId, args)
       helpers.print(result)
     } catch (error) {

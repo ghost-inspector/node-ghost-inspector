@@ -29,6 +29,15 @@ const cleanArgs = (args) => {
 }
 
 /**
+ * Abstract the Ghost Inspector client to customize connection details.
+ */
+const getClient = (args) => {
+  const client = require('../index')(args.apiKey)
+  client.userAgent = `${client.userAgent} CLI`
+  return client
+}
+
+/**
  * Adds common execution-related arguments for test, suite, on-demand test.
  */
 const getCommonExecutionOptions = () => {
@@ -109,4 +118,4 @@ const print = (object) => {
   console.log(JSON.stringify(object))
 }
 
-module.exports = { cleanArgs, getCommonExecutionOptions, print }
+module.exports = { cleanArgs, getClient, getCommonExecutionOptions, print }

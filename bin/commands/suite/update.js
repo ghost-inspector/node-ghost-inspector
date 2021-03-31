@@ -18,7 +18,7 @@ module.exports = {
     delete args['suiteId']
 
     try {
-      const client = require('../../../index')(argv.apiKey)
+      const client = helpers.getClient(argv)
       const result = await client.updateSuite(suiteId, args)
       helpers.print(result)
     } catch (error) {

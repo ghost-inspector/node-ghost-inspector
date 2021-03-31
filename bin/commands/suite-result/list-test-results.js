@@ -23,7 +23,7 @@ module.exports = {
     const suiteResultId = args.suiteResultId
     delete args['suiteResultId']
     try {
-      const client = require('../../../index')(argv.apiKey)
+      const client = helpers.getClient(argv)
       const results = await client.getSuiteResultTestResults(suiteResultId, args)
       helpers.print(results)
     } catch (error) {

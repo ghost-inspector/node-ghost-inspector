@@ -8,7 +8,7 @@ module.exports = {
 
   handler: async function (argv) {
     try {
-      const client = require('../../../index')(argv.apiKey)
+      const client = helpers.getClient(argv)
       const results = await client.getTestResultsRunning(argv.testId)
       helpers.print(results)
     } catch (error) {

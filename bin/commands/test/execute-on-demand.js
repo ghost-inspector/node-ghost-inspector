@@ -20,10 +20,10 @@ module.exports = {
   handler: async function (argv) {
     // clean up yargs-related stuff
     const args = helpers.cleanArgs(argv)
-    const { apiKey, organizationId, file, immediate } = args
+    const { organizationId, file, immediate } = args
 
     try {
-      const client = require('../../../index')(apiKey)
+      const client = helpers.getClient(argv)
       const absPath = resolvePath(file)
       const input = require(absPath)
       const result = await client.executeTestOnDemand(organizationId, input, { wait: !immediate })

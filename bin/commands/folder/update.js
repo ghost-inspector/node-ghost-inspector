@@ -6,7 +6,7 @@ module.exports = {
   builder: {},
   handler: async function (argv) {
     try {
-      const client = require('../../../index')(argv.apiKey)
+      const client = helpers.getClient(argv)
       const result = await client.updateFolder(argv.folderId, argv.folderName)
       helpers.print(result)
     } catch (error) {
