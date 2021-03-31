@@ -8,7 +8,6 @@ module.exports = {
     try {
       const client = require('../../../index')(argv.apiKey)
       const result = await client.getSuiteTests(argv.suiteId)
-      // print out result, regardless
       helpers.print(result)
     } catch (error) {
       throw error

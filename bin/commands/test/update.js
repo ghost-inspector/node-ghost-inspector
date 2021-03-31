@@ -12,17 +12,13 @@ module.exports = {
     return yargs
   },
   handler: async function (argv) {
-    // clean up yargs-related stuff
     const args = helpers.cleanArgs(argv)
 
     const testId = args.testId
     delete args['testId']
 
-    const apiKey = args.apiKey
-    delete args['apiKey']
-
     try {
-      const client = require('../../../index')(apiKey)
+      const client = require('../../../index')(argv.apiKey)
       const result = await client.updateTest(testId, args)
       helpers.print(result)
     } catch (error) {

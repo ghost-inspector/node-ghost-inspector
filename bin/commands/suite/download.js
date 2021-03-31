@@ -13,7 +13,6 @@ module.exports = {
         choices: ['json', 'html', 'side'],
         default: 'json',
       },
-      // TODO: this is not added yet
       'include-imports': {
         description:
           'Bundle imported suites in the export when provided (currenlty for .json exports only)',
@@ -24,7 +23,6 @@ module.exports = {
     return yargs
   },
   handler: async function (argv) {
-    // clean up yargs-related stuff
     const args = helpers.cleanArgs(argv)
 
     try {
@@ -53,7 +51,7 @@ module.exports = {
         destination = `suite-${args.suiteId}.zip`
       }
 
-      await client[downloadMethod](args.suiteId, destination)
+      await client[downloadMethod](args.suiteId, destination, args)
       // just print out the raw result, might not be JSON
       console.log(`Suite downloaded to ${destination}`)
     } catch (error) {

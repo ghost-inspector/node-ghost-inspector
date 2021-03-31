@@ -23,7 +23,6 @@ module.exports = {
     return yargs
   },
   handler: async function (argv) {
-    // clean up yargs-related stuff
     const args = helpers.cleanArgs(argv)
 
     try {

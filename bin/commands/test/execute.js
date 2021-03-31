@@ -17,22 +17,15 @@ module.exports = {
   },
 
   handler: async function (argv) {
-    // clean up yargs-related stuff
     const args = helpers.cleanArgs(argv)
 
-    // pull out the testId & apiKey so the rest can be passed in verbatim
     const testId = args.testId
     delete args['testid']
-
-    const apiKey = args.apiKey
-    delete args['apiKey']
-
     // execute
     try {
-      const client = require('../../../index')(apiKey)
+      const client = require('../../../index')(argv.apiKey)
       // TODO: disable visuals defaults overriding stuff set on the test
       const [result, passing, screenshotPassing] = await client.executeTest(testId, args)
-      // print out result, regardless
       helpers.print(result)
     } catch (error) {
       throw error

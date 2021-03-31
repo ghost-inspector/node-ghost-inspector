@@ -11,9 +11,10 @@
  * Node.js client without further modification.
  */
 const cleanArgs = (args) => {
-  // remove yargs cruft
+  // remove yargs cruft & apiKey
   delete args['_']
   delete args['$0']
+  delete args['apiKey']
 
   // remove hypenated args 'foo-bar'
   Object.keys(args).forEach((key) => {

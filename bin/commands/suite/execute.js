@@ -12,19 +12,15 @@ module.exports = {
   },
 
   handler: async function (argv) {
-    // clean up yargs-related stuff
     const args = helpers.cleanArgs(argv)
 
     // pull out the suiteId & apiKey so the rest can be passed in verbatim
     const suiteId = args.suiteId
     delete args['suiteid']
 
-    const apiKey = args.apiKey
-    delete args['apiKey']
-
     // execute
     try {
-      const client = require('../../../index')(apiKey)
+      const client = require('../../../index')(argv.apiKey)
       const [result, passing, screenshotPassing] = await client.executeSuite(suiteId, args)
       // print out result, regardless
       helpers.print(result)
