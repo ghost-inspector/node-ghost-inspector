@@ -8,7 +8,7 @@ const DEFAULT_POLL_INTERVAL = 5000
 class GhostInspector {
   constructor(apiKey) {
     this.userAgent = 'Ghost Inspector Node.js Client'
-    this.host = 'https://api.ghostinspectortest.com'
+    this.host = 'https://api.ghostinspector.com'
     this.prefix = '/v1'
     this.apiKey = apiKey
   }
@@ -146,7 +146,7 @@ class GhostInspector {
     if (typeof options === 'function') {
       callback = options
     }
-    
+
     // Add API key to params
     const params = {
       apiKey: this.apiKey,
@@ -330,22 +330,42 @@ class GhostInspector {
 
   // TODO: resulting file appears to be broken on suites with >1 test
   async downloadSuiteSeleniumHtml(suiteId, dest, callback) {
-    return this.download(`/suites/${suiteId}/export/selenium-html/`, dest, { encoding: 'binary' }, callback)
+    return this.download(
+      `/suites/${suiteId}/export/selenium-html/`,
+      dest,
+      { encoding: 'binary' },
+      callback,
+    )
   }
 
   async downloadSuiteSeleniumJson(suiteId, dest, callback) {
-    return this.download(`/suites/${suiteId}/export/selenium-json/`, dest, { encoding: 'binary' }, callback)
+    return this.download(
+      `/suites/${suiteId}/export/selenium-json/`,
+      dest,
+      { encoding: 'binary' },
+      callback,
+    )
   }
 
   async downloadSuiteSeleniumSide(suiteId, dest, callback) {
-    return this.download(`/suites/${suiteId}/export/selenium-side/`, dest, { encoding: 'binary' }, callback)
+    return this.download(
+      `/suites/${suiteId}/export/selenium-side/`,
+      dest,
+      { encoding: 'binary' },
+      callback,
+    )
   }
 
   async downloadSuiteJson(suiteId, dest, options, callback) {
     if (typeof options === 'function') {
       callback = options
     }
-    return this.download(`/suites/${suiteId}/export/json/`, dest, { ...options, encoding: 'binary' }, callback)
+    return this.download(
+      `/suites/${suiteId}/export/json/`,
+      dest,
+      { ...options, encoding: 'binary' },
+      callback,
+    )
   }
 
   async downloadTestJson(testId, dest, options, callback) {
