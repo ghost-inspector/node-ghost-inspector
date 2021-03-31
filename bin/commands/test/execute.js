@@ -21,10 +21,8 @@ module.exports = {
 
     const testId = args.testId
     delete args['testid']
-    // execute
     try {
       const client = require('../../../index')(argv.apiKey)
-      // TODO: disable visuals defaults overriding stuff set on the test
       const [result, passing, screenshotPassing] = await client.executeTest(testId, args)
       helpers.print(result)
     } catch (error) {
