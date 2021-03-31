@@ -83,14 +83,11 @@ describe('API methods', function () {
     assert.deepEqual(requestOptions.body, {
       organization: 'org-id',
       name: 'folder-name',
-      apiKey: 'my-api-key'
+      apiKey: 'my-api-key',
     })
     assert.equal(requestOptions.json, true)
     assert.equal(requestOptions.method, 'POST')
-    assert.equal(
-      requestOptions.uri,
-      'https://api.ghostinspector.com/v1/folders/',
-    )
+    assert.equal(requestOptions.uri, 'https://api.ghostinspector.com/v1/folders/')
     // assert async
     assert.equal(response.expected, 'data')
     // assert callback called with (error, data)
@@ -132,7 +129,11 @@ describe('API methods', function () {
   })
 
   it('updateFolder()', async function () {
-    const response = await this.client.updateFolder('folder-id', 'new-folder-name', this.callbackSpy)
+    const response = await this.client.updateFolder(
+      'folder-id',
+      'new-folder-name',
+      this.callbackSpy,
+    )
     // assert API call
     const requestOptions = this.requestStub.args[0][0]
     assert.deepEqual(requestOptions.headers, {
@@ -142,10 +143,7 @@ describe('API methods', function () {
     assert.deepEqual(requestOptions.body, { name: 'new-folder-name', apiKey: 'my-api-key' })
     assert.equal(requestOptions.json, true)
     assert.equal(requestOptions.method, 'POST')
-    assert.equal(
-      requestOptions.uri,
-      'https://api.ghostinspector.com/v1/folders/folder-id/',
-    )
+    assert.equal(requestOptions.uri, 'https://api.ghostinspector.com/v1/folders/folder-id/')
     // assert async
     assert.equal(response.expected, 'data')
     // assert callback called with (error, data)
@@ -156,7 +154,7 @@ describe('API methods', function () {
     const response = await this.client.getFolderSuites('folder-123', this.callbackSpy)
     // assert API call
     const requestOptions = this.requestStub.args[0][0]
-    assert.deepEqual(requestOptions.headers, {'User-Agent': 'Ghost Inspector Node.js Client' })
+    assert.deepEqual(requestOptions.headers, { 'User-Agent': 'Ghost Inspector Node.js Client' })
     assert.equal(requestOptions.json, true)
     assert.equal(requestOptions.method, 'GET')
     assert.equal(
@@ -180,14 +178,11 @@ describe('API methods', function () {
     assert.deepEqual(requestOptions.body, {
       organization: 'org-id',
       name: 'suite-name',
-      apiKey: 'my-api-key'
+      apiKey: 'my-api-key',
     })
     assert.equal(requestOptions.json, true)
     assert.equal(requestOptions.method, 'POST')
-    assert.equal(
-      requestOptions.uri,
-      'https://api.ghostinspector.com/v1/suites/',
-    )
+    assert.equal(requestOptions.uri, 'https://api.ghostinspector.com/v1/suites/')
     // assert async
     assert.equal(response.expected, 'data')
     // assert callback called with (error, data)
@@ -195,7 +190,11 @@ describe('API methods', function () {
   })
 
   it('updateSuite()', async function () {
-    const response = await this.client.updateSuite('suite-id', { name: 'new-suite-name' }, this.callbackSpy)
+    const response = await this.client.updateSuite(
+      'suite-id',
+      { name: 'new-suite-name' },
+      this.callbackSpy,
+    )
     // assert API call
     const requestOptions = this.requestStub.args[0][0]
     assert.deepEqual(requestOptions.headers, {
@@ -205,10 +204,7 @@ describe('API methods', function () {
     assert.deepEqual(requestOptions.body, { name: 'new-suite-name', apiKey: 'my-api-key' })
     assert.equal(requestOptions.json, true)
     assert.equal(requestOptions.method, 'POST')
-    assert.equal(
-      requestOptions.uri,
-      'https://api.ghostinspector.com/v1/suites/suite-id/',
-    )
+    assert.equal(requestOptions.uri, 'https://api.ghostinspector.com/v1/suites/suite-id/')
     // assert async
     assert.equal(response.expected, 'data')
     // assert callback called with (error, data)
@@ -479,7 +475,7 @@ describe('API methods', function () {
         this.callbackSpy,
       )
       // assert callback called with (error, html)
-      assert.equal(this.callbackSpy.args[0][0], "Some API error")
+      assert.equal(this.callbackSpy.args[0][0], 'Some API error')
       // assert file was not written
       assert.equal(this.writeFileStub.called, false)
     })
@@ -846,14 +842,14 @@ describe('API methods', function () {
     const response = await this.client.updateTest('test-123', updates, this.callbackSpy)
     // assert API call
     const requestOptions = this.requestStub.args[0][0]
-    assert.deepEqual(requestOptions.headers, { 'User-Agent': 'Ghost Inspector Node.js Client' })
-    assert.deepEqual(requestOptions.formData, { name: 'New test name', apiKey: 'my-api-key' })
+    assert.deepEqual(requestOptions.headers, {
+      'User-Agent': 'Ghost Inspector Node.js Client',
+      'Content-Type': 'application/json',
+    })
+    assert.deepEqual(requestOptions.body, { name: 'New test name', apiKey: 'my-api-key' })
     assert.equal(requestOptions.json, true)
     assert.equal(requestOptions.method, 'POST')
-    assert.equal(
-      requestOptions.uri,
-      'https://api.ghostinspector.com/v1/tests/test-123/',
-    )
+    assert.equal(requestOptions.uri, 'https://api.ghostinspector.com/v1/tests/test-123/')
     // assert async
     assert.equal(response.expected, 'data')
     // assert callback called with (error, data)
@@ -1623,7 +1619,12 @@ describe('API methods', function () {
 
     it('should download JSON with imports', async function () {
       this.requestStub.resolves('{"some": "json"}')
-      const response = await this.client.downloadTestJson('test-123', '/foo.json', { includeImports: true }, this.callbackSpy)
+      const response = await this.client.downloadTestJson(
+        'test-123',
+        '/foo.json',
+        { includeImports: true },
+        this.callbackSpy,
+      )
       // assert API call
       const requestOptions = this.requestStub.args[0][0]
       assert.deepEqual(requestOptions.headers, { 'User-Agent': 'Ghost Inspector Node.js Client' })
