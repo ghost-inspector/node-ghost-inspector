@@ -95,10 +95,6 @@ const getCommonExecutionOptions = () => {
       description:
         'Alternate screen size to use for this execution only. This should be a string formatted as {width}x{height}, for example 1024x768. Will be ignored if screenshot comparison or visual capture is disabled. Provide multiple --viewport arguments to trigger multiple executions.',
     },
-    webhook: {
-      description:
-        'An escaped URL (or array of URLs) added to the webhooks list for this execution only',
-    },
     '[custom-variable]': {
       description:
         'Pass in custom variables for this execution that are accessible in your steps via {{customVariable}}. For example, providing --first-name=Justin will create a {{firstName}} variable with the value Justin.',

@@ -12,6 +12,10 @@ module.exports = {
         description:
           'The ID of any completed test result across your organization to use as the baseline for the screenshot comparison Will be ignored if screenshot comparison or visual capture is disabled.',
       },
+      webhook: {
+        description:
+          'An escaped URL (or array of URLs) added to the webhooks list for this execution only',
+      },
     })
     return yargs
   },
