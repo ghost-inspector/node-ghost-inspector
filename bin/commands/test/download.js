@@ -26,7 +26,7 @@ module.exports = {
     const args = helpers.cleanArgs(argv)
 
     try {
-      const client = require('../../../index')(args.apiKey)
+      const client = require('../../../index')(argv.apiKey)
 
       let downloadMethod
       switch (args.format) {
