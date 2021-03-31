@@ -41,12 +41,10 @@ const getCommonExecutionOptions = () => {
     'disable-notifications': {
       description: 'Disable all notifications for this execution only when provided',
       type: 'boolean',
-      default: false,
     },
     'disable-visuals': {
       description: 'Disable capturing screenshots and video for this execution only when provided',
       type: 'boolean',
-      default: false,
     },
     'http-auth-password': {
       description: 'Alternate HTTP authentication password to use for this execution only',
