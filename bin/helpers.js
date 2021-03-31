@@ -11,6 +11,9 @@
  * Node.js client without further modification.
  */
 const cleanArgs = (args) => {
+  // make a copy to leave the original intact
+  args = { ...args }
+
   // remove yargs cruft & apiKey
   delete args['_']
   delete args['$0']
