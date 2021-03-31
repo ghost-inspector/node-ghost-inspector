@@ -1,21 +1,20 @@
-
 const helpers = require('../../helpers')
 
 module.exports = {
   command: 'list-results <suite-id>',
-  desc: 'Fetch an array containing the results for a suite. Results are returned in reverse chronological order (newest first).',
+  desc:
+    'Fetch an array containing the results for a suite. Results are returned in reverse chronological order (newest first).',
   builder: (yargs) => {
     yargs.options({
-      'count': {
+      count: {
         description: 'Number of results to return.',
         default: 10,
       },
-      'offset': {
+      offset: {
         description: 'Number of results to skip.',
         default: 0,
-      }
+      },
     })
-    // TODO: output CSV format? Node client doesn't have it yet
     return yargs
   },
   handler: async function (argv) {
@@ -34,9 +33,9 @@ module.exports = {
       const results = await client.getSuiteResults(suiteId, args)
       helpers.print(results)
     } catch (error) {
-      throw new Error(error.message)
+      throw error
     }
 
     process.exit(0)
-  }
+  },
 }

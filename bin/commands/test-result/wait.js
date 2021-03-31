@@ -1,4 +1,3 @@
-
 const helpers = require('../../helpers')
 
 module.exports = {
@@ -6,9 +5,9 @@ module.exports = {
   desc: 'Poll a running test result until complete.',
   builder: (yargs) => {
     yargs.options({
-      'pollInterval': {
+      pollInterval: {
         description: 'Interval (in ms) to check for updated result.',
-        default: 2000
+        default: 2000,
       },
     })
     return yargs
@@ -16,12 +15,12 @@ module.exports = {
   handler: async function (argv) {
     try {
       const client = require('../../../index')(argv.apiKey)
-      const result = await client.waitForResult(argv.resultId, argv)
+      const result = await client.waitForTestResult(argv.resultId, argv)
       helpers.print(result)
     } catch (error) {
-      throw new Error(error.message)
+      throw error
     }
 
     process.exit(0)
-  }
+  },
 }

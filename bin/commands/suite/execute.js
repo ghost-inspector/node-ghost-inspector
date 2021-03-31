@@ -1,4 +1,3 @@
-
 const helpers = require('../../helpers')
 
 module.exports = {
@@ -30,9 +29,9 @@ module.exports = {
       // print out result, regardless
       helpers.print(result)
     } catch (error) {
-      throw new Error(error.message)
+      throw error
     }
 
     process.exit(0)
-  }
+  },
 }

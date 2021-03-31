@@ -1,4 +1,3 @@
-
 const helpers = require('../../helpers')
 
 module.exports = {
@@ -6,20 +5,21 @@ module.exports = {
   desc: 'Download a single suite.',
   builder: (yargs) => {
     yargs.options({
-      'destination': {
+      destination: {
         description: 'Path to local destination for output. Defaults to "suite-<suite-id>.zip"',
       },
-      'format': {
+      format: {
         description: 'Desired output format',
         choices: ['json', 'html', 'side'],
         default: 'json',
       },
       // TODO: this is not added yet
       'include-imports': {
-        description: 'Bundle imported suites in the export when provided (currenlty for .json exports only)',
+        description:
+          'Bundle imported suites in the export when provided (currenlty for .json exports only)',
         type: 'boolean',
         default: false,
-      }
+      },
     })
     return yargs
   },
@@ -31,13 +31,13 @@ module.exports = {
       const client = require('../../../index')(args.apiKey)
 
       let downloadMethod
-      switch(args.format) {
+      switch (args.format) {
         case 'html':
           downloadMethod = 'downloadSuiteSeleniumHtml'
-        break;
+          break
         case 'side':
           downloadMethod = 'downloadSuiteSeleniumSide'
-        break;
+          break
         default:
           if (argv.includeImports) {
             downloadMethod = 'downloadSuiteJsonBundled'
@@ -57,10 +57,9 @@ module.exports = {
       // just print out the raw result, might not be JSON
       console.log(`Suite downloaded to ${destination}`)
     } catch (error) {
-      console.log(error)
-      throw new Error(error.message)
+      throw error
     }
 
     process.exit(0)
-  }
+  },
 }

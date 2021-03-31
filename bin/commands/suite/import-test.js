@@ -11,8 +11,8 @@ module.exports = {
       const result = await client.importTest(argv.suiteId, test)
       helpers.print(result)
     } catch (error) {
-      throw new Error(error.message)
+      throw error
     }
     process.exit(0)
-  }
+  },
 }

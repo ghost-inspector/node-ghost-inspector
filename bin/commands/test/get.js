@@ -1,4 +1,3 @@
-
 const helpers = require('../../helpers')
 
 module.exports = {
@@ -11,9 +10,9 @@ module.exports = {
       const result = await client.getTest(argv.testId)
       helpers.print(result)
     } catch (error) {
-      throw new Error(error.message)
+      throw error
     }
 
     process.exit(0)
-  }
+  },
 }

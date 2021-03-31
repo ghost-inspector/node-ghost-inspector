@@ -7,6 +7,6 @@ require('yargs/yargs')(process.argv.slice(2))
   .demandOption('apiKey')
   .commandDir('commands')
   .demandCommand()
-  .wrap(100)
+  .wrap(120)
   .help()
   .argv

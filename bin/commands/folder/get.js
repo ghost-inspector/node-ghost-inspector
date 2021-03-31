@@ -10,9 +10,9 @@ module.exports = {
       const result = await client.getFolder(argv.folderId)
       helpers.print(result)
     } catch (error) {
-      throw new Error(error.message)
+      throw error
     }
 
     process.exit(0)
-  }
+  },
 }

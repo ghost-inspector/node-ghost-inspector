@@ -1,4 +1,3 @@
-
 const helpers = require('../../helpers')
 
 module.exports = {
@@ -10,8 +9,9 @@ module.exports = {
       ...helpers.getCommonExecutionOptions(),
       // execute-test only
       'screenshot-compare-baseline-result': {
-        description: 'The ID of any completed test result across your organization to use as the baseline for the screenshot comparison Will be ignored if screenshot comparison or visual capture is disabled.',
-      }
+        description:
+          'The ID of any completed test result across your organization to use as the baseline for the screenshot comparison Will be ignored if screenshot comparison or visual capture is disabled.',
+      },
     })
     return yargs
   },
@@ -30,13 +30,14 @@ module.exports = {
     // execute
     try {
       const client = require('../../../index')(apiKey)
+      // TODO: disable visuals defaults overriding stuff set on the test
       const [result, passing, screenshotPassing] = await client.executeTest(testId, args)
       // print out result, regardless
       helpers.print(result)
     } catch (error) {
-      throw new Error(error.message)
+      throw error
     }
 
     process.exit(0)
-  }
+  },
 }

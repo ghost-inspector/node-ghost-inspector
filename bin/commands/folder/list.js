@@ -1,15 +1,4 @@
-
 const helpers = require('../../helpers')
-
-// TODO: clean up __v in the JSON output
-/*
-  {
-    "_id": "5cd1d3688a512d55d82c8e1c",
-    "name": "WordPress Plugin",
-    "organization": "5a0604918ee170435385d4a7",
-    "__v": 0
-  },
-*/
 
 module.exports = {
   command: 'list',
@@ -22,9 +11,9 @@ module.exports = {
       // print out result, regardless
       helpers.print(result)
     } catch (error) {
-      throw new Error(error.message)
+      throw error
     }
 
     process.exit(0)
-  }
+  },
 }

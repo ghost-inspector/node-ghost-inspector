@@ -1,4 +1,3 @@
-
 const helpers = require('../../helpers')
 
 module.exports = {
@@ -6,19 +5,20 @@ module.exports = {
   desc: 'Download a single test.',
   builder: (yargs) => {
     yargs.options({
-      'destination': {
+      destination: {
         description: 'Path to local destination for output. Defaults to "test-<test-id>.<format>"',
       },
-      'format': {
+      format: {
         description: 'Desired output format',
         choices: ['json', 'html', 'side'],
         default: 'json',
       },
       'include-imports': {
-        description: 'Bundle imported tests in the export when provided (currenlty for .json exports only)',
+        description:
+          'Bundle imported tests in the export when provided (currenlty for .json exports only)',
         type: 'boolean',
         default: false,
-      }
+      },
     })
     return yargs
   },
@@ -30,13 +30,13 @@ module.exports = {
       const client = require('../../../index')(args.apiKey)
 
       let downloadMethod
-      switch(args.format) {
+      switch (args.format) {
         case 'html':
           downloadMethod = 'downloadTestSeleniumHtml'
-        break;
+          break
         case 'side':
           downloadMethod = 'downloadTestSeleniumSide'
-        break;
+          break
         default:
           downloadMethod = 'downloadTestJson'
       }
@@ -53,9 +53,9 @@ module.exports = {
       console.log(`Test downloaded to ${destination}`)
     } catch (error) {
       console.log(error)
-      throw new Error(error.message)
+      throw error
     }
 
     process.exit(0)
-  }
+  },
 }

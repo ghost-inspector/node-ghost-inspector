@@ -8,10 +8,10 @@ module.exports = {
   handler: async function (argv) {
     try {
       const uri = 'https://api.ghostinspector.com/v1/test-runner-ip-addresses'
-      helpers.print(await request({uri, json: true}))
+      helpers.print(await request({ uri, json: true }))
     } catch (error) {
-      throw new Error(error.message)
+      throw error
     }
     process.exit(0)
-  }
+  },
 }

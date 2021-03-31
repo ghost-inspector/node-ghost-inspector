@@ -1,4 +1,3 @@
-
 const helpers = require('../../helpers')
 
 module.exports = {
@@ -6,7 +5,6 @@ module.exports = {
   desc: 'Update a suite.',
   builder: (yargs) => {
     yargs.options({
-      // TODO: list all possible values?
       '[attribute]': {
         description: 'Pass "--[attribute] value" to update your suite (eg: --name "My test")',
       },
@@ -27,8 +25,8 @@ module.exports = {
       const result = await client.updateSuite(suiteId, args)
       helpers.print(result)
     } catch (error) {
-      throw new Error(error.message)
+      throw error
     }
     process.exit(0)
-  }
+  },
 }

@@ -10,9 +10,9 @@ module.exports = {
       const result = await client.cancelSuiteResult(argv.suiteResultId)
       helpers.print(result)
     } catch (error) {
-      throw new Error(error.message)
+      throw error
     }
 
     process.exit(0)
-  }
+  },
 }

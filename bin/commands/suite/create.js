@@ -10,8 +10,8 @@ module.exports = {
       const result = await client.createSuite(argv.organizationId, argv.suiteName)
       helpers.print(result)
     } catch (error) {
-      throw new Error(error.message)
+      throw error
     }
     process.exit(0)
-  }
+  },
 }

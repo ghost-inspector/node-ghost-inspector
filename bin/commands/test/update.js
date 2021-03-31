@@ -1,4 +1,3 @@
-
 const helpers = require('../../helpers')
 
 module.exports = {
@@ -6,7 +5,6 @@ module.exports = {
   desc: 'Update a test.',
   builder: (yargs) => {
     yargs.options({
-      // TODO: list all possible values?
       '[attribute]': {
         description: 'Pass "--[attribute] value" to update your test (eg: --name "My test")',
       },
@@ -24,13 +22,13 @@ module.exports = {
     delete args['apiKey']
 
     try {
-      const client = require('../../../index')(argv.apiKey)
-      const result = await client.updateTest(argv.testId, args)
+      const client = require('../../../index')(apiKey)
+      const result = await client.updateTest(testId, args)
       helpers.print(result)
     } catch (error) {
-      throw new Error(error.message)
+      throw error
     }
 
     process.exit(0)
-  }
+  },
 }

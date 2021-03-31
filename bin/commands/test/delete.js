@@ -1,4 +1,3 @@
-
 const helpers = require('../../helpers')
 
 module.exports = {
@@ -9,12 +8,11 @@ module.exports = {
     try {
       const client = require('../../../index')(argv.apiKey)
       const result = await client.deleteTest(argv.testId)
-      // TODO: test this, non-JSON response?
-      console.log(result)
+      helpers.print({ deleted: result })
     } catch (error) {
-      throw new Error(error.message)
+      throw error
     }
 
     process.exit(0)
-  }
+  },
 }

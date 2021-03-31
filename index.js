@@ -8,7 +8,7 @@ const DEFAULT_POLL_INTERVAL = 5000
 class GhostInspector {
   constructor(apiKey) {
     this.userAgent = 'Ghost Inspector Node.js Client'
-    this.host = 'https://api.ghostinspector.com'
+    this.host = 'https://api.ghostinspectortest.com'
     this.prefix = '/v1'
     this.apiKey = apiKey
   }
@@ -368,6 +368,7 @@ class GhostInspector {
   }
 
   async updateTest(testId, updates, callback) {
+    updates = { body: updates }
     return this.request('POST', `/tests/${testId}/`, updates, callback)
   }
 
