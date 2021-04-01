@@ -1,3 +1,4 @@
+const assert = require('assert')
 /**
  * Yargs duplicates every argument like so:
  *
@@ -32,7 +33,15 @@ const cleanArgs = (args) => {
  * Abstract the Ghost Inspector client to customize connection details.
  */
 const getClient = (args) => {
-  const client = require('../index')(args.apiKey)
+  const apiKey = process.env.GHOST_INSPECTOR_API_KEY || args.apiKey
+  try {
+    assert.ok(apiKey, 'apiKey is required')
+  } catch (error) {
+    // unwrap assertion error
+    throw new Error(error.message)
+  }
+
+  const client = require('../index')(apiKey)
   client.userAgent = `${client.userAgent} CLI`
   return client
 }
