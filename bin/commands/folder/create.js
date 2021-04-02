@@ -8,7 +8,7 @@ module.exports = {
     try {
       const client = helpers.getClient(argv)
       const result = await client.createFolder(argv.organizationId, argv.folderName)
-      helpers.print(result)
+      helpers.printJson(result)
     } catch (error) {
       throw error
     }

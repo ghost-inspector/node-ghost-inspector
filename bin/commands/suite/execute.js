@@ -23,7 +23,7 @@ module.exports = {
       const client = helpers.getClient(argv)
       const [result, passing, screenshotPassing] = await client.executeSuite(suiteId, args)
       // print out result, regardless
-      helpers.print(result)
+      helpers.printJson(result)
     } catch (error) {
       throw error
     }

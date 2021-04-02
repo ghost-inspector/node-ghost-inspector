@@ -123,8 +123,8 @@ const getCommonExecutionOptions = () => {
   }
 }
 
-const print = (object) => {
+const printJson = (object) => {
   console.log(JSON.stringify(object))
 }
 
-module.exports = { cleanArgs, getClient, getCommonExecutionOptions, print }
+module.exports = { cleanArgs, getClient, getCommonExecutionOptions, printJson }

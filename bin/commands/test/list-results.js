@@ -26,7 +26,7 @@ module.exports = {
     try {
       const client = helpers.getClient(argv)
       const [result, passing, screenshotPassing] = await client.getTestResults(testId, args)
-      helpers.print(result)
+      helpers.printJson(result)
     } catch (error) {
       throw error
     }

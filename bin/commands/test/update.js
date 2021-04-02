@@ -20,7 +20,7 @@ module.exports = {
     try {
       const client = helpers.getClient(argv)
       const result = await client.updateTest(testId, args)
-      helpers.print(result)
+      helpers.printJson(result)
     } catch (error) {
       throw error
     }

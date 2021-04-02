@@ -16,7 +16,7 @@ module.exports = {
     try {
       const client = helpers.getClient(argv)
       const result = await client.waitForTestResult(argv.resultId, argv)
-      helpers.print(result)
+      helpers.printJson(result)
     } catch (error) {
       throw error
     }

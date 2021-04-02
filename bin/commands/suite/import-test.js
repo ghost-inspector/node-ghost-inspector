@@ -10,7 +10,7 @@ module.exports = {
       // TODO: resolve path
       const test = require(argv.file)
       const result = await client.importTest(argv.suiteId, test)
-      helpers.print(result)
+      helpers.printJson(result)
     } catch (error) {
       throw error
     }

@@ -25,7 +25,7 @@ module.exports = {
     try {
       const client = helpers.getClient(argv)
       const results = await client.getSuiteResultTestResults(suiteResultId, args)
-      helpers.print(results)
+      helpers.printJson(results)
     } catch (error) {
       throw error
     }
