@@ -1,6 +1,5 @@
 const assert = require('assert').strict
 const fs = require('fs')
-const request = require('request-promise-native')
 const sinon = require('sinon')
 
 const wait = (time = 5) => {
