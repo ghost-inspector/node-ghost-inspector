@@ -20,7 +20,14 @@ module.exports = {
     try {
       const client = helpers.getClient(argv)
       const result = await client.updateTest(testId, args)
-      helpers.printJson(result)
+      if (argv.json) {
+        helpers.printJson(result)
+      } else {
+        helpers.print({
+          message: `Test updated: ${result.name}`,
+          id: result._id,
+        })
+      }
     } catch (error) {
       throw error
     }

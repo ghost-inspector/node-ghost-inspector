@@ -52,7 +52,6 @@ module.exports = {
       }
 
       await client[downloadMethod](args.suiteId, destination, args)
-      // just print out the raw result, might not be JSON
       console.log(`Suite downloaded to ${destination}`)
     } catch (error) {
       throw error

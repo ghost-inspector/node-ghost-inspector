@@ -28,7 +28,14 @@ module.exports = {
     try {
       const client = helpers.getClient(argv)
       const [result, passing, screenshotPassing] = await client.executeTest(testId, args)
-      helpers.printJson(result)
+      if (argv.json) {
+        helpers.printJson(result)
+      } else {
+        helpers.print({
+          message: `Result: ${result.name}`,
+          id: result._id,
+        })
+      }
     } catch (error) {
       throw error
     }

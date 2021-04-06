@@ -8,7 +8,14 @@ module.exports = {
     try {
       const client = helpers.getClient(argv)
       const result = await client.duplicateSuite(argv.suiteId)
-      helpers.printJson(result)
+      if (argv.json) {
+        helpers.printJson(result)
+      } else {
+        helpers.print({
+          message: `Suite duplicated: ${result.name}`,
+          id: result._id,
+        })
+      }
     } catch (error) {
       throw error
     }

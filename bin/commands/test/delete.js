@@ -8,7 +8,13 @@ module.exports = {
     try {
       const client = helpers.getClient(argv)
       const result = await client.deleteTest(argv.testId)
-      helpers.printJson({ deleted: result })
+      if (argv.json) {
+        helpers.printJson({ deleted: result })
+      } else {
+        helpers.print({
+          message: `Test deleted`,
+        })
+      }
     } catch (error) {
       throw error
     }

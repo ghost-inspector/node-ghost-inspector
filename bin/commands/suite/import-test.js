@@ -1,3 +1,5 @@
+const resolvePath = require('path').resolve
+
 const helpers = require('../../helpers')
 
 module.exports = {
@@ -7,10 +9,17 @@ module.exports = {
   handler: async function (argv) {
     try {
       const client = helpers.getClient(argv)
-      // TODO: resolve path
-      const test = require(argv.file)
+      // TODO: test this again with resolvePath
+      const test = resolvePath(argv.file)
       const result = await client.importTest(argv.suiteId, test)
-      helpers.printJson(result)
+      if (argv.json) {
+        helpers.printJson(result)
+      } else {
+        helpers.print({
+          message: `Test imported: ${result.name}`,
+          id: result._id,
+        })
+      }
     } catch (error) {
       throw error
     }

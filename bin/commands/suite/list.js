@@ -7,8 +7,18 @@ module.exports = {
   handler: async function (argv) {
     try {
       const client = helpers.getClient(argv)
-      const result = await client.getSuites()
-      helpers.printJson(result)
+      const results = await client.getSuites()
+      if (argv.json) {
+        helpers.printJson(results)
+      } else {
+        results.forEach((item) => {
+          helpers.print({
+            message: item.name,
+            id: item._id,
+            passing: item.passing,
+          })
+        })
+      }
     } catch (error) {
       throw error
     }

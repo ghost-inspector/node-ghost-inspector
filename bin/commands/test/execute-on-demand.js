@@ -27,7 +27,14 @@ module.exports = {
       const absPath = resolvePath(file)
       const input = require(absPath)
       const result = await client.executeTestOnDemand(organizationId, input, { wait: !immediate })
-      helpers.printJson(result)
+      if (argv.json) {
+        helpers.printJson(result)
+      } else {
+        helpers.print({
+          message: `Result: ${result.name}`,
+          id: result._id,
+        })
+      }
     } catch (error) {
       throw error
     }

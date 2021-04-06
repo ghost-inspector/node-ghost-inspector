@@ -7,8 +7,18 @@ module.exports = {
   handler: async function (argv) {
     try {
       const client = helpers.getClient(argv)
-      const result = await client.getFolderSuites(argv.folderId)
-      helpers.printJson(result)
+      const results = await client.getFolderSuites(argv.folderId)
+      if (argv.json) {
+        helpers.printJson(results)
+      } else {
+        results.forEach((item) => {
+          helpers.print({
+            message: item.name,
+            id: item._id,
+            passing: item.passing,
+          })
+        })
+      }
     } catch (error) {
       throw error
     }

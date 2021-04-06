@@ -1,4 +1,5 @@
 const assert = require('assert')
+const chalk = require('chalk')
 /**
  * Yargs duplicates every argument like so:
  *
@@ -123,8 +124,31 @@ const getCommonExecutionOptions = () => {
   }
 }
 
+const print = (details) => {
+  let passing
+  if (details.passing !== undefined) {
+    switch (details.passing) {
+      case true:
+        passing = `${chalk.green('✓')} `
+        break
+      case false:
+        passing = `${chalk.red('✖️')} `
+        break
+      default:
+        passing = '? '
+    }
+  } else {
+    passing = ''
+  }
+  let id = ''
+  if (details.id) {
+    id = ` (${details.id})`
+  }
+  console.log(`${passing}${details.message}${id}`)
+}
+
 const printJson = (object) => {
   console.log(JSON.stringify(object))
 }
 
-module.exports = { cleanArgs, getClient, getCommonExecutionOptions, printJson }
+module.exports = { cleanArgs, getClient, getCommonExecutionOptions, print, printJson }

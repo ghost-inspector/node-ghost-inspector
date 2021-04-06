@@ -8,7 +8,14 @@ module.exports = {
     try {
       const client = helpers.getClient(argv)
       const result = await client.createSuite(argv.organizationId, argv.suiteName)
-      helpers.printJson(result)
+      if (argv.json) {
+        helpers.printJson(result)
+      } else {
+        helpers.print({
+          message: `Suite created: ${result.name}`,
+          id: result._id,
+        })
+      }
     } catch (error) {
       throw error
     }

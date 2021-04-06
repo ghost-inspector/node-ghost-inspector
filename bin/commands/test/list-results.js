@@ -25,8 +25,18 @@ module.exports = {
 
     try {
       const client = helpers.getClient(argv)
-      const [result, passing, screenshotPassing] = await client.getTestResults(testId, args)
-      helpers.printJson(result)
+      const [results, passing, screenshotPassing] = await client.getTestResults(testId, args)
+      if (argv.json) {
+        helpers.printJson(results)
+      } else {
+        results.forEach((item) => {
+          helpers.print({
+            message: item.name,
+            id: item._id,
+            passing: item.passing,
+          })
+        })
+      }
     } catch (error) {
       throw error
     }
