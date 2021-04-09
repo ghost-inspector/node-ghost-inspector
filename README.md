@@ -6,11 +6,11 @@ The official Node.js package and CLI for interacting with [Ghost Inspector's API
 
 ## Jump to...
 
- * [Installation](#installation)
- * [Quick Start](#quick-start)
- * [CLI Usage](#cli-usage)
- * [Node.js Client Usage](#nodejs-client-usage)
- * [Contributing](#contributing)
+- [Installation](#installation)
+- [Quick Start](#quick-start)
+- [CLI Usage](#cli-usage)
+- [Node.js Client Usage](#nodejs-client-usage)
+- [Contributing](#contributing)
 
 ## Installation
 
@@ -41,12 +41,18 @@ try {
 } catch (err) {
   console.error(err)
 }
-
 ```
 
 ## CLI Usage
 
+CLI quickstart:
+
+```
+❯ ghost-inspector test execute <my-test-id> --browser Firefox --myVariable "some variable"
+```
+
 View all available commands for the CLI:
+
 ```
 ❯ ghost-inspector --help
 ghost-inspector <command>
@@ -63,18 +69,12 @@ Commands:
 Options:
   --version  Show version number                                                           [boolean]
   --apiKey   Your Ghost Inspector API key.                                                [required]
+  --json     Provide output in JSON format.
   --help     Show help                                                                     [boolean]
 ```
 
-You can also view usage help for each sub-command:
+By default all commands will provide human-readable output, but you can also return JSON by passing the flag `--json`.
 
-```
-❯ ghost-inspector test --help
-...
-
-❯ ghost-inspector test execute --help
-...
-```
 **Note:** your API key may be passed in through the environment (`GHOST_INSPECTOR_API_KEY`) or as a parameter (`--apiKey xxx`).
 
 <br />
@@ -95,53 +95,52 @@ This package supports both callbacks and `await` to receive data back from the m
 
 Jump to...
 
- * Folders
-    * [`createFolder()`](#ghostinspectorcreatefolderorganizationid-foldername-callback)
-    * [`getFolder()`](#ghostinspectorgetfolderfolderid-callback)
-    * [`getFolders()`](#ghostinspectorgetfolderscallback)
-    * [`getFolderSuites()`](#ghostinspectorgetfoldersuitesfolderid-callback)
-    * [`updateFolder()`](#ghostinspectorupdatefolderfolderid-foldername-callback)
- * Suites
-    * [`createSuite()`](#ghostinspectorcreatesuiteorganizationid-suitename-callback)
-    * [`downloadSuiteJson()`](#ghostinspectordownloadsuitejsonsuiteid-dest-callback)
-    * [`downloadSuiteSeleniumHtml()`](#ghostinspectordownloadsuiteseleniumhtmlsuiteid-dest-callback)
-    * [`downloadSuiteSeleniumSide()`](#ghostinspectordownloadsuiteseleniumsidesuiteid-dest-callback)
-    * [`downloadSuiteSeleniumJson()`](#ghostinspectordownloadsuiteseleniumjsonsuiteid-dest-callback)
-    * [`duplicateSuite()`](#ghostinspectorduplicatesuitesuiteid-options-callback)
-    * [`executeSuite()`](#ghostinspectorexecutesuitesuiteid-options-callback)
-    * [`getSuite()`](#ghostinspectorgetsuitesuiteid-callback)
-    * [`getSuites()`](#ghostinspectorgetsuites-callback)
-    * [`getSuiteResults()`](#ghostinspectorgetsuiteresultssuiteid-callback)
-    * [`getSuiteTests()`](#ghostinspectorgetsuitetestssuiteid-callback)
-    * [`importTest()`](#ghostinspectorimporttestsuiteid-test-callback)
-    * [`updateSuite()`](#ghostinspectorupdatesuitesuiteid-updates-callback)
- * Suite Results
-    * [`cancelSuiteResult()`](#ghostinspectorcancelsuiteresultsuiteresultid-callback)
-    * [`getSuiteResult()`](#ghostinspectorgetsuiteresultssuiteresultid-callback)
-    * [`getSuiteResultTestResults()`](#ghostinspectorgetsuiteresulttestresultssuiteresultid-callback)
-    * [`getSuiteResultXUnit()`](#ghostinspectorgetsuiteresultxunitsuiteresultid-callback)
- * Tests
-    * [`acceptTestScreenshot()`](#ghostinspectoraccepttestscreenshottestid-callback)
-    * [`deleteTest()`](#ghostinspectordeletetesttestid-callback)
-    * [`downloadTestJson()`](#ghostinspectordownloadtestjsontestid-dest-callback)
-    * [`downloadTestSeleniumHtml()`](#ghostinspectordownloadtestseleniumhtmltestid-dest-callback)
-    * [`downloadTestSeleniumSide()`](#ghostinspectordownloadtestseleniumsidetestid-dest-callback)
-    * [`downloadTestSeleniumJson()`](#ghostinspectordownloadtestseleniumjsontestid-dest-callback)
-    * [`duplicateTest()`](#ghostinspectorduplicatetesttestid-callback)
-    * [`executeTest()`](#ghostinspectorexecutetesttestid-options-callback)
-    * [`executeTestOnDemand()`](#ghostinspectorexecutetestondemandorganizationid-test-options-callback)
-    * [`getTest()`](#ghostinspectorgettesttestid-callback)
-    * [`getTestResults()`](#ghostinspectorgettestresultstestid-options-callback)
-    * [`getTestResultsRunning()`](#ghostinspectorgettestresultsrunningtestid-callback)
-    * [`updateTest()`](#ghostinspectorupdatetesttestid-updates-callback)
-    * [`waitForTestResult()`](#ghostinspectorwaitfortestresultresultid-options-callback)
- * Test Results
-    * [`cancelTestResult()`](#ghostinspectorcanceltestresulttestresultid-callback)
-    * [`getTestResult()`](#ghostinspectorgettestresulttestresultid-callback)
- * Organization
-    * [`getAllRunningTests()`](#ghostinspectorgetallrunningtestsorganizationid-callback)
-    * [`getTests()`](#ghostinspectorgettests-callback)
-    
+- Folders
+  - [`createFolder()`](#ghostinspectorcreatefolderorganizationid-foldername-callback)
+  - [`getFolder()`](#ghostinspectorgetfolderfolderid-callback)
+  - [`getFolders()`](#ghostinspectorgetfolderscallback)
+  - [`getFolderSuites()`](#ghostinspectorgetfoldersuitesfolderid-callback)
+  - [`updateFolder()`](#ghostinspectorupdatefolderfolderid-foldername-callback)
+- Suites
+  - [`createSuite()`](#ghostinspectorcreatesuiteorganizationid-suitename-callback)
+  - [`downloadSuiteJson()`](#ghostinspectordownloadsuitejsonsuiteid-dest-callback)
+  - [`downloadSuiteSeleniumHtml()`](#ghostinspectordownloadsuiteseleniumhtmlsuiteid-dest-callback)
+  - [`downloadSuiteSeleniumSide()`](#ghostinspectordownloadsuiteseleniumsidesuiteid-dest-callback)
+  - [`downloadSuiteSeleniumJson()`](#ghostinspectordownloadsuiteseleniumjsonsuiteid-dest-callback)
+  - [`duplicateSuite()`](#ghostinspectorduplicatesuitesuiteid-options-callback)
+  - [`executeSuite()`](#ghostinspectorexecutesuitesuiteid-options-callback)
+  - [`getSuite()`](#ghostinspectorgetsuitesuiteid-callback)
+  - [`getSuites()`](#ghostinspectorgetsuites-callback)
+  - [`getSuiteResults()`](#ghostinspectorgetsuiteresultssuiteid-callback)
+  - [`getSuiteTests()`](#ghostinspectorgetsuitetestssuiteid-callback)
+  - [`importTest()`](#ghostinspectorimporttestsuiteid-test-callback)
+  - [`updateSuite()`](#ghostinspectorupdatesuitesuiteid-updates-callback)
+- Suite Results
+  - [`cancelSuiteResult()`](#ghostinspectorcancelsuiteresultsuiteresultid-callback)
+  - [`getSuiteResult()`](#ghostinspectorgetsuiteresultssuiteresultid-callback)
+  - [`getSuiteResultTestResults()`](#ghostinspectorgetsuiteresulttestresultssuiteresultid-callback)
+  - [`getSuiteResultXUnit()`](#ghostinspectorgetsuiteresultxunitsuiteresultid-callback)
+- Tests
+  - [`acceptTestScreenshot()`](#ghostinspectoraccepttestscreenshottestid-callback)
+  - [`deleteTest()`](#ghostinspectordeletetesttestid-callback)
+  - [`downloadTestJson()`](#ghostinspectordownloadtestjsontestid-dest-callback)
+  - [`downloadTestSeleniumHtml()`](#ghostinspectordownloadtestseleniumhtmltestid-dest-callback)
+  - [`downloadTestSeleniumSide()`](#ghostinspectordownloadtestseleniumsidetestid-dest-callback)
+  - [`downloadTestSeleniumJson()`](#ghostinspectordownloadtestseleniumjsontestid-dest-callback)
+  - [`duplicateTest()`](#ghostinspectorduplicatetesttestid-callback)
+  - [`executeTest()`](#ghostinspectorexecutetesttestid-options-callback)
+  - [`executeTestOnDemand()`](#ghostinspectorexecutetestondemandorganizationid-test-options-callback)
+  - [`getTest()`](#ghostinspectorgettesttestid-callback)
+  - [`getTestResults()`](#ghostinspectorgettestresultstestid-options-callback)
+  - [`getTestResultsRunning()`](#ghostinspectorgettestresultsrunningtestid-callback)
+  - [`updateTest()`](#ghostinspectorupdatetesttestid-updates-callback)
+  - [`waitForTestResult()`](#ghostinspectorwaitfortestresultresultid-options-callback)
+- Test Results
+  - [`cancelTestResult()`](#ghostinspectorcanceltestresulttestresultid-callback)
+  - [`getTestResult()`](#ghostinspectorgettestresulttestresultid-callback)
+- Organization
+  - [`getAllRunningTests()`](#ghostinspectorgetallrunningtestsorganizationid-callback)
+  - [`getTests()`](#ghostinspectorgettests-callback)
 
 <br />
 
@@ -404,13 +403,10 @@ try {
 }
 
 // Example using a callback
-GhostInspector.duplicateSuite(
-  '[suite-id]',
-  function (err, newSuite) {
-    if (err) return console.error(err)
-    console.log(newSuite)
-  },
-)
+GhostInspector.duplicateSuite('[suite-id]', function (err, newSuite) {
+  if (err) return console.error(err)
+  console.log(newSuite)
+})
 ```
 
 #### `GhostInspector.downloadSuiteSeleniumHtml(suiteId, dest, [callback])`
@@ -477,7 +473,7 @@ Download a file of all tests in this suite in Ghostinspector JSON format
 ```js
 // Example using await
 const options = {
-  includeImports: true
+  includeImports: true,
 }
 
 try {
@@ -499,7 +495,7 @@ Download a single test in Ghostinspector JSON format
 
 ```js
 const options = {
-  includeImports: true
+  includeImports: true,
 }
 
 // Example using await
@@ -609,7 +605,6 @@ GhostInspector.updateTest('[test-id]', { name: 'My new test name' }, function (e
   console.log(tests)
 })
 ```
-
 
 #### `GhostInspector.getTestResults(testId, [options], [callback])`
 
