@@ -1,5 +1,3 @@
-const resolvePath = require('path').resolve
-
 const helpers = require('../../helpers')
 
 module.exports = {
@@ -7,10 +5,10 @@ module.exports = {
   desc: 'Import a test in JSON format. <file> must be local path on-disk to JSON test file.',
   builder: {},
   handler: async function (argv) {
+    // TODO test this again manually
     try {
       const client = helpers.getClient(argv)
-      // TODO: test this again with resolvePath
-      const test = resolvePath(argv.file)
+      const test = helpers.loadJsonFile(argv.file)
       const result = await client.importTest(argv.suiteId, test)
       if (argv.json) {
         helpers.printJson(result)

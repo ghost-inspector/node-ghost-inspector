@@ -21,11 +21,11 @@ module.exports = {
     const args = helpers.cleanArgs(argv)
 
     const testId = args.testId
-    delete args['testid']
+    delete args['testId']
 
     try {
       const client = helpers.getClient(argv)
-      const [results, passing, screenshotPassing] = await client.getTestResults(testId, args)
+      const results = await client.getTestResults(testId, args)
       if (argv.json) {
         helpers.printJson(results)
       } else {

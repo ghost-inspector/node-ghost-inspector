@@ -1,4 +1,3 @@
-const resolvePath = require('path').resolve
 const helpers = require('../../helpers')
 
 module.exports = {
@@ -24,9 +23,8 @@ module.exports = {
 
     try {
       const client = helpers.getClient(argv)
-      const absPath = resolvePath(file)
-      const input = require(absPath)
-      const result = await client.executeTestOnDemand(organizationId, input, { wait: !immediate })
+      const input = helpers.loadJsonFile(file)
+      const [result] = await client.executeTestOnDemand(organizationId, input, { wait: !immediate })
       if (argv.json) {
         helpers.printJson(result)
       } else {

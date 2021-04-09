@@ -47,7 +47,9 @@ module.exports = {
         destination = `test-${args.testId}.${args.format}`
       }
 
-      await client[downloadMethod](args.testId, destination)
+      await client[downloadMethod](args.testId, destination, {
+        includeImports: !!args.includeImports,
+      })
       // just print out the raw result, might not be JSON
       console.log(`Test downloaded to ${destination}`)
     } catch (error) {

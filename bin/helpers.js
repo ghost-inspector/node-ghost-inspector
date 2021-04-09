@@ -1,5 +1,8 @@
 const assert = require('assert')
 const chalk = require('chalk')
+const fs = require('fs')
+const path = require('path')
+
 /**
  * Yargs duplicates every argument like so:
  *
@@ -20,6 +23,7 @@ const cleanArgs = (args) => {
   delete args['_']
   delete args['$0']
   delete args['apiKey']
+  delete args['json']
 
   // remove hypenated args 'foo-bar'
   Object.keys(args).forEach((key) => {
@@ -124,6 +128,9 @@ const getCommonExecutionOptions = () => {
   }
 }
 
+/**
+ * Helper to consistently print CLI output in plain format and aide in testing.
+ */
 const print = (details) => {
   let passing
   if (details.passing !== undefined) {
@@ -147,8 +154,25 @@ const print = (details) => {
   console.log(`${passing}${details.message}${id}`)
 }
 
+/**
+ * Prints the provided object to JSON, aides in testing the CLI.
+ */
 const printJson = (object) => {
   console.log(JSON.stringify(object))
 }
 
-module.exports = { cleanArgs, getClient, getCommonExecutionOptions, print, printJson }
+/**
+ * Resolves and loads a local JSON file, aides in testing the CLI.
+ */
+const loadJsonFile = (relativePath) => {
+  return require(path.resolve(relativePath))
+}
+
+module.exports = {
+  cleanArgs,
+  getClient,
+  getCommonExecutionOptions,
+  print,
+  printJson,
+  loadJsonFile,
+}

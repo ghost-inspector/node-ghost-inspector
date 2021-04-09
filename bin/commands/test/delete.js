@@ -12,7 +12,7 @@ module.exports = {
         helpers.printJson({ deleted: result })
       } else {
         helpers.print({
-          message: `Test deleted`,
+          message: `Test deleted (${argv.testId})`,
         })
       }
     } catch (error) {

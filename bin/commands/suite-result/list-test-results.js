@@ -22,6 +22,7 @@ module.exports = {
 
     const suiteResultId = args.suiteResultId
     delete args['suiteResultId']
+
     try {
       const client = helpers.getClient(argv)
       const results = await client.getSuiteResultTestResults(suiteResultId, args)

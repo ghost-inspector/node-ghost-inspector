@@ -22,7 +22,7 @@ module.exports = {
 
     // pull out the suiteId & apiKey so the rest can be passed in verbatim
     const suiteId = args.suiteId
-    delete args['suiteid']
+    delete args['suiteId']
 
     try {
       const client = helpers.getClient(argv)
@@ -34,6 +34,7 @@ module.exports = {
           helpers.print({
             message: item.name,
             id: item._id,
+            passing: item.passing,
           })
         })
       }

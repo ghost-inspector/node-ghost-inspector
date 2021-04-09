@@ -37,11 +37,7 @@ module.exports = {
           downloadMethod = 'downloadSuiteSeleniumSide'
           break
         default:
-          if (argv.includeImports) {
-            downloadMethod = 'downloadSuiteJsonBundled'
-          } else {
-            downloadMethod = 'downloadSuiteJson'
-          }
+          downloadMethod = 'downloadSuiteJson'
       }
 
       let destination
@@ -51,7 +47,9 @@ module.exports = {
         destination = `suite-${args.suiteId}.zip`
       }
 
-      await client[downloadMethod](args.suiteId, destination, args)
+      await client[downloadMethod](args.suiteId, destination, {
+        includeImports: !!args.includeImports,
+      })
       console.log(`Suite downloaded to ${destination}`)
     } catch (error) {
       throw error
