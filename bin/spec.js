@@ -2,11 +2,16 @@ const assert = require('assert').strict
 const sinon = require('sinon')
 
 const client = require('../index')('test-key')
-const helpers = require('../bin/helpers')
+const helpers = require('./helpers')
 
 describe('CLI', function () {
   before(function () {
     this.sandbox = sinon.createSandbox()
+    this.expectedExitCode = 0
+
+    this.setExpectedExitCode = (code) => {
+      this.expectedExitCode = code
+    }
 
     this.setUpHandler = ({ commandModule, clientMethod, clientMethodResponse }) => {
       this.handler = require(`../bin/commands/${commandModule}`).handler
@@ -31,7 +36,7 @@ describe('CLI', function () {
       // helpers.printJson will only ever get 1 argument, check it
       assert.deepEqual(this.consoleStub.args[0], expectedOutput)
       // make sure process exited successfully
-      assert.ok(this.exitStub.calledWith(0))
+      assert.ok(this.exitStub.calledWith(this.expectedExitCode))
     }
 
     this.testPlainOutput = async ({ handlerInput, expectedClientArgs, expectedOutput }) => {
@@ -43,7 +48,7 @@ describe('CLI', function () {
        */
       assert.deepEqual(this.consoleStub.args, expectedOutput)
       // make sure process exited successfully
-      assert.ok(this.exitStub.calledWith(0))
+      assert.equal(this.exitStub.args[0][0], this.expectedExitCode)
     }
   })
 
@@ -55,52 +60,53 @@ describe('CLI', function () {
 
   afterEach(function () {
     this.sandbox.restore()
+    this.expectedExitCode = 0
   })
 
   describe('folder', function () {
-    require('../bin/commands/folder')
-    require('../bin/commands/folder/get.spec')
-    require('../bin/commands/folder/list-suites.spec')
-    require('../bin/commands/folder/list.spec')
-    require('../bin/commands/folder/update.spec')
+    require('./commands/folder')
+    require('./commands/folder/get.spec')
+    require('./commands/folder/list-suites.spec')
+    require('./commands/folder/list.spec')
+    require('./commands/folder/update.spec')
   })
 
   describe('organization', function () {
-    require('../bin/commands/organization/get-running.spec')
+    require('./commands/organization/get-running.spec')
   })
 
   describe('suite', function () {
-    require('../bin/commands/suite/create.spec')
-    require('../bin/commands/suite/download.spec')
-    require('../bin/commands/suite/duplicate.spec')
-    require('../bin/commands/suite/execute.spec')
-    require('../bin/commands/suite/get.spec')
-    require('../bin/commands/suite/import-test.spec')
-    require('../bin/commands/suite/list-results.spec')
-    require('../bin/commands/suite/list-tests.spec')
-    require('../bin/commands/suite/list.spec')
-    require('../bin/commands/suite/update.spec')
+    require('./commands/suite/create.spec')
+    require('./commands/suite/download.spec')
+    require('./commands/suite/duplicate.spec')
+    require('./commands/suite/execute.spec')
+    require('./commands/suite/get.spec')
+    require('./commands/suite/import-test.spec')
+    require('./commands/suite/list-results.spec')
+    require('./commands/suite/list-tests.spec')
+    require('./commands/suite/list.spec')
+    require('./commands/suite/update.spec')
   })
 
   describe('suite', function () {
-    require('../bin/commands/suite-result/cancel.spec')
-    require('../bin/commands/suite-result/get-xunit-report.spec')
-    require('../bin/commands/suite-result/get.spec')
-    require('../bin/commands/suite-result/list-test-results.spec')
-    require('../bin/commands/suite-result/list.spec')
+    require('./commands/suite-result/cancel.spec')
+    require('./commands/suite-result/get-xunit-report.spec')
+    require('./commands/suite-result/get.spec')
+    require('./commands/suite-result/list-test-results.spec')
+    require('./commands/suite-result/list.spec')
   })
 
   describe('test', function () {
-    require('../bin/commands/test/accept-screenshot.spec')
-    require('../bin/commands/test/delete.spec')
-    require('../bin/commands/test/download.spec')
-    require('../bin/commands/test/duplicate.spec')
-    require('../bin/commands/test/execute-on-demand.spec')
-    require('../bin/commands/test/execute.spec')
-    require('../bin/commands/test/get-running.spec')
-    require('../bin/commands/test/get.spec')
-    require('../bin/commands/test/list-results.spec')
-    require('../bin/commands/test/list.spec')
-    require('../bin/commands/test/update.spec')
+    require('./commands/test/accept-screenshot.spec')
+    require('./commands/test/delete.spec')
+    require('./commands/test/download.spec')
+    require('./commands/test/duplicate.spec')
+    require('./commands/test/execute-on-demand.spec')
+    require('./commands/test/execute.spec')
+    require('./commands/test/get-running.spec')
+    require('./commands/test/get.spec')
+    require('./commands/test/list-results.spec')
+    require('./commands/test/list.spec')
+    require('./commands/test/update.spec')
   })
 })

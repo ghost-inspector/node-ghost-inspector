@@ -19,7 +19,7 @@
     "test": "npm run test-unit && npm run test-cli && npm run test-integration",
     "test-unit": "./node_modules/.bin/mocha test/*.js --bail",
     "test-integration": "./node_modules/.bin/mocha test/integration/*.js --bail",
-    "test-cli": "./node_modules/.bin/mocha test/cli.js --bail"
+    "test-cli": "./node_modules/.bin/mocha bin/spec.js --bail"
   },
   "main": "./index.js",
   "bin": {

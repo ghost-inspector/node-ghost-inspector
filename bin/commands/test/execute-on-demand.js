@@ -24,19 +24,30 @@ module.exports = {
     try {
       const client = helpers.getClient(argv)
       const input = helpers.loadJsonFile(file)
-      const [result] = await client.executeTestOnDemand(organizationId, input, { wait: !immediate })
+      const [result, passing, screenshotPassing] = await client.executeTestOnDemand(
+        organizationId,
+        input,
+        { wait: !immediate },
+      )
+      const [overallPassing, exitOk] = helpers.resolvePassingStatus(
+        argv,
+        passing,
+        screenshotPassing,
+      )
+
       if (argv.json) {
         helpers.printJson(result)
       } else {
         helpers.print({
           message: `Result: ${result.name}`,
           id: result._id,
+          passing: overallPassing,
         })
       }
+
+      process.exit(exitOk ? 0 : 1)
     } catch (error) {
       throw error
     }
-
-    process.exit(0)
   },
 }

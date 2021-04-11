@@ -28,18 +28,25 @@ module.exports = {
     try {
       const client = helpers.getClient(argv)
       const [result, passing, screenshotPassing] = await client.executeTest(testId, args)
+      const [overallPassing, exitOk] = helpers.resolvePassingStatus(
+        argv,
+        passing,
+        screenshotPassing,
+      )
+
       if (argv.json) {
         helpers.printJson(result)
       } else {
         helpers.print({
           message: `Result: ${result.name}`,
           id: result._id,
+          passing: overallPassing,
         })
       }
+
+      process.exit(exitOk ? 0 : 1)
     } catch (error) {
       throw error
     }
-
-    process.exit(0)
   },
 }

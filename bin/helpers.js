@@ -24,6 +24,8 @@ const cleanArgs = (args) => {
   delete args['$0']
   delete args['apiKey']
   delete args['json']
+  delete args['errorOnFail']
+  delete args['errorOnScreenshotFail']
 
   // remove hypenated args 'foo-bar'
   Object.keys(args).forEach((key) => {
@@ -71,6 +73,16 @@ const getCommonExecutionOptions = () => {
     'disable-visuals': {
       description: 'Disable capturing screenshots and video for this execution only when provided',
       type: 'boolean',
+    },
+    'error-on-fail': {
+      description:
+        'Exit the command with a non-0 status if the test or suite passing value is not `true`. Ignored when used with --immediate',
+      default: false,
+    },
+    'error-on-screenshot-fail': {
+      description:
+        'Exit the command with a non-0 status if the test or suite screenshotComparePassing value is not `true`. Ignored when used with --immediate',
+      default: false,
     },
     'http-auth-password': {
       description: 'Alternate HTTP authentication password to use for this execution only',
@@ -129,6 +141,13 @@ const getCommonExecutionOptions = () => {
 }
 
 /**
+ * Resolves and loads a local JSON file, aides in testing the CLI.
+ */
+const loadJsonFile = (relativePath) => {
+  return require(path.resolve(relativePath))
+}
+
+/**
  * Helper to consistently print CLI output in plain format and aide in testing.
  */
 const print = (details) => {
@@ -162,17 +181,42 @@ const printJson = (object) => {
 }
 
 /**
- * Resolves and loads a local JSON file, aides in testing the CLI.
+ * Given `args.errorOnFail` and `args.errorOnScreenshotFail`, determine the
+ * overall passing status based on `passing` and `screenshotComparePassing`
+ * when `args.immediate` is provided. Used to resolve the exit code and real
+ * passing status of test/suite execution.
  */
-const loadJsonFile = (relativePath) => {
-  return require(path.resolve(relativePath))
+const resolvePassingStatus = (args, passing, screenshotPassing) => {
+  let overallPassing = passing
+  let exitOk = true
+  if (!args.immediate) {
+    if (args.errorOnScreenshotFail) {
+      // check if the user wants to exit based on screenshot failing
+      if (screenshotPassing) {
+        overallPassing = true
+        exitOk = true
+      } else {
+        // in the failing scenario, "overall" can be `false` or `null`
+        overallPassing = screenshotPassing
+        exitOk = false
+      }
+    }
+    // check if the user wants to exit based on test failing
+    if (args.errorOnFail && !passing) {
+      // in the failing scenario, "overall" can be `false` or `null`
+      overallPassing = passing
+      exitOk = false
+    }
+  }
+  return [overallPassing, exitOk]
 }
 
 module.exports = {
   cleanArgs,
   getClient,
   getCommonExecutionOptions,
+  loadJsonFile,
   print,
   printJson,
-  loadJsonFile,
+  resolvePassingStatus,
 }
