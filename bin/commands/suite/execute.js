@@ -21,20 +21,27 @@ module.exports = {
     // execute
     try {
       const client = helpers.getClient(argv)
-      const [result, passing, screenshotPassing] = await client.executeSuite(suiteId, args)
-      const [overallPassing, exitOk] = helpers.resolvePassingStatus(
-        argv,
-        passing,
-        screenshotPassing,
-      )
+      let [result, passing, screenshotPassing] = await client.executeSuite(suiteId, args)
+      const { exitOk } = helpers.resolvePassingStatus(argv, passing, screenshotPassing)
 
       if (argv.json) {
         helpers.printJson(result)
       } else {
-        helpers.print({
-          message: `Suite result: ${result.name}`,
-          id: result._id,
-          passing: overallPassing,
+        // handle multiple results
+        if (!Array.isArray(result)) {
+          result = [result]
+        }
+        result.forEach((item) => {
+          const { overallPassing } = helpers.resolvePassingStatus(
+            argv,
+            item.passing,
+            item.screenshotComparePassing,
+          )
+          helpers.print({
+            message: `Suite result: ${item.name}`,
+            id: item._id,
+            passing: overallPassing,
+          })
         })
       }
       process.exit(exitOk ? 0 : 1)

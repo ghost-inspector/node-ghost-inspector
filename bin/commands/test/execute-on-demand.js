@@ -16,6 +16,7 @@ module.exports = {
     return yargs
   },
 
+  // TODO; what happens when we execute with multiple browsers, etc?
   handler: async function (argv) {
     // clean up yargs-related stuff
     const args = helpers.cleanArgs(argv)
@@ -29,7 +30,7 @@ module.exports = {
         input,
         { wait: !immediate },
       )
-      const [overallPassing, exitOk] = helpers.resolvePassingStatus(
+      const { overallPassing, exitOk } = helpers.resolvePassingStatus(
         argv,
         passing,
         screenshotPassing,

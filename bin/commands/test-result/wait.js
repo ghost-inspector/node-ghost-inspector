@@ -39,7 +39,7 @@ module.exports = {
       const passing = result.passing
       const screenshotPassing = result.screenshotComparePassing
 
-      const [overallPassing, exitOk] = helpers.resolvePassingStatus(
+      const { overallPassing, exitOk } = helpers.resolvePassingStatus(
         argv,
         passing,
         screenshotPassing,

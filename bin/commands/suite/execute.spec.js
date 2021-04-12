@@ -3,7 +3,7 @@ describe('execute', function () {
     this.setUpHandler({
       commandModule: './suite/execute',
       clientMethod: 'executeSuite',
-      clientMethodResponse: [{ name: 'My suite', _id: '98765' }, true, false],
+      clientMethodResponse: [{ name: 'My suite', _id: '98765', passing: true }, true, false],
     })
   })
 
@@ -19,7 +19,7 @@ describe('execute', function () {
         immediate: true,
       },
       expectedClientArgs: ['my-suite-id', { myVar: 'foobar', immediate: true }],
-      expectedOutput: ['{"name":"My suite","_id":"98765"}'],
+      expectedOutput: ['{"name":"My suite","_id":"98765","passing":true}'],
     })
   })
 
@@ -40,7 +40,7 @@ describe('execute --immediate=true', function () {
     this.setUpHandler({
       commandModule: './suite/execute',
       clientMethod: 'executeSuite',
-      clientMethodResponse: [{ name: 'My suite', _id: '98765' }, null, null],
+      clientMethodResponse: [{ name: 'My suite', _id: '98765', passing: null }, null, null],
     })
   })
 
@@ -84,13 +84,18 @@ describe('execute --immediate=true', function () {
   })
 })
 
+// TODO: tests for multiples
 describe('execute --immediate=false', function () {
   describe('test failing, screenshot failing', function () {
     beforeEach(function () {
       this.setUpHandler({
         commandModule: './suite/execute',
         clientMethod: 'executeSuite',
-        clientMethodResponse: [{ name: 'My suite', _id: '98765' }, false, false],
+        clientMethodResponse: [
+          { name: 'My suite', _id: '98765', passing: false, screenshotComparePassing: false },
+          false,
+          false,
+        ],
       })
     })
 
@@ -128,7 +133,11 @@ describe('execute --immediate=false', function () {
       this.setUpHandler({
         commandModule: './suite/execute',
         clientMethod: 'executeSuite',
-        clientMethodResponse: [{ name: 'My suite', _id: '98765' }, true, false],
+        clientMethodResponse: [
+          { name: 'My suite', _id: '98765', passing: true, screenshotComparePassing: false },
+          true,
+          false,
+        ],
       })
     })
 
@@ -181,7 +190,11 @@ describe('execute --immediate=false', function () {
       this.setUpHandler({
         commandModule: './suite/execute',
         clientMethod: 'executeSuite',
-        clientMethodResponse: [{ name: 'My suite', _id: '98765' }, false, true],
+        clientMethodResponse: [
+          { name: 'My suite', _id: '98765', passing: false, screenshotComparePassing: true },
+          false,
+          true,
+        ],
       })
     })
 
@@ -234,7 +247,11 @@ describe('execute --immediate=false', function () {
       this.setUpHandler({
         commandModule: './suite/execute',
         clientMethod: 'executeSuite',
-        clientMethodResponse: [{ name: 'My suite', _id: '98765' }, true, null],
+        clientMethodResponse: [
+          { name: 'My suite', _id: '98765', passing: true, screenshotComparePassing: null },
+          true,
+          null,
+        ],
       })
     })
 
@@ -287,7 +304,11 @@ describe('execute --immediate=false', function () {
       this.setUpHandler({
         commandModule: './suite/execute',
         clientMethod: 'executeSuite',
-        clientMethodResponse: [{ name: 'My suite', _id: '98765' }, null, true],
+        clientMethodResponse: [
+          { name: 'My suite', _id: '98765', passing: null, screenshotComparePassing: true },
+          null,
+          true,
+        ],
       })
     })
     it('--errorOnFail should exit with error for test null', async function () {

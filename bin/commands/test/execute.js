@@ -27,20 +27,28 @@ module.exports = {
     delete args['testId']
     try {
       const client = helpers.getClient(argv)
-      const [result, passing, screenshotPassing] = await client.executeTest(testId, args)
-      const [overallPassing, exitOk] = helpers.resolvePassingStatus(
-        argv,
-        passing,
-        screenshotPassing,
-      )
+      let [result, passing, screenshotPassing] = await client.executeTest(testId, args)
+
+      const { exitOk } = helpers.resolvePassingStatus(argv, passing, screenshotPassing)
 
       if (argv.json) {
         helpers.printJson(result)
       } else {
-        helpers.print({
-          message: `Result: ${result.name}`,
-          id: result._id,
-          passing: overallPassing,
+        // handle multiple results
+        if (!Array.isArray(result)) {
+          result = [result]
+        }
+        result.forEach((item) => {
+          const { overallPassing } = helpers.resolvePassingStatus(
+            argv,
+            item.passing,
+            item.screenshotComparePassing,
+          )
+          helpers.print({
+            message: `Result: ${item.name}`,
+            id: item._id,
+            passing: overallPassing,
+          })
         })
       }
 

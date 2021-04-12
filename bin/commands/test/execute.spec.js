@@ -35,12 +35,62 @@ describe('execute', function () {
   })
 })
 
+// TODO: flesh out the rest of the multiple cases
+describe('execute multiple', function () {
+  beforeEach(function () {
+    this.setUpHandler({
+      commandModule: './test/execute',
+      clientMethod: 'executeTest',
+      clientMethodResponse: [
+        [
+          { name: 'My test', _id: '98765', passing: true },
+          { name: 'My other test', _id: '76543', passing: true },
+        ],
+        true,
+        false,
+      ],
+    })
+  })
+
+  it('should print JSON', async function () {
+    await this.testJsonOutput({
+      handlerInput: {
+        testId: 'my-test-id',
+        myVar: 'foobar',
+        immediate: true,
+      },
+      expectedClientArgs: ['my-test-id', { myVar: 'foobar', immediate: true }],
+      expectedOutput: [
+        '[{"name":"My test","_id":"98765","passing":true},{"name":"My other test","_id":"76543","passing":true}]',
+      ],
+    })
+  })
+
+  it('should print plain text', async function () {
+    await this.testPlainOutput({
+      handlerInput: {
+        testId: 'my-test-id',
+        myVar: 'foobar',
+      },
+      expectedClientArgs: ['my-test-id', { myVar: 'foobar' }],
+      expectedOutput: [
+        ['\u001b[32m✓\u001b[39m Result: My test (98765)'],
+        ['\u001b[32m✓\u001b[39m Result: My other test (76543)'],
+      ],
+    })
+  })
+})
+
 describe('execute --immediate=true', function () {
   beforeEach(function () {
     this.setUpHandler({
       commandModule: './test/execute',
       clientMethod: 'executeTest',
-      clientMethodResponse: [{ name: 'My test', _id: '98765' }, null, null],
+      clientMethodResponse: [
+        { name: 'My test', _id: '98765', passing: null, screenshotComparePassing: null },
+        null,
+        null,
+      ],
     })
   })
 
@@ -85,12 +135,16 @@ describe('execute --immediate=true', function () {
 })
 
 describe('execute --immediate=false', function () {
-  describe('test failing, screenshot failing', function () {
+  describe('single: test failing, screenshot failing', function () {
     beforeEach(function () {
       this.setUpHandler({
         commandModule: './test/execute',
         clientMethod: 'executeTest',
-        clientMethodResponse: [{ name: 'My test', _id: '98765' }, false, false],
+        clientMethodResponse: [
+          { name: 'My test', _id: '98765', passing: false, screenshotComparePassing: false },
+          false,
+          false,
+        ],
       })
     })
 
@@ -128,7 +182,11 @@ describe('execute --immediate=false', function () {
       this.setUpHandler({
         commandModule: './test/execute',
         clientMethod: 'executeTest',
-        clientMethodResponse: [{ name: 'My test', _id: '98765' }, true, false],
+        clientMethodResponse: [
+          { name: 'My test', _id: '98765', passing: true, screenshotComparePassing: false },
+          true,
+          false,
+        ],
       })
     })
 
@@ -181,7 +239,11 @@ describe('execute --immediate=false', function () {
       this.setUpHandler({
         commandModule: './test/execute',
         clientMethod: 'executeTest',
-        clientMethodResponse: [{ name: 'My test', _id: '98765' }, false, true],
+        clientMethodResponse: [
+          { name: 'My test', _id: '98765', passing: false, screenshotComparePassing: true },
+          false,
+          true,
+        ],
       })
     })
 
@@ -234,7 +296,11 @@ describe('execute --immediate=false', function () {
       this.setUpHandler({
         commandModule: './test/execute',
         clientMethod: 'executeTest',
-        clientMethodResponse: [{ name: 'My test', _id: '98765' }, true, null],
+        clientMethodResponse: [
+          { name: 'My test', _id: '98765', passing: true, screenshotComparePassing: null },
+          true,
+          null,
+        ],
       })
     })
 
@@ -287,7 +353,11 @@ describe('execute --immediate=false', function () {
       this.setUpHandler({
         commandModule: './test/execute',
         clientMethod: 'executeTest',
-        clientMethodResponse: [{ name: 'My test', _id: '98765' }, null, true],
+        clientMethodResponse: [
+          { name: 'My test', _id: '98765', passing: null, screenshotComparePassing: true },
+          null,
+          true,
+        ],
       })
     })
     it('--errorOnFail should exit with error for test null', async function () {

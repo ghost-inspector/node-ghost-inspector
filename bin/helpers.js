@@ -208,7 +208,7 @@ const resolvePassingStatus = (args, passing, screenshotPassing) => {
       exitOk = false
     }
   }
-  return [overallPassing, exitOk]
+  return { overallPassing, exitOk }
 }
 
 module.exports = {
