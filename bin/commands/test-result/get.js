@@ -14,6 +14,7 @@ module.exports = {
         helpers.print({
           message: result.name,
           id: result._id,
+          passing: result.passing,
         })
       }
     } catch (error) {

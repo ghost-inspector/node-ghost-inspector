@@ -109,4 +109,10 @@ describe('CLI', function () {
     require('./commands/test/list.spec')
     require('./commands/test/update.spec')
   })
+
+  describe('test-result', function () {
+    require('./commands/test-result/cancel.spec')
+    require('./commands/test-result/get.spec')
+    require('./commands/test-result/wait.spec')
+  })
 })
