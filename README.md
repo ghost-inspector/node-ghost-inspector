@@ -48,7 +48,7 @@ try {
 CLI quickstart:
 
 ```
-❯ ghost-inspector test execute <my-test-id> --browser Firefox --myVariable "some variable"
+❯ ghost-inspector test execute <my-test-id> --browser Firefox --myVariable "some variable" --errorOnFail
 ```
 
 ### Exit status control for CI systems
