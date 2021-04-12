@@ -2,13 +2,20 @@ const helpers = require('../../helpers')
 
 module.exports = {
   command: 'import-test <suite-id> <file>',
-  desc: 'Import a test in JSON format. <file> must be local path on-disk to JSON test file.',
+  desc:
+    'Import a test in JSON or HTML (Selenium IDE v1) format. <file> must be local path on-disk to JSON test file.',
   builder: {},
   handler: async function (argv) {
-    // TODO test this again manually
     try {
       const client = helpers.getClient(argv)
-      const test = helpers.loadJsonFile(argv.file)
+      let test
+
+      // try to load the file with JSON, fall back on HTML
+      try {
+        test = helpers.loadJsonFile(argv.file)
+      } catch (unused) {
+        test = argv.file
+      }
       const result = await client.importTest(argv.suiteId, test)
       if (argv.json) {
         helpers.printJson(result)
@@ -19,7 +26,8 @@ module.exports = {
         })
       }
     } catch (error) {
-      throw error
+      throw new Error(error.message)
+      // throw error
     }
     process.exit(0)
   },

@@ -88,7 +88,7 @@ describe('CLI', function () {
     require('./commands/suite/update.spec')
   })
 
-  describe('suite', function () {
+  describe('suite-result', function () {
     require('./commands/suite-result/cancel.spec')
     require('./commands/suite-result/get-xunit-report.spec')
     require('./commands/suite-result/get.spec')

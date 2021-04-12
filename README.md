@@ -532,6 +532,8 @@ GhostInspector.downloadTestJson('[test-id]', 'test.json', options, function (err
 
 Import a test in JSON or HTML (Selenium IDE v1) format.
 
+**Note:** For JSON, pass the JavaScript object to the client, for HTML pass the path to the file on disk.
+
 ```js
 // JSON example (using async)
 const myJsonTest = require('my-test.json')
@@ -539,8 +541,7 @@ const importedTest = await GhostInspector.importTest('[suite-id]', myJsonTest)
 console.log(importedTest)
 
 // HTML example (using callback)
-const myHtmlTest = fs.readFileSync('/path/to/my-test.html', 'utf-8')
-GhostInspector.importTest('[suite-id]', myHtmlTest, function (err, importedTest) {
+GhostInspector.importTest('[suite-id]', '/path/to/my-test.html', function (err, importedTest) {
   if (err) return console.error(err)
   console.log(importedTest)
 })
