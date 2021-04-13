@@ -16,12 +16,17 @@
   },
   "scripts": {
     "lint": "eslint .",
-    "test": "npm run test-unit && npm run test-integration",
+    "test": "npm run test-unit && npm run test-cli && npm run test-integration",
     "test-unit": "./node_modules/.bin/mocha test/*.js --bail",
-    "test-integration": "./node_modules/.bin/mocha test/integration/*.js --bail"
+    "test-integration": "./node_modules/.bin/mocha test/integration/*.js --bail",
+    "test-cli": "./node_modules/.bin/mocha bin/spec.js --bail"
   },
   "main": "./index.js",
+  "bin": {
+    "ghost-inspector": "./bin/cli.js"
+  },
   "dependencies": {
+    "chalk": "^4.1.0",
     "request": "^2.88.2",
     "request-promise-native": "^1.0.9"
   },

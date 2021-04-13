@@ -142,12 +142,26 @@ class GhostInspector {
     }
   }
 
-  async download(path, dest, callback) {
+  async download(path, dest, options, callback) {
+    if (typeof options === 'function') {
+      callback = options
+    }
+
     // Add API key to params
     const params = {
       apiKey: this.apiKey,
     }
-    const options = {
+
+    if (options && options.includeImports) {
+      params.includeImports = true
+    }
+
+    let encoding = 'utf8'
+    if (options && options.encoding) {
+      encoding = options.encoding
+    }
+
+    const requestOptions = {
       method: 'GET',
       uri: this.buildRequestUrl(path) + this.buildQueryString(params),
       headers: {
@@ -157,7 +171,7 @@ class GhostInspector {
     // Send request to API
     let data
     try {
-      data = await this._request(options)
+      data = await this._request(requestOptions)
     } catch (err) {
       if (typeof callback === 'function') {
         callback(err)
@@ -165,9 +179,18 @@ class GhostInspector {
       }
       throw err
     }
+    // check the response for API key issues
+    if (data.indexOf('{"code":"ERROR"') > -1) {
+      let message = JSON.parse(data).message
+      if (typeof callback === 'function') {
+        callback(message)
+        return
+      }
+      throw new Error(message)
+    }
     // Save response into file
     const err = await new Promise((resolve) => {
-      fs.writeFile(dest, data, resolve)
+      fs.writeFile(dest, data, { encoding }, resolve)
     })
     // Process response
     if (err) {
@@ -191,6 +214,11 @@ class GhostInspector {
     return request(options)
   }
 
+  async createFolder(organizationId, folderName, callback) {
+    const options = { body: { organization: organizationId, name: folderName } }
+    return this.request('POST', '/folders/', options, callback)
+  }
+
   async getFolders(callback) {
     return this.request('GET', '/folders/', callback)
   }
@@ -199,12 +227,27 @@ class GhostInspector {
     return this.request('GET', `/folders/${folderId}/`, callback)
   }
 
+  async updateFolder(folderId, folderName, callback) {
+    const options = { body: { name: folderName } }
+    return this.request('POST', `/folders/${folderId}/`, options, callback)
+  }
+
   async getFolderSuites(folderId, callback) {
     return this.request('GET', `/folders/${folderId}/suites/`, callback)
   }
 
   async getSuites(callback) {
     return this.request('GET', '/suites/', callback)
+  }
+
+  async createSuite(organizationId, suiteName, callback) {
+    const options = { body: { organization: organizationId, name: suiteName } }
+    return this.request('POST', '/suites/', options, callback)
+  }
+
+  async updateSuite(suiteId, updates, callback) {
+    updates = { body: { ...updates } }
+    return this.request('POST', `/suites/${suiteId}/`, updates, callback)
   }
 
   async getSuite(suiteId, callback) {
@@ -217,6 +260,10 @@ class GhostInspector {
 
   async getSuiteResults(suiteId, options, callback) {
     return this.request('GET', `/suites/${suiteId}/results/`, options, callback)
+  }
+
+  async duplicateSuite(suiteId, callback) {
+    return this.request('POST', `/suites/${suiteId}/duplicate/`, callback)
   }
 
   async executeSuite(suiteId, providedOptions, callback) {
@@ -281,24 +328,51 @@ class GhostInspector {
     return [data, passing, screenshotPassing]
   }
 
+  // TODO: resulting file appears to be broken on suites with >1 test
   async downloadSuiteSeleniumHtml(suiteId, dest, callback) {
-    return this.download(`/suites/${suiteId}/export/selenium-html/`, dest, callback)
+    return this.download(
+      `/suites/${suiteId}/export/selenium-html/`,
+      dest,
+      { encoding: 'binary' },
+      callback,
+    )
   }
 
   async downloadSuiteSeleniumJson(suiteId, dest, callback) {
-    return this.download(`/suites/${suiteId}/export/selenium-json/`, dest, callback)
+    return this.download(
+      `/suites/${suiteId}/export/selenium-json/`,
+      dest,
+      { encoding: 'binary' },
+      callback,
+    )
   }
 
   async downloadSuiteSeleniumSide(suiteId, dest, callback) {
-    return this.download(`/suites/${suiteId}/export/selenium-side/`, dest, callback)
+    return this.download(
+      `/suites/${suiteId}/export/selenium-side/`,
+      dest,
+      { encoding: 'binary' },
+      callback,
+    )
   }
 
-  async downloadSuiteJson(suiteId, dest, callback) {
-    return this.download(`/suites/${suiteId}/export/json/`, dest, callback)
+  async downloadSuiteJson(suiteId, dest, options, callback) {
+    if (typeof options === 'function') {
+      callback = options
+    }
+    return this.download(
+      `/suites/${suiteId}/export/json/`,
+      dest,
+      { ...options, encoding: 'binary' },
+      callback,
+    )
   }
 
-  async downloadTestJson(testId, dest, callback) {
-    return this.download(`/tests/${testId}/export/json/`, dest, callback)
+  async downloadTestJson(testId, dest, options, callback) {
+    if (typeof options === 'function') {
+      callback = options
+    }
+    return this.download(`/tests/${testId}/export/json/`, dest, options, callback)
   }
 
   async getTests(callback) {
@@ -307,6 +381,15 @@ class GhostInspector {
 
   async getTest(testId, callback) {
     return this.request('GET', `/tests/${testId}/`, callback)
+  }
+
+  async deleteTest(testId, callback) {
+    return this.request('DELETE', `/tests/${testId}/`, callback)
+  }
+
+  async updateTest(testId, updates, callback) {
+    updates = { body: updates }
+    return this.request('POST', `/tests/${testId}/`, updates, callback)
   }
 
   async getTestResults(testId, options, callback) {
@@ -530,6 +613,11 @@ class GhostInspector {
   // Legacy alias for cancelTestResult()
   async cancelResult(testResultId, callback) {
     return this.cancelTestResult(testResultId, callback)
+  }
+
+  // Fetch a list of the currently-executing results for the entire organization and return the results.
+  async getAllRunningTests(organizationId, callback) {
+    return this.request('GET', `/organizations/${organizationId}/running/`, callback)
   }
 }
 

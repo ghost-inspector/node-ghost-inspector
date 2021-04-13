@@ -1,0 +1,25 @@
+const helpers = require('../../helpers')
+
+module.exports = {
+  command: 'cancel <result-id>',
+  desc: 'Cancel an active test run.',
+  builder: {},
+  handler: async function (argv) {
+    try {
+      const client = helpers.getClient(argv)
+      const result = await client.cancelTestResult(argv.resultId)
+      if (argv.json) {
+        helpers.printJson(result)
+      } else {
+        helpers.print({
+          message: `Result cancelled: ${result.name}`,
+          id: result._id,
+        })
+      }
+    } catch (error) {
+      throw error
+    }
+
+    process.exit(0)
+  },
+}
