@@ -35,52 +35,6 @@ describe('execute', function () {
   })
 })
 
-// TODO: flesh out the rest of the multiple cases
-describe('execute multiple', function () {
-  beforeEach(function () {
-    this.setUpHandler({
-      commandModule: './test/execute',
-      clientMethod: 'executeTest',
-      clientMethodResponse: [
-        [
-          { name: 'My test', _id: '98765', passing: true },
-          { name: 'My other test', _id: '76543', passing: true },
-        ],
-        true,
-        false,
-      ],
-    })
-  })
-
-  it('should print JSON', async function () {
-    await this.testJsonOutput({
-      handlerInput: {
-        testId: 'my-test-id',
-        myVar: 'foobar',
-        immediate: true,
-      },
-      expectedClientArgs: ['my-test-id', { myVar: 'foobar', immediate: true }],
-      expectedOutput: [
-        '[{"name":"My test","_id":"98765","passing":true},{"name":"My other test","_id":"76543","passing":true}]',
-      ],
-    })
-  })
-
-  it('should print plain text', async function () {
-    await this.testPlainOutput({
-      handlerInput: {
-        testId: 'my-test-id',
-        myVar: 'foobar',
-      },
-      expectedClientArgs: ['my-test-id', { myVar: 'foobar' }],
-      expectedOutput: [
-        ['\u001b[32m✓\u001b[39m Result: My test (98765)'],
-        ['\u001b[32m✓\u001b[39m Result: My other test (76543)'],
-      ],
-    })
-  })
-})
-
 describe('execute --immediate=true', function () {
   beforeEach(function () {
     this.setUpHandler({

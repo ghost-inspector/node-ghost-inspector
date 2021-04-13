@@ -5,7 +5,8 @@ global.describe = () => {}
 
 require('yargs/yargs')(process.argv.slice(2))
   .option('apiKey', {
-    description: 'Your Ghost Inspector API key.',
+    description:
+      'Your Ghost Inspector API key. You may also pass GHOST_INSPECTOR_API_KEY through your environment.',
   })
   .option('json', {
     description: 'Provide output in JSON format.',
