@@ -19,34 +19,31 @@ module.exports = {
     delete args['suiteId']
 
     // execute
-    try {
-      const client = helpers.getClient(argv)
-      let [result, passing, screenshotPassing] = await client.executeSuite(suiteId, args)
-      const { exitOk } = helpers.resolvePassingStatus(argv, passing, screenshotPassing)
+    const client = helpers.getClient(argv)
+    let [result, passing, screenshotPassing] = await client.executeSuite(suiteId, args)
+    const { exitOk } = helpers.resolvePassingStatus(argv, passing, screenshotPassing)
 
-      if (argv.json) {
-        helpers.printJson(result)
-      } else {
-        // handle multiple results
-        if (!Array.isArray(result)) {
-          result = [result]
-        }
-        result.forEach((item) => {
-          const { overallPassing } = helpers.resolvePassingStatus(
-            argv,
-            item.passing,
-            item.screenshotComparePassing,
-          )
-          helpers.print({
-            message: `Suite result: ${item.name}`,
-            id: item._id,
-            passing: overallPassing,
-          })
-        })
+    if (argv.json) {
+      helpers.printJson(result)
+    } else {
+      // handle multiple results
+      if (!Array.isArray(result)) {
+        result = [result]
       }
-      process.exit(exitOk ? 0 : 1)
-    } catch (error) {
-      throw error
+      result.forEach((item) => {
+        const { overallPassing } = helpers.resolvePassingStatus(
+          argv,
+          item.passing,
+          item.screenshotComparePassing,
+        )
+        helpers.print({
+          message: `Suite result: ${item.name}`,
+          id: item._id,
+          passing: overallPassing,
+        })
+      })
     }
+
+    process.exit(exitOk ? 0 : 1)
   },
 }

@@ -23,22 +23,18 @@ module.exports = {
     const suiteResultId = args.suiteResultId
     delete args['suiteResultId']
 
-    try {
-      const client = helpers.getClient(argv)
-      const results = await client.getSuiteResultTestResults(suiteResultId, args)
-      if (argv.json) {
-        helpers.printJson(results)
-      } else {
-        results.forEach((item) => {
-          helpers.print({
-            message: item.name,
-            id: item._id,
-            passing: item.passing,
-          })
+    const client = helpers.getClient(argv)
+    const results = await client.getSuiteResultTestResults(suiteResultId, args)
+    if (argv.json) {
+      helpers.printJson(results)
+    } else {
+      results.forEach((item) => {
+        helpers.print({
+          message: item.name,
+          id: item._id,
+          passing: item.passing,
         })
-      }
-    } catch (error) {
-      throw error
+      })
     }
 
     process.exit(0)
