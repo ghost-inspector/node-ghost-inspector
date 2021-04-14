@@ -24,36 +24,31 @@ module.exports = {
   },
   handler: async function (argv) {
     const args = helpers.cleanArgs(argv)
+    const client = helpers.getClient(argv)
 
-    try {
-      const client = helpers.getClient(argv)
-
-      let downloadMethod
-      switch (args.format) {
-        case 'html':
-          downloadMethod = 'downloadSuiteSeleniumHtml'
-          break
-        case 'side':
-          downloadMethod = 'downloadSuiteSeleniumSide'
-          break
-        default:
-          downloadMethod = 'downloadSuiteJson'
-      }
-
-      let destination
-      if (args.destination) {
-        destination = `${args.destination}.zip`
-      } else {
-        destination = `suite-${args.suiteId}.zip`
-      }
-
-      await client[downloadMethod](args.suiteId, destination, {
-        includeImports: !!args.includeImports,
-      })
-      console.log(`Suite downloaded to ${destination}`)
-    } catch (error) {
-      throw error
+    let downloadMethod
+    switch (args.format) {
+      case 'html':
+        downloadMethod = 'downloadSuiteSeleniumHtml'
+        break
+      case 'side':
+        downloadMethod = 'downloadSuiteSeleniumSide'
+        break
+      default:
+        downloadMethod = 'downloadSuiteJson'
     }
+
+    let destination
+    if (args.destination) {
+      destination = `${args.destination}.zip`
+    } else {
+      destination = `suite-${args.suiteId}.zip`
+    }
+
+    await client[downloadMethod](args.suiteId, destination, {
+      includeImports: !!args.includeImports,
+    })
+    console.log(`Suite downloaded to ${destination}`)
 
     process.exit(0)
   },

@@ -24,38 +24,32 @@ module.exports = {
   },
   handler: async function (argv) {
     const args = helpers.cleanArgs(argv)
+    const client = helpers.getClient(argv)
 
-    try {
-      const client = helpers.getClient(argv)
-
-      let downloadMethod
-      switch (args.format) {
-        case 'html':
-          downloadMethod = 'downloadTestSeleniumHtml'
-          break
-        case 'side':
-          downloadMethod = 'downloadTestSeleniumSide'
-          break
-        default:
-          downloadMethod = 'downloadTestJson'
-      }
-
-      let destination
-      if (args.destination) {
-        destination = `${args.destination}.${args.format}`
-      } else {
-        destination = `test-${args.testId}.${args.format}`
-      }
-
-      await client[downloadMethod](args.testId, destination, {
-        includeImports: !!args.includeImports,
-      })
-      // just print out the raw result, might not be JSON
-      console.log(`Test downloaded to ${destination}`)
-    } catch (error) {
-      console.log(error)
-      throw error
+    let downloadMethod
+    switch (args.format) {
+      case 'html':
+        downloadMethod = 'downloadTestSeleniumHtml'
+        break
+      case 'side':
+        downloadMethod = 'downloadTestSeleniumSide'
+        break
+      default:
+        downloadMethod = 'downloadTestJson'
     }
+
+    let destination
+    if (args.destination) {
+      destination = `${args.destination}.${args.format}`
+    } else {
+      destination = `test-${args.testId}.${args.format}`
+    }
+
+    await client[downloadMethod](args.testId, destination, {
+      includeImports: !!args.includeImports,
+    })
+    // just print out the raw result, might not be JSON
+    console.log(`Test downloaded to ${destination}`)
 
     process.exit(0)
   },

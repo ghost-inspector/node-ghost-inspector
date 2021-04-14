@@ -28,35 +28,32 @@ module.exports = {
     const resultId = args.resultId
     delete args['resultId']
 
-    try {
-      const client = helpers.getClient(argv)
-      const result = await client.waitForTestResult(resultId, args)
+    const client = helpers.getClient(argv)
+    const result = await client.waitForTestResult(resultId, args)
 
-      // GhostInspector.waitForTestResult() return value is a little different than
-      // the execute* methods, we'll manually implement the passing and screenshot
-      // values to stay consistent with --errorOnFail, --errorOnScreenshotFail
-      // functionality
-      const passing = result.passing
-      const screenshotPassing = result.screenshotComparePassing
+    // GhostInspector.waitForTestResult() return value is a little different than
+    // the execute* methods, we'll manually implement the passing and screenshot
+    // values to stay consistent with --errorOnFail, --errorOnScreenshotFail
+    // functionality
+    const passing = result.passing
+    const screenshotPassing = result.screenshotComparePassing
 
-      const { overallPassing, exitOk } = helpers.resolvePassingStatus(
-        argv,
-        passing,
-        screenshotPassing,
-      )
+    const { overallPassing, exitOk } = helpers.resolvePassingStatus(
+      argv,
+      passing,
+      screenshotPassing,
+    )
 
-      if (argv.json) {
-        helpers.printJson(result)
-      } else {
-        helpers.print({
-          message: result.name,
-          id: result._id,
-          passing: overallPassing,
-        })
-      }
-      process.exit(exitOk ? 0 : 1)
-    } catch (error) {
-      throw error
+    if (argv.json) {
+      helpers.printJson(result)
+    } else {
+      helpers.print({
+        message: result.name,
+        id: result._id,
+        passing: overallPassing,
+      })
     }
+
+    process.exit(exitOk ? 0 : 1)
   },
 }

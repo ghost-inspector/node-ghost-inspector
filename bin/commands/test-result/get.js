@@ -5,20 +5,16 @@ module.exports = {
   desc: 'Fetch a single test result.',
   builder: {},
   handler: async function (argv) {
-    try {
-      const client = helpers.getClient(argv)
-      const result = await client.getTestResult(argv.resultId)
-      if (argv.json) {
-        helpers.printJson(result)
-      } else {
-        helpers.print({
-          message: result.name,
-          id: result._id,
-          passing: result.passing,
-        })
-      }
-    } catch (error) {
-      throw error
+    const client = helpers.getClient(argv)
+    const result = await client.getTestResult(argv.resultId)
+    if (argv.json) {
+      helpers.printJson(result)
+    } else {
+      helpers.print({
+        message: result.name,
+        id: result._id,
+        passing: result.passing,
+      })
     }
 
     process.exit(0)

@@ -17,20 +17,17 @@ module.exports = {
     const suiteId = args.suiteId
     delete args['suiteId']
 
-    try {
-      const client = helpers.getClient(argv)
-      const result = await client.updateSuite(suiteId, args)
-      if (argv.json) {
-        helpers.printJson(result)
-      } else {
-        helpers.print({
-          message: `Suite updated: ${result.name}`,
-          id: result._id,
-        })
-      }
-    } catch (error) {
-      throw error
+    const client = helpers.getClient(argv)
+    const result = await client.updateSuite(suiteId, args)
+    if (argv.json) {
+      helpers.printJson(result)
+    } else {
+      helpers.print({
+        message: `Suite updated: ${result.name}`,
+        id: result._id,
+      })
     }
+
     process.exit(0)
   },
 }
