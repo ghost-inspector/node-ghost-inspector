@@ -31,9 +31,9 @@
     "request-promise-native": "^1.0.9"
   },
   "devDependencies": {
-    "es-abstract": "^1.17.7",
-    "eslint": "^7.20.0",
-    "eslint-config-prettier": "^8.1.0",
+    "es-abstract": "^1.18.0",
+    "eslint": "^7.24.0",
+    "eslint-config-prettier": "^8.2.0",
     "eslint-config-standard": "^16.0.2",
     "eslint-plugin-import": "^2.22.1",
     "eslint-plugin-node": "^11.1.0",
@@ -41,7 +41,7 @@
     "eslint-plugin-standard": "^4.1.0",
     "mocha": "^7.2.0",
     "prettier": "^2.2.1",
-    "sinon": "^9.2.4"
+    "sinon": "^10.0.0"
   },
   "keywords": [
     "ghost",
