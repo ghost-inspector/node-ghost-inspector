@@ -16,7 +16,7 @@ module.exports = {
 
     // pull out the suiteId & apiKey so the rest can be passed in verbatim
     const suiteId = args.suiteId
-    delete args['suiteId']
+    delete args.suiteId
 
     // execute
     const client = helpers.getClient(argv)

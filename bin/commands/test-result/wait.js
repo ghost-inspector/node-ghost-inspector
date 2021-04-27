@@ -26,7 +26,7 @@ module.exports = {
     const args = helpers.cleanArgs(argv)
 
     const resultId = args.resultId
-    delete args['resultId']
+    delete args.resultId
 
     const client = helpers.getClient(argv)
     const result = await client.waitForTestResult(resultId, args)

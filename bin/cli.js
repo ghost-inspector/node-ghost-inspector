@@ -3,6 +3,7 @@
 // mute spec when not under test
 global.describe = () => {}
 
+/* eslint-disable no-unused-expressions */
 require('yargs/yargs')(process.argv.slice(2))
   .parserConfiguration({
     'camel-case-expansion': false,
