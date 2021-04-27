@@ -15,12 +15,22 @@ commands:
           name: Install dependencies
           command: npm ci
       - run:
-          name: Lint
-          command: npm run lint
-      - run:
           name: Test
           command: npm test
       - save-npm-cache
+  lint-nodejs:
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - v{{ .Environment.CIRCLE_CACHE_VERSION }}-{{ arch }}-npm-cache-{{ .Branch }}-{{ .Environment.CIRCLE_JOB }}
+            - v{{ .Environment.CIRCLE_CACHE_VERSION }}-{{ arch }}-npm-cache-stable-{{ .Environment.CIRCLE_JOB }}
+      - run:
+          name: Install dependencies
+          command: npm ci
+      - run:
+          name: Lint
+          command: npm run lint
   save-npm-cache:
     steps:
       - save_cache:
@@ -49,6 +59,7 @@ jobs:
       - image: node:14
     steps:
       - test-nodejs
+      - lint-nodejs
 
 workflows:
   node-multi-build:
