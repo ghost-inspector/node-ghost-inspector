@@ -48,22 +48,22 @@ try {
 CLI quickstart:
 
 ```
-❯ ghost-inspector test execute <my-test-id> --browser Firefox --myVariable "some variable" --errorOnFail
+❯ ghost-inspector test execute <testId> --browser Firefox --myVariable "some variable" --errorOnFail
 ```
 
 ### Exit status control for CI systems
 
-Under an automated build environment it makes sense to have a command return a non-success status when things are failing. By default the CLI will always return a success (`0`) status when executing tests or suites, however you can have the command fail for a non-passing test or suite status (`--errorOnFailing`), a non-passing screenshot status (`--errorOnScreenshotFail`) or both when waiting for a result:
+Under an automated build environment it makes sense to have a command return a non-success status when things are failing. By default the CLI will always return a success (`0`) status when executing tests or suites, however you can have the command fail for a non-passing test or suite status (`--errorOnFail`), a non-passing screenshot status (`--errorOnScreenshotFail`) or both when waiting for a result:
 
 ```
 # exit with error code when failing
-❯ ghost-inspector test execute <my-test-id> --errorOnFail
+❯ ghost-inspector test execute <testId> --errorOnFail
 
 # exit with error code when screenshot failing (will ignore `passing`)
-❯ ghost-inspector test execute <my-test-id> --errorOnScreenshotFail
+❯ ghost-inspector test execute <testId> --errorOnScreenshotFail
 
 # exit with error code if `passing` or `screenshotComparePassing` is `false`
-❯ ghost-inspector test execute <my-test-id> --errorOnFail --errorOnScreenshotFail
+❯ ghost-inspector test execute <testId> --errorOnFail --errorOnScreenshotFail
 
 ```
 

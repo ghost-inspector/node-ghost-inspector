@@ -1,7 +1,7 @@
 const helpers = require('../../helpers')
 
 module.exports = {
-  command: 'get <result-id>',
+  command: 'get <resultId>',
   desc: 'Fetch a single test result.',
   builder: {},
   handler: async function (argv) {

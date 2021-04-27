@@ -1,8 +1,8 @@
 const helpers = require('../../helpers')
 
 module.exports = {
-  command: 'update <folder-id> <folder-name>',
-  desc: 'Update a folder with new <folder-name>.',
+  command: 'update <folderId> <folderName>',
+  desc: 'Update a folder with new <folderName>.',
   builder: {},
   handler: async function (argv) {
     const client = helpers.getClient(argv)

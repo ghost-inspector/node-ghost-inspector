@@ -1,16 +1,16 @@
 const helpers = require('../../helpers')
 
 module.exports = {
-  command: 'wait <result-id>',
+  command: 'wait <resultId>',
   desc: 'Poll a running test result until complete.',
   builder: (yargs) => {
     yargs.options({
-      'error-on-fail': {
+      errorOnFail: {
         description:
           'Exit the command with a non-0 status if the test or suite passing value is not `true`. Ignored when used with --immediate',
         default: false,
       },
-      'error-on-screenshot-fail': {
+      errorOnScreenshotFail: {
         description:
           'Exit the command with a non-0 status if the test or suite screenshotComparePassing value is not `true`. Ignored when used with --immediate',
         default: false,

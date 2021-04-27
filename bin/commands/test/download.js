@@ -1,12 +1,12 @@
 const helpers = require('../../helpers')
 
 module.exports = {
-  command: 'download <test-id>',
+  command: 'download <testId>',
   desc: 'Download a single test.',
   builder: (yargs) => {
     yargs.options({
       destination: {
-        description: 'Path to local destination for output. Defaults to "test-<test-id>.<format>"',
+        description: 'Path to local destination for output. Defaults to "test-<testId>.<format>"',
       },
       format: {
         description: 'Desired output format',

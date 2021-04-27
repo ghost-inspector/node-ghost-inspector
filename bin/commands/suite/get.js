@@ -1,7 +1,7 @@
 const helpers = require('../../helpers')
 
 module.exports = {
-  command: 'get <suite-id>',
+  command: 'get <suiteId>',
   desc: 'Fetch a single suite.',
   builder: {},
   handler: async function (argv) {

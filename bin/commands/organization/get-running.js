@@ -1,7 +1,7 @@
 const helpers = require('../../helpers')
 
 module.exports = {
-  command: 'get-running <organization-id>',
+  command: 'get-running <organizationId>',
   desc:
     'Fetch a list of the currently-executing results for the entire organization and return the results.',
   builder: {},

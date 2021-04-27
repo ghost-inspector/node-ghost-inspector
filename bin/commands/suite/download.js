@@ -1,19 +1,19 @@
 const helpers = require('../../helpers')
 
 module.exports = {
-  command: 'download <suite-id>',
+  command: 'download <suiteId>',
   desc: 'Download a single suite.',
   builder: (yargs) => {
     yargs.options({
       destination: {
-        description: 'Path to local destination for output. Defaults to "suite-<suite-id>.zip"',
+        description: 'Path to local destination for output. Defaults to "suite-<suiteId>.zip"',
       },
       format: {
         description: 'Desired output format',
         choices: ['json', 'html', 'side'],
         default: 'json',
       },
-      'include-imports': {
+      includeImports: {
         description:
           'Bundle imported suites in the export when provided (currenlty for .json exports only)',
         type: 'boolean',

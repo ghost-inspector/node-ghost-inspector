@@ -4,15 +4,7 @@ const fs = require('fs')
 const path = require('path')
 
 /**
- * Yargs duplicates every argument like so:
- *
- *   {
- *     'foo-bar': 'baz',
- *     fooBar: 'baz',
- *   }
- *
- * And also includes some yargs-specific details (eg '$0') that we don't need.
- * This cleans those up so the output is compatible with the Ghost Inspector
+ * Clean up arguments so the output is compatible with the Ghost Inspector
  * Node.js client without further modification.
  */
 const cleanArgs = (args) => {
@@ -27,12 +19,6 @@ const cleanArgs = (args) => {
   delete args['errorOnFail']
   delete args['errorOnScreenshotFail']
 
-  // remove hypenated args 'foo-bar'
-  Object.keys(args).forEach((key) => {
-    if (key.includes('-')) {
-      delete args[key]
-    }
-  })
   return args
 }
 
@@ -63,31 +49,31 @@ const getCommonExecutionOptions = () => {
         'Alternate browser to use for this execution. The following options are available: chrome (Latest version), chrome- (Specific version of Chrome, for example chrome-83), firefox (Latest version), firefox- (Specific version of Firefox, for example firefox-77). Provide multiple --browser arguments to trigger multiple executions.',
       type: 'string',
     },
-    'data-file': {
+    dataFile: {
       description: 'Path to local CSV file containing a row of variable values for each test run',
     },
-    'disable-notifications': {
+    disableNotifications: {
       description: 'Disable all notifications for this execution only when provided',
       type: 'boolean',
     },
-    'disable-visuals': {
+    disableVisuals: {
       description: 'Disable capturing screenshots and video for this execution only when provided',
       type: 'boolean',
     },
-    'error-on-fail': {
+    errorOnFail: {
       description:
         'Exit the command with a non-0 status if the test or suite passing value is not `true`. Ignored when used with --immediate',
       default: false,
     },
-    'error-on-screenshot-fail': {
+    errorOnScreenshotFail: {
       description:
         'Exit the command with a non-0 status if the test or suite screenshotComparePassing value is not `true`. Ignored when used with --immediate',
       default: false,
     },
-    'http-auth-password': {
+    httpAuthPassword: {
       description: 'Alternate HTTP authentication password to use for this execution only',
     },
-    'http-auth-username': {
+    httpAuthUsername: {
       description: 'Alternate HTTP authentication username to use for this execution only',
     },
     immediate: {
@@ -95,7 +81,7 @@ const getCommonExecutionOptions = () => {
       type: 'boolean',
       default: false,
     },
-    'max-concurrent-data-rows': {
+    maxConcurrentDataRows: {
       description:
         'Specify the max number of rows to execute simultaneously when executing a test using dataFile.',
     },
@@ -103,39 +89,39 @@ const getCommonExecutionOptions = () => {
       description:
         'Geo-location for this execution, defaults to "us-east-1". Use `ghost-inspector test-runner-ips` to see all available regions. Provide multiple --region params to trigger multiple executions.',
     },
-    'screenshot-compare-enabled': {
+    screenshotCompareEnabled: {
       description: 'Enable screenshot comparison for this execution only when provided',
       type: Boolean,
     },
-    'screenshot-compare-threshold': {
+    screenshotCompareThreshold: {
       description:
         'Use a number between 0.0 and 1.0 to set the tolerance when comparing screenshots (for this execution only). Will be ignored if screenshot comparison or visual capture is disabled.',
       type: 'number',
     },
-    'screenshot-exclusions': {
+    screenshotExclusions: {
       description:
         'Comma-separated list of CSS selectors. Elements matched by this CSS will be hidden before the screenshot is taken (for this execution only). Will be ignored if screenshot comparison or visual capture is disabled.',
     },
-    'screenshot-target': {
+    screenshotTarget: {
       description:
         'Use a CSS or XPath selector. Screenshot will be taken of the element specified instead of the whole page (for this execution only). Will be ignored if screenshot comparison or visual capture is disabled.',
     },
-    'slack-channel': {
+    slackChannel: {
       description: 'Specify the Slack channel to notify for this test run.',
     },
-    'start-url': {
+    startUrl: {
       description: 'Alternate start URL to use for this execution only',
     },
-    'user-agent': {
+    userAgent: {
       description: 'Alternate user agent to use for this execution only',
     },
     viewport: {
       description:
         'Alternate screen size to use for this execution only. This should be a string formatted as {width}x{height}, for example 1024x768. Will be ignored if screenshot comparison or visual capture is disabled. Provide multiple --viewport arguments to trigger multiple executions.',
     },
-    '[custom-variable]': {
+    '[customVariable]': {
       description:
-        'Pass in custom variables for this execution that are accessible in your steps via {{customVariable}}. For example, providing --first-name=Justin will create a {{firstName}} variable with the value Justin.',
+        'Pass in custom variables for this execution that are accessible in your steps via {{customVariable}}. For example, providing --first-name=Justin will create a {{first-name}} variable with the value Justin. Note that camelCase and kebab-case are both allowed for custom variables.',
     },
   }
 }

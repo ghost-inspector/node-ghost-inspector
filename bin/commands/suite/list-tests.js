@@ -1,7 +1,7 @@
 const helpers = require('../../helpers')
 
 module.exports = {
-  command: 'list-tests <suite-id>',
+  command: 'list-tests <suiteId>',
   desc: 'Fetch an array of all the tests in a suite.',
   builder: {},
   handler: async function (argv) {
