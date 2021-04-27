@@ -54,7 +54,9 @@
     "automated testing",
     "browser testing",
     "automated browser testing",
-    "selenium"
+    "selenium",
+    "cli",
+    "command line interface"
   ],
   "license": "MIT",
   "readmeFilename": "README.md"

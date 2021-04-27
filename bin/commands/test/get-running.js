@@ -1,7 +1,7 @@
 const helpers = require('../../helpers')
 
 module.exports = {
-  command: 'get-results-running <test-id>',
+  command: 'get-results-running <testId>',
   desc: 'Fetch a list of the currently-executing results for this test and return the result.',
 
   builder: {},

@@ -1,7 +1,7 @@
 const helpers = require('../../helpers')
 
 module.exports = {
-  command: 'create <organization-id> <folder-name>',
+  command: 'create <organizationId> <folderName>',
   desc: 'Create a folder.',
   builder: {},
   handler: async function (argv) {

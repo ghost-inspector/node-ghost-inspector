@@ -1,7 +1,7 @@
 const helpers = require('../../helpers')
 
 module.exports = {
-  command: 'delete <test-id>',
+  command: 'delete <testId>',
   desc: 'Delete a test.',
   builder: {},
   handler: async function (argv) {

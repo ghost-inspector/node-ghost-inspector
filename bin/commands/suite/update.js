@@ -1,7 +1,7 @@
 const helpers = require('../../helpers')
 
 module.exports = {
-  command: 'update <suite-id>',
+  command: 'update <suiteId>',
   desc: 'Update a suite.',
   builder: (yargs) => {
     yargs.options({

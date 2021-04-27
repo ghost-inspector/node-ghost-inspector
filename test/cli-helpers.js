@@ -6,7 +6,7 @@ describe('helpers', function () {
   describe('cleanArgs()', function () {
     it(' should clean up provided input', function () {
       const result = helpers.cleanArgs({
-        'foo-bar': 'biz',
+        'foo-bar': 'baz',
         fooBar: 'biz',
         _: 'value',
         $0: 'value',
@@ -16,7 +16,7 @@ describe('helpers', function () {
         errorOnScreenshotFail: true,
       })
 
-      assert.deepEqual(result, { fooBar: 'biz' })
+      assert.deepEqual(result, { fooBar: 'biz', 'foo-bar': 'baz' })
     })
   })
 

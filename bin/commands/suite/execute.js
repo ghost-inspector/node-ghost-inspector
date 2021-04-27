@@ -1,7 +1,7 @@
 const helpers = require('../../helpers')
 
 module.exports = {
-  command: 'execute <suite-id> [options]',
+  command: 'execute <suiteId> [options]',
   desc: 'Execute a suite with the provided options.',
 
   builder: (yargs) => {

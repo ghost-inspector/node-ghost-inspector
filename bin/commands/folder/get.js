@@ -1,7 +1,7 @@
 const helpers = require('../../helpers')
 
 module.exports = {
-  command: 'get <folder-id>',
+  command: 'get <folderId>',
   desc: 'Fetch a single folder.',
   builder: {},
   handler: async function (argv) {

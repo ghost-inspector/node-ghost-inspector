@@ -34,7 +34,7 @@ describe('Async: Get suites', function () {
   this.timeout(0)
   it('should return suites', async () => {
     const data = await GhostInspector.getSuites()
-    assert.strictEqual(data.length, 2)
+    assert.strictEqual(data.length, 3)
   })
 })
 

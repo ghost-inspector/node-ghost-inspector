@@ -1,7 +1,7 @@
 const helpers = require('../../helpers')
 
 module.exports = {
-  command: 'accept-screenshot <test-id>',
+  command: 'accept-screenshot <testId>',
   desc:
     "Accept the current screenshot as the new baseline for a test, will throw/return an error if the test's screenshot is already passing, or if screenshot comparison is disabled.",
   builder: {},

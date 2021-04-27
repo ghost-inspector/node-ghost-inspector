@@ -1,7 +1,7 @@
 const helpers = require('../../helpers')
 
 module.exports = {
-  command: 'duplicate <test-id>',
+  command: 'duplicate <testId>',
   desc: 'Duplicate a test.',
   builder: {},
   handler: async function (argv) {
