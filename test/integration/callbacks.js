@@ -44,7 +44,7 @@ describe('Callback: Get suites', function () {
   it('should return suites', (done) => {
     GhostInspector.getSuites((err, data) => {
       assert.strictEqual(err, null)
-      assert.strictEqual(data.length, 2)
+      assert.strictEqual(data.length, 3)
       done()
     })
   })
