@@ -181,7 +181,7 @@ class GhostInspector {
     }
     // check the response for API key issues
     if (data.indexOf('{"code":"ERROR"') > -1) {
-      let message = JSON.parse(data).message
+      const message = JSON.parse(data).message
       if (typeof callback === 'function') {
         callback(message)
         return

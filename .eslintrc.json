@@ -1,11 +1,12 @@
 {
   "extends": ["standard", "prettier"],
   "parserOptions": {
-    "ecmaVersion": 8
+    "ecmaVersion": 2018,
+    "sourceType": "module"
   },
   "overrides": [
     {
-      "files": [ "test/**/*" ],
+      "files": [ "test/**/*", "**/*spec.js" ],
       "globals": {
         "describe": true,
         "it": true,

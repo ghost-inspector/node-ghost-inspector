@@ -15,7 +15,7 @@ module.exports = {
     const args = helpers.cleanArgs(argv)
 
     const suiteId = args.suiteId
-    delete args['suiteId']
+    delete args.suiteId
 
     const client = helpers.getClient(argv)
     const result = await client.updateSuite(suiteId, args)

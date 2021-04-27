@@ -1,6 +1,5 @@
 const assert = require('assert')
 const chalk = require('chalk')
-const fs = require('fs')
 const path = require('path')
 
 /**
@@ -12,12 +11,12 @@ const cleanArgs = (args) => {
   args = { ...args }
 
   // remove yargs cruft & apiKey
-  delete args['_']
-  delete args['$0']
-  delete args['apiKey']
-  delete args['json']
-  delete args['errorOnFail']
-  delete args['errorOnScreenshotFail']
+  delete args._
+  delete args.$0
+  delete args.apiKey
+  delete args.json
+  delete args.errorOnFail
+  delete args.errorOnScreenshotFail
 
   return args
 }
