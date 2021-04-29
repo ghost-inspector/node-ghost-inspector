@@ -7,14 +7,22 @@ const path = require('path')
  * Node.js client without further modification.
  */
 const cleanArgs = (args) => {
-  // make a copy to leave the original intact
-  args = { ...args }
+  let rawArgs = {}
+  if (args.jsonInput) {
+    try {
+      rawArgs = JSON.parse(args.jsonInput)
+    } catch (unused) {}
+  }
+
+  // apply JSON input, then options
+  args = { ...rawArgs, ...args }
 
   // remove yargs cruft & apiKey
   delete args._
   delete args.$0
   delete args.apiKey
   delete args.json
+  delete args.jsonInput
   delete args.errorOnFail
   delete args.errorOnScreenshotFail
 
