@@ -15,6 +15,9 @@ require('yargs/yargs')(process.argv.slice(2))
   .option('json', {
     description: 'Provide output in JSON format.',
   })
+  .option('jsonInput', {
+    description: 'Provide options input in JSON format',
+  })
   .commandDir('commands')
   .demandCommand()
   .wrap(120)

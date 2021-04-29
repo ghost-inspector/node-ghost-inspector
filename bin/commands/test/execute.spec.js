@@ -364,19 +364,44 @@ describe('execute --immediate=false', function () {
         clientMethodResponse: [{ name: 'My test', _id: '98765' }, null, true],
       })
     })
+
     it('should pass in user variables with hypens', async function () {
-      this.setExpectedExitCode(1)
       await this.testPlainOutput({
         handlerInput: {
           testId: 'my-test-id',
           myVar: 'foobar',
           'my-other-var': 'foobaz',
           immediate: false,
-          errorOnFail: true,
         },
         expectedClientArgs: [
           'my-test-id',
           { myVar: 'foobar', 'my-other-var': 'foobaz', immediate: false },
+        ],
+        expectedOutput: [['Result: My test (98765)']],
+      })
+    })
+
+    it('should pass in raw parameters', async function () {
+      await this.testPlainOutput({
+        handlerInput: {
+          testId: 'my-test-id',
+          myVar: 'foobar',
+          'my-other-var': 'foobaz',
+          duplicateVar: 1,
+          jsonInput: '{"faz": "baz", "duplicateVar": 2, "immediate": true}',
+        },
+        expectedClientArgs: [
+          'my-test-id',
+          {
+            // explicit parameters
+            myVar: 'foobar',
+            'my-other-var': 'foobaz',
+            // raw parameters
+            immediate: true,
+            faz: 'baz',
+            // explicit param overrides raw param
+            duplicateVar: 1,
+          },
         ],
         expectedOutput: [['Result: My test (98765)']],
       })
