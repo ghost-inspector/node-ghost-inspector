@@ -1,4 +1,5 @@
 const assert = require('assert')
+const ngrok = require('ngrok')
 const helpers = require('../../helpers')
 
 const onDemandTest = { name: 'My on-demand test' }
@@ -99,6 +100,18 @@ describe('execute --immediate=true', function () {
       },
       expectedClientArgs: ['my-org-id', { name: 'My on-demand test' }, { wait: false }],
       expectedOutput: [['? Result: My test (98765)']],
+    })
+  })
+
+  it('should throw an error when used with ngrok', async function () {
+    const input = {
+      organizationId: 'my-org-id',
+      file: 'my-on-demand-test.json',
+      immediate: true,
+      ngrokTunnel: 8800,
+    }
+    await assert.rejects(this.handler(input), {
+      message: 'Cannot use --ngrokTunnel with --immediate',
     })
   })
 })
@@ -366,6 +379,151 @@ describe('execute --immediate=false', function () {
         expectedClientArgs: ['my-org-id', { name: 'My on-demand test' }, { wait: true }],
         expectedOutput: [['? Result: My test (98765)']],
       })
+    })
+  })
+
+  describe('ngrok', function () {
+    beforeEach(function () {
+      this.setUpHandler({
+        commandModule: './test/execute-on-demand',
+        clientMethod: 'executeTestOnDemand',
+        clientMethodResponse: [{ name: 'My test', _id: '98765' }, null, true],
+      })
+      // stub for file loading
+      this.loadJsonStub = this.sandbox.stub(helpers, 'loadJsonFile').returns(onDemandTest)
+    })
+
+    it('should set ngrokTunnel variable', async function () {
+      this.sandbox.stub(ngrok, 'connect').resolves('some-url')
+
+      await this.testPlainOutput({
+        handlerInput: {
+          organizationId: 'my-org-id',
+          file: 'my-on-demand-test.json',
+          immediate: false,
+          ngrokTunnel: 8080,
+          ngrokToken: 'token',
+          ngrokUrlVariable: 'ngrokUrl',
+        },
+        expectedClientArgs: [
+          'my-org-id',
+          { name: 'My on-demand test', variables: { ngrokUrl: 'some-url' } },
+          { wait: true },
+        ],
+        expectedOutput: [
+          ["Ngrok URL (some-url) assigned to variable 'ngrokUrl'"],
+          ['? Result: My test (98765)'],
+        ],
+      })
+    })
+
+    it('should not have console output with --json', async function () {
+      this.sandbox.stub(ngrok, 'connect').resolves('some-url')
+
+      await this.testPlainOutput({
+        handlerInput: {
+          organizationId: 'my-org-id',
+          file: 'my-on-demand-test.json',
+          immediate: false,
+          ngrokTunnel: 8080,
+          ngrokToken: 'token',
+          ngrokUrlVariable: 'ngrokUrl',
+          json: true,
+        },
+        expectedClientArgs: [
+          'my-org-id',
+          { name: 'My on-demand test', variables: { ngrokUrl: 'some-url' } },
+          { wait: true },
+        ],
+        expectedOutput: [['{"name":"My test","_id":"98765"}']],
+      })
+    })
+
+    it('should use ngrokHostHeader', async function () {
+      const connectStub = this.sandbox.stub(ngrok, 'connect').resolves('some-url')
+
+      await this.testPlainOutput({
+        handlerInput: {
+          organizationId: 'my-org-id',
+          file: 'my-on-demand-test.json',
+          immediate: false,
+          ngrokTunnel: 8080,
+          ngrokToken: 'token',
+          ngrokUrlVariable: 'ngrokUrl',
+          ngrokHostHeader: 'some-header',
+        },
+        expectedClientArgs: [
+          'my-org-id',
+          { name: 'My on-demand test', variables: { ngrokUrl: 'some-url' } },
+          { wait: true },
+        ],
+        expectedOutput: [
+          ["Ngrok URL (some-url) assigned to variable 'ngrokUrl'"],
+          ['? Result: My test (98765)'],
+        ],
+      })
+
+      assert.deepEqual(connectStub.args[0][0], {
+        addr: 8080,
+        authtoken: 'token',
+        host_header: 'some-header',
+      })
+    })
+
+    it('should tear down ngrok', async function () {
+      const connectStub = this.sandbox.stub(ngrok, 'connect').resolves('some-url')
+      const disconnectStub = this.sandbox.stub(ngrok, 'disconnect').resolves()
+
+      await this.testPlainOutput({
+        handlerInput: {
+          organizationId: 'my-org-id',
+          file: 'my-on-demand-test.json',
+          immediate: false,
+          ngrokTunnel: 8080,
+          ngrokToken: 'token',
+          ngrokUrlVariable: 'ngrokUrl',
+          ngrokHostHeader: 'some-header',
+        },
+        expectedClientArgs: [
+          'my-org-id',
+          { name: 'My on-demand test', variables: { ngrokUrl: 'some-url' } },
+          { wait: true },
+        ],
+        expectedOutput: [
+          ["Ngrok URL (some-url) assigned to variable 'ngrokUrl'"],
+          ['? Result: My test (98765)'],
+        ],
+      })
+
+      assert.ok(disconnectStub.called)
+    })
+
+    it('should ignore ngrok teardown error', async function () {
+      const connectStub = this.sandbox.stub(ngrok, 'connect').resolves('some-url')
+      const disconnectStub = this.sandbox.stub(ngrok, 'disconnect').rejects()
+
+      await this.testPlainOutput({
+        handlerInput: {
+          organizationId: 'my-org-id',
+          file: 'my-on-demand-test.json',
+          immediate: false,
+          ngrokTunnel: 8080,
+          ngrokToken: 'token',
+          ngrokUrlVariable: 'ngrokUrl',
+          ngrokHostHeader: 'some-header',
+        },
+        expectedClientArgs: [
+          'my-org-id',
+          { name: 'My on-demand test', variables: { ngrokUrl: 'some-url' } },
+          { wait: true },
+        ],
+        expectedOutput: [
+          ["Ngrok URL (some-url) assigned to variable 'ngrokUrl'"],
+          ['? Result: My test (98765)'],
+        ],
+      })
+
+      assert.ok(disconnectStub.called)
     })
   })
 })

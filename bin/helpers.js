@@ -1,6 +1,7 @@
 const assert = require('assert')
 const chalk = require('chalk')
 const path = require('path')
+const ngrok = require('ngrok')
 
 /**
  * Clean up arguments so the output is compatible with the Ghost Inspector
@@ -25,6 +26,12 @@ const cleanArgs = (args) => {
   delete args.jsonInput
   delete args.errorOnFail
   delete args.errorOnScreenshotFail
+
+  // delete ngrok stuff
+  delete args.ngrokTunnel
+  delete args.ngrokUrlVariable
+  delete args.ngrokHostHeader
+  delete args.ngrokToken
 
   return args
 }
@@ -92,6 +99,19 @@ const getCommonExecutionOptions = () => {
       description:
         'Specify the max number of rows to execute simultaneously when executing a test using dataFile.',
     },
+    ngrokTunnel: {
+      description: 'TODO',
+    },
+    ngrokUrlVariable: {
+      description: 'TODO',
+      default: 'ngrokUrl',
+    },
+    ngrokHostHeader: {
+      description: 'TODO',
+    },
+    ngrokToken: {
+      description: 'TODO',
+    },
     region: {
       description:
         'Geo-location for this execution, defaults to "us-east-1". Use `ghost-inspector test-runner-ips` to see all available regions. Provide multiple --region params to trigger multiple executions.',
@@ -126,7 +146,7 @@ const getCommonExecutionOptions = () => {
       description:
         'Alternate screen size to use for this execution only. This should be a string formatted as {width}x{height}, for example 1024x768. Will be ignored if screenshot comparison or visual capture is disabled. Provide multiple --viewport arguments to trigger multiple executions.',
     },
-    '[customVariable]': {
+    '[variableName]': {
       description:
         'Pass in custom variables for this execution that are accessible in your steps via {{customVariable}}. For example, providing --first-name=Justin will create a {{first-name}} variable with the value Justin. Note that camelCase and kebab-case are both allowed for custom variables.',
     },
@@ -204,11 +224,61 @@ const resolvePassingStatus = (args, passing, screenshotPassing) => {
   return { overallPassing, exitOk }
 }
 
+/**
+ * Helper to set up an ngrok tunnel when the correct parameters are present.
+ */
+const ngrokSetup = async (args) => {
+  if (args.ngrokTunnel) {
+    if (args.immediate) {
+      throw new Error('Cannot use --ngrokTunnel with --immediate')
+    }
+
+    const apiKey = process.env.NGROK_TOKEN || args.ngrokToken
+    try {
+      assert.ok(apiKey, 'ngrokToken is required')
+    } catch (error) {
+      // unwrap assertion error
+      throw new Error(error.message)
+    }
+
+    const connectArgs = {
+      authtoken: args.ngrokToken,
+      addr: args.ngrokTunnel,
+    }
+
+    if (args.ngrokHostHeader) {
+      connectArgs.host_header = args.ngrokHostHeader
+    }
+
+    const url = await ngrok.connect(connectArgs)
+    args[args.ngrokUrlVariable] = url
+
+    if (!args.json) {
+      console.log(`Ngrok URL (${url}) assigned to variable '${args.ngrokUrlVariable}'`)
+    }
+  }
+  return args
+}
+
+const ngrokTeardown = async (args) => {
+  // tear down tunnel
+  if (args.ngrokTunnel) {
+    try {
+      await ngrok.disconnect()
+      await ngrok.kill()
+    } catch (unused) {}
+  }
+  // kill ngrok
+  return args
+}
+
 module.exports = {
   cleanArgs,
   getClient,
   getCommonExecutionOptions,
   loadJsonFile,
+  ngrokSetup,
+  ngrokTeardown,
   print,
   printJson,
   resolvePassingStatus,

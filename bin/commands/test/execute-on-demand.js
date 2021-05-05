@@ -17,25 +17,39 @@ module.exports = {
   },
 
   // TODO; what happens when we execute with multiple browsers, etc?
-  handler: async function (argv) {
+  handler: async function (rawArgs) {
+    // pass raw args to ngrkok
+    rawArgs = await helpers.ngrokSetup(rawArgs)
+
     // clean up yargs-related stuff
-    const args = helpers.cleanArgs(argv)
+    const args = helpers.cleanArgs(rawArgs)
     const { organizationId, file, immediate } = args
 
-    const client = helpers.getClient(argv)
-    const input = helpers.loadJsonFile(file)
+    const client = helpers.getClient(rawArgs)
+    const test = helpers.loadJsonFile(file)
+
+    // process ngrokUrlVariable, since API endpoint doesn't accept variables
+    if (rawArgs.ngrokTunnel) {
+      if (rawArgs.ngrokUrlVariable === 'startUrl') {
+        test.startUrl = rawArgs.startUrl
+      } else {
+        test.variables = test.variables || {}
+        test.variables[rawArgs.ngrokUrlVariable] = rawArgs[rawArgs.ngrokUrlVariable]
+      }
+    }
+
     const [result, passing, screenshotPassing] = await client.executeTestOnDemand(
       organizationId,
-      input,
+      test,
       { wait: !immediate },
     )
     const { overallPassing, exitOk } = helpers.resolvePassingStatus(
-      argv,
+      rawArgs,
       passing,
       screenshotPassing,
     )
 
-    if (argv.json) {
+    if (rawArgs.json) {
       helpers.printJson(result)
     } else {
       helpers.print({
@@ -44,6 +58,8 @@ module.exports = {
         passing: overallPassing,
       })
     }
+
+    await helpers.ngrokTeardown(rawArgs)
 
     process.exit(exitOk ? 0 : 1)
   },

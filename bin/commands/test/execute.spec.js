@@ -1,3 +1,6 @@
+const assert = require('assert').strict
+const ngrok = require('ngrok')
+
 describe('execute', function () {
   beforeEach(function () {
     this.setUpHandler({
@@ -84,6 +87,18 @@ describe('execute --immediate=true', function () {
       },
       expectedClientArgs: ['my-test-id', { myVar: 'foobar', immediate: true }],
       expectedOutput: [['? Result: My test (98765)']],
+    })
+  })
+
+  it('should throw an error when used with ngrok', async function () {
+    const input = {
+      testId: 'my-test-id',
+      myVar: 'foobar',
+      immediate: true,
+      ngrokTunnel: 8800,
+    }
+    await assert.rejects(this.handler(input), {
+      message: 'Cannot use --ngrokTunnel with --immediate',
     })
   })
 })
@@ -405,6 +420,144 @@ describe('execute --immediate=false', function () {
         ],
         expectedOutput: [['Result: My test (98765)']],
       })
+    })
+  })
+
+  describe('ngrok', function () {
+    beforeEach(function () {
+      this.setUpHandler({
+        commandModule: './test/execute',
+        clientMethod: 'executeTest',
+        clientMethodResponse: [{ name: 'My test', _id: '98765' }, null, true],
+      })
+    })
+
+    it('should set ngrokTunnel variable', async function () {
+      this.sandbox.stub(ngrok, 'connect').resolves('some-url')
+
+      await this.testPlainOutput({
+        handlerInput: {
+          testId: 'my-test-id',
+          myVar: 'foobar',
+          immediate: false,
+          ngrokTunnel: 8080,
+          ngrokToken: 'token',
+          ngrokUrlVariable: 'ngrokUrl',
+        },
+        expectedClientArgs: [
+          'my-test-id',
+          { myVar: 'foobar', immediate: false, ngrokUrl: 'some-url' },
+        ],
+        expectedOutput: [
+          ["Ngrok URL (some-url) assigned to variable 'ngrokUrl'"],
+          ['Result: My test (98765)'],
+        ],
+      })
+    })
+
+    it('should not have console output with --json', async function () {
+      this.sandbox.stub(ngrok, 'connect').resolves('some-url')
+
+      await this.testPlainOutput({
+        handlerInput: {
+          testId: 'my-test-id',
+          myVar: 'foobar',
+          immediate: false,
+          ngrokTunnel: 8080,
+          ngrokToken: 'token',
+          ngrokUrlVariable: 'ngrokUrl',
+          json: true,
+        },
+        expectedClientArgs: [
+          'my-test-id',
+          { myVar: 'foobar', immediate: false, ngrokUrl: 'some-url' },
+        ],
+        expectedOutput: [['{"name":"My test","_id":"98765"}']],
+      })
+    })
+
+    it('should use ngrokHostHeader', async function () {
+      const connectStub = this.sandbox.stub(ngrok, 'connect').resolves('some-url')
+
+      await this.testPlainOutput({
+        handlerInput: {
+          testId: 'my-test-id',
+          myVar: 'foobar',
+          immediate: false,
+          ngrokTunnel: 8080,
+          ngrokToken: 'token',
+          ngrokUrlVariable: 'ngrokUrl',
+          ngrokHostHeader: 'some-header',
+        },
+        expectedClientArgs: [
+          'my-test-id',
+          { myVar: 'foobar', immediate: false, ngrokUrl: 'some-url' },
+        ],
+        expectedOutput: [
+          ["Ngrok URL (some-url) assigned to variable 'ngrokUrl'"],
+          ['Result: My test (98765)'],
+        ],
+      })
+
+      assert.deepEqual(connectStub.args[0][0], {
+        addr: 8080,
+        authtoken: 'token',
+        host_header: 'some-header',
+      })
+    })
+
+    it('should tear down ngrok', async function () {
+      const connectStub = this.sandbox.stub(ngrok, 'connect').resolves('some-url')
+      const disconnectStub = this.sandbox.stub(ngrok, 'disconnect').resolves()
+
+      await this.testPlainOutput({
+        handlerInput: {
+          testId: 'my-test-id',
+          myVar: 'foobar',
+          immediate: false,
+          ngrokTunnel: 8080,
+          ngrokToken: 'token',
+          ngrokUrlVariable: 'ngrokUrl',
+          ngrokHostHeader: 'some-header',
+        },
+        expectedClientArgs: [
+          'my-test-id',
+          { myVar: 'foobar', immediate: false, ngrokUrl: 'some-url' },
+        ],
+        expectedOutput: [
+          ["Ngrok URL (some-url) assigned to variable 'ngrokUrl'"],
+          ['Result: My test (98765)'],
+        ],
+      })
+
+      assert.ok(disconnectStub.called)
+    })
+
+    it('should ignore ngrok teardown error', async function () {
+      const connectStub = this.sandbox.stub(ngrok, 'connect').resolves('some-url')
+      const disconnectStub = this.sandbox.stub(ngrok, 'disconnect').rejects()
+
+      await this.testPlainOutput({
+        handlerInput: {
+          testId: 'my-test-id',
+          myVar: 'foobar',
+          immediate: false,
+          ngrokTunnel: 8080,
+          ngrokToken: 'token',
+          ngrokUrlVariable: 'ngrokUrl',
+          ngrokHostHeader: 'some-header',
+        },
+        expectedClientArgs: [
+          'my-test-id',
+          { myVar: 'foobar', immediate: false, ngrokUrl: 'some-url' },
+        ],
+        expectedOutput: [
+          ["Ngrok URL (some-url) assigned to variable 'ngrokUrl'"],
+          ['Result: My test (98765)'],
+        ],
+      })
+
+      assert.ok(disconnectStub.called)
     })
   })
 })
