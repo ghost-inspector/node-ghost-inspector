@@ -785,7 +785,7 @@ const myTest = require('./my-test.json')
 
 // Wait for the result to finish execution before returning
 const options = {
-  wait: true,
+  immediate: false,
 }
 
 // Example using await

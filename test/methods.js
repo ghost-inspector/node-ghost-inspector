@@ -1376,7 +1376,7 @@ describe('API methods', function () {
       assert.deepEqual(this.callbackSpy.args[0], [null, { _id: '123' }])
     })
 
-    it('should execute on-demand test and poll', async function () {
+    it('should execute on-demand test and poll - legacy wait=true', async function () {
       const result = { _id: '123' }
       // set up a stub to mock waiting for a results
       const waitStub = sinon.stub(this.client, 'waitForResult')
@@ -1415,6 +1415,51 @@ describe('API methods', function () {
       assert.deepEqual(response, { _id: '123' })
       // assert that wait was called
       assert.ok(waitStub.called)
+
+      waitStub.restore()
+    })
+
+    it('should execute on-demand test and poll - immediate=false', async function () {
+      const result = { _id: '123' }
+      // set up a stub to mock waiting for a results
+      const waitStub = sinon.stub(this.client, 'waitForResult')
+      waitStub.callsFake(function (_resultId) {
+        return new Promise(function (resolve) {
+          setTimeout(() => {
+            resolve(result)
+          }, 5)
+        })
+      })
+      // set up success response
+      this.requestStub.resolves({ code: 'SUCCESS', data: result })
+      const options = { immediate: false }
+      const test = { name: 'foo' }
+      const response = await this.client.executeTestOnDemand(
+        'org-123',
+        test,
+        options,
+        this.callbackSpy,
+      )
+      // assert API call
+      const requestOptions = this.requestStub.args[0][0]
+      assert.deepEqual(requestOptions.headers, {
+        'Content-Type': 'application/json',
+        'User-Agent': 'Ghost Inspector Node.js Client',
+      })
+      assert.equal(requestOptions.json, true)
+      assert.equal(requestOptions.method, 'POST')
+      assert.equal(
+        requestOptions.uri,
+        'https://api.ghostinspector.com/v1/organizations/org-123/on-demand/execute/',
+      )
+      assert.deepEqual(requestOptions.body, { apiKey: 'my-api-key', name: 'foo' })
+      assert.equal(requestOptions.formData, undefined)
+      // assert async
+      assert.deepEqual(response, { _id: '123' })
+      // assert that wait was called
+      assert.ok(waitStub.called)
+
+      waitStub.restore()
     })
   })
 

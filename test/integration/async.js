@@ -253,7 +253,9 @@ describe('Async: Execute on-demand test', function () {
   it('should execute an on-demand test and wait for completion', async () => {
     const test = require('./test.json')
     const organizationId = '547fc38c404e81ff79292e53'
-    const result = await GhostInspector.executeTestOnDemand(organizationId, test, { wait: true })
+    const result = await GhostInspector.executeTestOnDemand(organizationId, test, {
+      immediate: false,
+    })
     assert.ok(result.passing)
   })
 })

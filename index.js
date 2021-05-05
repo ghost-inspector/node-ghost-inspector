@@ -523,7 +523,14 @@ class GhostInspector {
       }
       throw err
     }
-    if (options.wait) {
+
+    // maintain support for deprecated 'wait' flag
+    let wait = false
+    if (options.wait || options.immediate === false) {
+      wait = true
+    }
+
+    if (wait) {
       const pollFunction = () => this.getTestResult(result._id)
       return this.waitForResult(pollFunction, options, callback)
     }
