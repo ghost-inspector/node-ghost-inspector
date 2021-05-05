@@ -12,7 +12,7 @@ module.exports = {
   },
 
   handler: async function (rawArgs) {
-    // pass raw args to ngrkok
+    // pass raw args to ngrok
     rawArgs = await helpers.ngrokSetup(rawArgs)
 
     const executionArgs = helpers.cleanArgs(rawArgs)
