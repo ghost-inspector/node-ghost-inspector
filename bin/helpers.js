@@ -233,16 +233,16 @@ const ngrokSetup = async (args) => {
       throw new Error('Cannot use --ngrokTunnel with --immediate')
     }
 
-    const apiKey = process.env.NGROK_TOKEN || args.ngrokToken
+    const ngrokToken = process.env.NGROK_TOKEN || args.ngrokToken
     try {
-      assert.ok(apiKey, 'ngrokToken is required')
+      assert.ok(ngrokToken, 'ngrokToken is required')
     } catch (error) {
       // unwrap assertion error
       throw new Error(error.message)
     }
 
     const connectArgs = {
-      authtoken: args.ngrokToken,
+      authtoken: ngrokToken,
       addr: args.ngrokTunnel,
     }
 
@@ -250,11 +250,15 @@ const ngrokSetup = async (args) => {
       connectArgs.host_header = args.ngrokHostHeader
     }
 
-    const url = await ngrok.connect(connectArgs)
-    args[args.ngrokUrlVariable] = url
+    try {
+      const url = await ngrok.connect(connectArgs)
+      args[args.ngrokUrlVariable] = url
 
-    if (!args.json) {
-      console.log(`Ngrok URL (${url}) assigned to variable '${args.ngrokUrlVariable}'`)
+      if (!args.json) {
+        console.log(`Ngrok URL (${url}) assigned to variable '${args.ngrokUrlVariable}'`)
+      }
+    } catch (error) {
+      throw new Error(error.message)
     }
   }
   return args
