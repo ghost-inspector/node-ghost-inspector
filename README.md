@@ -81,9 +81,11 @@ The CLI has built-in support for [ngrok](https://ngrok.com/) to make it easier f
   --ngrokToken '<my-ngrok-token>'
 ```
 
+**Note**: `--ngrokTunnel` option is not available when using `--immediate`.
+
 If you prefer you can also set the ngrok token using the environment variable `NGROK_TOKEN`.
 
-#### Using the tunnel URL
+#### VPN tunnel URL variable
 
 Once you trigger your execution the variable `ngrokUrl` will be made available in your test with the URL of the tunnel. You can modify the name of this variable using the option `--ngrokUrlVariable`, for instance you could set it to `{{ appDomain }}` with the following example:
 
