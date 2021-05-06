@@ -509,9 +509,9 @@ class GhostInspector {
     }
     options = options || {}
     options.body = test
-    let result
+    let data
     try {
-      result = await this.request(
+      data = await this.request(
         'POST',
         `/organizations/${organizationId}/on-demand/execute/`,
         options,
@@ -524,6 +524,13 @@ class GhostInspector {
       throw err
     }
 
+    let returnSingleResult = true
+    if (!Array.isArray(data)) {
+      data = [data]
+    } else {
+      returnSingleResult = false
+    }
+
     // maintain support for deprecated 'wait' flag
     let wait = false
     if (options.wait || options.immediate === false) {
@@ -531,13 +538,26 @@ class GhostInspector {
     }
 
     if (wait) {
-      const pollFunction = () => this.getTestResult(result._id)
-      return this.waitForResult(pollFunction, options, callback)
+      data = await Promise.all(
+        data.map((item) => {
+          const pollFunction = () => this.getTestResult(item._id)
+          return this.waitForResult(pollFunction, options, callback)
+        }),
+      )
     }
+
+    // Check results, determine overall pass/fail
+    const passing = this.getOverallResultOutcome(data)
+    const screenshotPassing = this.getOverallResultOutcome(data, 'screenshotComparePassing')
+
+    // map back the single data item
+    data = data.length === 1 && returnSingleResult ? data[0] : data
+
+    // Call back with extra pass/fail parameter
     if (typeof callback === 'function') {
-      callback(null, result)
+      callback(null, data, passing, screenshotPassing)
     }
-    return result
+    return [data, passing, screenshotPassing]
   }
 
   async importTest(suiteId, test, callback) {

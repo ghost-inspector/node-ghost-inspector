@@ -16,7 +16,6 @@ module.exports = {
     return yargs
   },
 
-  // TODO; what happens when we execute with multiple browsers, etc?
   handler: async function (rawArgs) {
     // pass raw args to ngrkok
     rawArgs = await helpers.ngrokSetup(rawArgs)
@@ -38,24 +37,31 @@ module.exports = {
       }
     }
 
-    const [result, passing, screenshotPassing] = await client.executeTestOnDemand(
+    let [result, passing, screenshotPassing] = await client.executeTestOnDemand(
       organizationId,
       test,
-      { wait: !immediate },
+      { immediate },
     )
-    const { overallPassing, exitOk } = helpers.resolvePassingStatus(
-      rawArgs,
-      passing,
-      screenshotPassing,
-    )
+    const { exitOk } = helpers.resolvePassingStatus(rawArgs, passing, screenshotPassing)
 
     if (rawArgs.json) {
       helpers.printJson(result)
     } else {
-      helpers.print({
-        message: `Result: ${result.name}`,
-        id: result._id,
-        passing: overallPassing,
+      // handle multiple results
+      if (!Array.isArray(result)) {
+        result = [result]
+      }
+      result.forEach((item) => {
+        const { overallPassing } = helpers.resolvePassingStatus(
+          rawArgs,
+          item.passing,
+          item.screenshotComparePassing,
+        )
+        helpers.print({
+          message: `Result: ${item.name}`,
+          id: item._id,
+          passing: overallPassing,
+        })
       })
     }
 
