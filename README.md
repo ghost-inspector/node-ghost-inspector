@@ -785,21 +785,30 @@ const myTest = require('./my-test.json')
 
 // Wait for the result to finish execution before returning
 const options = {
-  wait: true,
+  immediate: false,
 }
 
 // Example using await
 try {
-  const result = await GhostInspector.executeTestOnDemand('[organization-id]', myTest, options)
+  const [result, passing, screenshotPassing] = await GhostInspector.executeTestOnDemand(
+    '[organization-id]',
+    myTest,
+    options,
+  )
 } catch (err) {
   console.error(err)
 }
 
 // Example using a callback
-GhostInspector.executeTestOnDemand('[organization-id]', myTest, options, function (err, result) {
-  if (err) return console.error(err)
-  console.log(`Passing: ${result.passing}`)
-})
+GhostInspector.executeTestOnDemand(
+  '[organization-id]',
+  myTest,
+  options,
+  function (err, result, passing, screenshotPassing) {
+    if (err) return console.error(err)
+    console.log(`Passing: ${result.passing}`)
+  },
+)
 ```
 
 #### `GhostInspector.waitForTestResult(resultId, [options], [callback])`

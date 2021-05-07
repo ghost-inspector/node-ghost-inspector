@@ -9,7 +9,11 @@ describe('execute-on-demand', function () {
     this.setUpHandler({
       commandModule: './test/execute-on-demand',
       clientMethod: 'executeTestOnDemand',
-      clientMethodResponse: [{ name: 'My test', _id: '98765', passing: null }, true, false],
+      clientMethodResponse: [
+        { name: 'My test', _id: '98765', passing: true, screenshotComparePassing: false },
+        true,
+        false,
+      ],
     })
 
     // stub for file loading
@@ -27,8 +31,10 @@ describe('execute-on-demand', function () {
         file: 'my-on-demand-test.json',
         immediate: true,
       },
-      expectedClientArgs: ['my-org-id', { name: 'My on-demand test' }, { wait: false }],
-      expectedOutput: ['{"name":"My test","_id":"98765","passing":null}'],
+      expectedClientArgs: ['my-org-id', { name: 'My on-demand test' }, { immediate: true }],
+      expectedOutput: [
+        '{"name":"My test","_id":"98765","passing":true,"screenshotComparePassing":false}',
+      ],
     })
 
     // assert json file was loaded
@@ -42,7 +48,7 @@ describe('execute-on-demand', function () {
         organizationId: 'my-test-id',
         immediate: true,
       },
-      expectedClientArgs: ['my-test-id', { name: 'My on-demand test' }, { wait: false }],
+      expectedClientArgs: ['my-test-id', { name: 'My on-demand test' }, { immediate: true }],
       expectedOutput: [['\u001b[32m✓\u001b[39m Result: My test (98765)']],
     })
 
@@ -57,7 +63,11 @@ describe('execute --immediate=true', function () {
     this.setUpHandler({
       commandModule: './test/execute-on-demand',
       clientMethod: 'executeTestOnDemand',
-      clientMethodResponse: [{ name: 'My test', _id: '98765' }, null, null],
+      clientMethodResponse: [
+        { name: 'My test', _id: '98765', passing: null, screenshotComparePassing: null },
+        null,
+        null,
+      ],
     })
 
     // stub for file loading
@@ -71,7 +81,7 @@ describe('execute --immediate=true', function () {
         file: 'my-on-demand-test.json',
         immediate: true,
       },
-      expectedClientArgs: ['my-org-id', { name: 'My on-demand test' }, { wait: false }],
+      expectedClientArgs: ['my-org-id', { name: 'My on-demand test' }, { immediate: true }],
       expectedOutput: [['? Result: My test (98765)']],
     })
   })
@@ -84,7 +94,7 @@ describe('execute --immediate=true', function () {
         immediate: true,
         errorOnScreenshotFail: true,
       },
-      expectedClientArgs: ['my-org-id', { name: 'My on-demand test' }, { wait: false }],
+      expectedClientArgs: ['my-org-id', { name: 'My on-demand test' }, { immediate: true }],
       expectedOutput: [['? Result: My test (98765)']],
     })
   })
@@ -98,7 +108,7 @@ describe('execute --immediate=true', function () {
         errorOnFail: true,
         errorOnScreenshotFail: true,
       },
-      expectedClientArgs: ['my-org-id', { name: 'My on-demand test' }, { wait: false }],
+      expectedClientArgs: ['my-org-id', { name: 'My on-demand test' }, { immediate: true }],
       expectedOutput: [['? Result: My test (98765)']],
     })
   })
@@ -122,7 +132,11 @@ describe('execute --immediate=false', function () {
       this.setUpHandler({
         commandModule: './test/execute-on-demand',
         clientMethod: 'executeTestOnDemand',
-        clientMethodResponse: [{ name: 'My test', _id: '98765' }, false, false],
+        clientMethodResponse: [
+          { name: 'My test', _id: '98765', passing: false, screenshotComparePassing: false },
+          false,
+          false,
+        ],
       })
 
       // stub for file loading
@@ -138,7 +152,7 @@ describe('execute --immediate=false', function () {
           immediate: false,
           errorOnFail: true,
         },
-        expectedClientArgs: ['my-org-id', { name: 'My on-demand test' }, { wait: true }],
+        expectedClientArgs: ['my-org-id', { name: 'My on-demand test' }, { immediate: false }],
         expectedOutput: [['\u001b[31m✖️\u001b[39m Result: My test (98765)']],
       })
     })
@@ -152,7 +166,7 @@ describe('execute --immediate=false', function () {
           immediate: false,
           errorOnScreenshotFail: true,
         },
-        expectedClientArgs: ['my-org-id', { name: 'My on-demand test' }, { wait: true }],
+        expectedClientArgs: ['my-org-id', { name: 'My on-demand test' }, { immediate: false }],
         expectedOutput: [['\u001b[31m✖️\u001b[39m Result: My test (98765)']],
       })
     })
@@ -163,7 +177,11 @@ describe('execute --immediate=false', function () {
       this.setUpHandler({
         commandModule: './test/execute-on-demand',
         clientMethod: 'executeTestOnDemand',
-        clientMethodResponse: [{ name: 'My test', _id: '98765' }, true, false],
+        clientMethodResponse: [
+          { name: 'My test', _id: '98765', passing: true, screenshotComparePassing: false },
+          true,
+          false,
+        ],
       })
 
       // stub for file loading
@@ -179,7 +197,7 @@ describe('execute --immediate=false', function () {
           immediate: false,
           errorOnFail: true,
         },
-        expectedClientArgs: ['my-org-id', { name: 'My on-demand test' }, { wait: true }],
+        expectedClientArgs: ['my-org-id', { name: 'My on-demand test' }, { immediate: false }],
         expectedOutput: [['\u001b[32m✓\u001b[39m Result: My test (98765)']],
       })
     })
@@ -193,7 +211,7 @@ describe('execute --immediate=false', function () {
           immediate: false,
           errorOnScreenshotFail: true,
         },
-        expectedClientArgs: ['my-org-id', { name: 'My on-demand test' }, { wait: true }],
+        expectedClientArgs: ['my-org-id', { name: 'My on-demand test' }, { immediate: false }],
         expectedOutput: [['\u001b[31m✖️\u001b[39m Result: My test (98765)']],
       })
     })
@@ -208,7 +226,7 @@ describe('execute --immediate=false', function () {
           errorOnFail: true,
           errorOnScreenshotFail: true,
         },
-        expectedClientArgs: ['my-org-id', { name: 'My on-demand test' }, { wait: true }],
+        expectedClientArgs: ['my-org-id', { name: 'My on-demand test' }, { immediate: false }],
         expectedOutput: [['\u001b[31m✖️\u001b[39m Result: My test (98765)']],
       })
     })
@@ -219,7 +237,11 @@ describe('execute --immediate=false', function () {
       this.setUpHandler({
         commandModule: './test/execute-on-demand',
         clientMethod: 'executeTestOnDemand',
-        clientMethodResponse: [{ name: 'My test', _id: '98765' }, false, true],
+        clientMethodResponse: [
+          { name: 'My test', _id: '98765', passing: false, screenshotComparePassing: true },
+          false,
+          true,
+        ],
       })
 
       // stub for file loading
@@ -235,7 +257,7 @@ describe('execute --immediate=false', function () {
           immediate: false,
           errorOnFail: true,
         },
-        expectedClientArgs: ['my-org-id', { name: 'My on-demand test' }, { wait: true }],
+        expectedClientArgs: ['my-org-id', { name: 'My on-demand test' }, { immediate: false }],
         expectedOutput: [['\u001b[31m✖️\u001b[39m Result: My test (98765)']],
       })
     })
@@ -249,7 +271,7 @@ describe('execute --immediate=false', function () {
           immediate: false,
           errorOnScreenshotFail: true,
         },
-        expectedClientArgs: ['my-org-id', { name: 'My on-demand test' }, { wait: true }],
+        expectedClientArgs: ['my-org-id', { name: 'My on-demand test' }, { immediate: false }],
         expectedOutput: [['\u001b[32m✓\u001b[39m Result: My test (98765)']],
       })
     })
@@ -264,7 +286,7 @@ describe('execute --immediate=false', function () {
           errorOnFail: true,
           errorOnScreenshotFail: true,
         },
-        expectedClientArgs: ['my-org-id', { name: 'My on-demand test' }, { wait: true }],
+        expectedClientArgs: ['my-org-id', { name: 'My on-demand test' }, { immediate: false }],
         expectedOutput: [['\u001b[31m✖️\u001b[39m Result: My test (98765)']],
       })
     })
@@ -275,7 +297,11 @@ describe('execute --immediate=false', function () {
       this.setUpHandler({
         commandModule: './test/execute-on-demand',
         clientMethod: 'executeTestOnDemand',
-        clientMethodResponse: [{ name: 'My test', _id: '98765' }, true, null],
+        clientMethodResponse: [
+          { name: 'My test', _id: '98765', passing: true, screenshotComparePassing: null },
+          true,
+          null,
+        ],
       })
 
       // stub for file loading
@@ -291,7 +317,7 @@ describe('execute --immediate=false', function () {
           immediate: false,
           errorOnFail: true,
         },
-        expectedClientArgs: ['my-org-id', { name: 'My on-demand test' }, { wait: true }],
+        expectedClientArgs: ['my-org-id', { name: 'My on-demand test' }, { immediate: false }],
         expectedOutput: [['\u001b[32m✓\u001b[39m Result: My test (98765)']],
       })
     })
@@ -305,7 +331,7 @@ describe('execute --immediate=false', function () {
           immediate: false,
           errorOnScreenshotFail: true,
         },
-        expectedClientArgs: ['my-org-id', { name: 'My on-demand test' }, { wait: true }],
+        expectedClientArgs: ['my-org-id', { name: 'My on-demand test' }, { immediate: false }],
         expectedOutput: [['? Result: My test (98765)']],
       })
     })
@@ -320,7 +346,7 @@ describe('execute --immediate=false', function () {
           errorOnFail: true,
           errorOnScreenshotFail: true,
         },
-        expectedClientArgs: ['my-org-id', { name: 'My on-demand test' }, { wait: true }],
+        expectedClientArgs: ['my-org-id', { name: 'My on-demand test' }, { immediate: false }],
         expectedOutput: [['? Result: My test (98765)']],
       })
     })
@@ -331,7 +357,11 @@ describe('execute --immediate=false', function () {
       this.setUpHandler({
         commandModule: './test/execute-on-demand',
         clientMethod: 'executeTestOnDemand',
-        clientMethodResponse: [{ name: 'My test', _id: '98765' }, null, true],
+        clientMethodResponse: [
+          { name: 'My test', _id: '98765', passing: null, screenshotComparePassing: true },
+          null,
+          true,
+        ],
       })
 
       // stub for file loading
@@ -347,7 +377,7 @@ describe('execute --immediate=false', function () {
           immediate: false,
           errorOnFail: true,
         },
-        expectedClientArgs: ['my-org-id', { name: 'My on-demand test' }, { wait: true }],
+        expectedClientArgs: ['my-org-id', { name: 'My on-demand test' }, { immediate: false }],
         expectedOutput: [['? Result: My test (98765)']],
       })
     })
@@ -361,7 +391,7 @@ describe('execute --immediate=false', function () {
           immediate: false,
           errorOnScreenshotFail: true,
         },
-        expectedClientArgs: ['my-org-id', { name: 'My on-demand test' }, { wait: true }],
+        expectedClientArgs: ['my-org-id', { name: 'My on-demand test' }, { immediate: false }],
         expectedOutput: [['\u001b[32m✓\u001b[39m Result: My test (98765)']],
       })
     })
@@ -376,7 +406,7 @@ describe('execute --immediate=false', function () {
           errorOnFail: true,
           errorOnScreenshotFail: true,
         },
-        expectedClientArgs: ['my-org-id', { name: 'My on-demand test' }, { wait: true }],
+        expectedClientArgs: ['my-org-id', { name: 'My on-demand test' }, { immediate: false }],
         expectedOutput: [['? Result: My test (98765)']],
       })
     })
@@ -387,7 +417,11 @@ describe('execute --immediate=false', function () {
       this.setUpHandler({
         commandModule: './test/execute-on-demand',
         clientMethod: 'executeTestOnDemand',
-        clientMethodResponse: [{ name: 'My test', _id: '98765' }, null, true],
+        clientMethodResponse: [
+          { name: 'My test', _id: '98765', passing: null, screenshotComparePassing: true },
+          null,
+          true,
+        ],
       })
       // stub for file loading
       this.loadJsonStub = this.sandbox.stub(helpers, 'loadJsonFile').returns(onDemandTest)
@@ -408,7 +442,7 @@ describe('execute --immediate=false', function () {
         expectedClientArgs: [
           'my-org-id',
           { name: 'My on-demand test', variables: { ngrokUrl: 'some-url' } },
-          { wait: true },
+          { immediate: false },
         ],
         expectedOutput: [
           ["Ngrok URL (some-url) assigned to variable 'ngrokUrl'"],
@@ -433,9 +467,11 @@ describe('execute --immediate=false', function () {
         expectedClientArgs: [
           'my-org-id',
           { name: 'My on-demand test', variables: { ngrokUrl: 'some-url' } },
-          { wait: true },
+          { immediate: false },
         ],
-        expectedOutput: [['{"name":"My test","_id":"98765"}']],
+        expectedOutput: [
+          ['{"name":"My test","_id":"98765","passing":null,"screenshotComparePassing":true}'],
+        ],
       })
     })
 
@@ -455,7 +491,7 @@ describe('execute --immediate=false', function () {
         expectedClientArgs: [
           'my-org-id',
           { name: 'My on-demand test', variables: { ngrokUrl: 'some-url' } },
-          { wait: true },
+          { immediate: false },
         ],
         expectedOutput: [
           ["Ngrok URL (some-url) assigned to variable 'ngrokUrl'"],
@@ -487,7 +523,7 @@ describe('execute --immediate=false', function () {
         expectedClientArgs: [
           'my-org-id',
           { name: 'My on-demand test', variables: { ngrokUrl: 'some-url' } },
-          { wait: true },
+          { immediate: false },
         ],
         expectedOutput: [
           ["Ngrok URL (some-url) assigned to variable 'ngrokUrl'"],
@@ -515,7 +551,7 @@ describe('execute --immediate=false', function () {
         expectedClientArgs: [
           'my-org-id',
           { name: 'My on-demand test', variables: { ngrokUrl: 'some-url' } },
-          { wait: true },
+          { immediate: false },
         ],
         expectedOutput: [
           ["Ngrok URL (some-url) assigned to variable 'ngrokUrl'"],
