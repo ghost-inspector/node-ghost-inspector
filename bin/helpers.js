@@ -64,34 +64,34 @@ const getCommonExecutionOptions = () => {
       type: 'string',
     },
     dataFile: {
-      description: 'Path to local CSV file containing a row of variable values for each test run',
+      description: 'Path to local CSV file containing a row of variable values for each test run.',
     },
     disableNotifications: {
-      description: 'Disable all notifications for this execution only when provided',
+      description: 'Disable all notifications for this execution only when provided.',
       type: 'boolean',
     },
     disableVisuals: {
-      description: 'Disable capturing screenshots and video for this execution only when provided',
+      description: 'Disable capturing screenshots and video for this execution only when provided.',
       type: 'boolean',
     },
     errorOnFail: {
       description:
-        'Exit the command with a non-0 status if the test or suite passing value is not `true`. Ignored when used with --immediate',
+        'Exit the command with a non-0 status if the test or suite passing value is not `true`. Ignored when used with --immediate.',
       default: false,
     },
     errorOnScreenshotFail: {
       description:
-        'Exit the command with a non-0 status if the test or suite screenshotComparePassing value is not `true`. Ignored when used with --immediate',
+        'Exit the command with a non-0 status if the test or suite screenshotComparePassing value is not `true`. Ignored when used with --immediate.',
       default: false,
     },
     httpAuthPassword: {
-      description: 'Alternate HTTP authentication password to use for this execution only',
+      description: 'Alternate HTTP authentication password to use for this execution only.',
     },
     httpAuthUsername: {
-      description: 'Alternate HTTP authentication username to use for this execution only',
+      description: 'Alternate HTTP authentication username to use for this execution only.',
     },
     immediate: {
-      description: 'Initiate the execution, then immediate return a response when provided',
+      description: 'Initiate the execution, then immediate return a response when provided.',
       type: 'boolean',
       default: false,
     },
@@ -100,24 +100,24 @@ const getCommonExecutionOptions = () => {
         'Specify the max number of rows to execute simultaneously when executing a test using dataFile.',
     },
     ngrokTunnel: {
-      description: 'TODO',
+      description: 'Create a VPN tunnel to the provided local website using ngrok.',
     },
     ngrokUrlVariable: {
-      description: 'TODO',
+      description: 'The name of the variable that will have the ngrok tunnel URL.',
       default: 'ngrokUrl',
     },
     ngrokHostHeader: {
-      description: 'TODO',
+      description: 'Rewrite the host header for incoming HTTP requests for the ngrok tunnel.',
     },
     ngrokToken: {
-      description: 'TODO',
+      description: 'Your ngrok auth token.',
     },
     region: {
       description:
         'Geo-location for this execution, defaults to "us-east-1". Use `ghost-inspector test-runner-ips` to see all available regions. Provide multiple --region params to trigger multiple executions.',
     },
     screenshotCompareEnabled: {
-      description: 'Enable screenshot comparison for this execution only when provided',
+      description: 'Enable screenshot comparison for this execution only when provided.',
       type: Boolean,
     },
     screenshotCompareThreshold: {
