@@ -49,7 +49,7 @@ CLI quickstart:
 
 ```
 ❯ ghost-inspector test execute <testId> \
-  --browser Firefox \
+  --browser firefox \
   --ngrokTunnel localhost:8000 \
   --myVariable "some variable" \
   --errorOnFail
