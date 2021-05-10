@@ -1,10 +1,12 @@
 const assert = require('assert').strict
+const ngrok = require('ngrok')
+const sinon = require('sinon')
 
 const helpers = require('../bin/helpers')
 
 describe('helpers', function () {
   describe('cleanArgs()', function () {
-    it(' should clean up provided input', function () {
+    it('should clean up provided input', function () {
       const result = helpers.cleanArgs({
         'foo-bar': 'baz',
         fooBar: 'biz',
@@ -14,6 +16,10 @@ describe('helpers', function () {
         json: true,
         errorOnFail: true,
         errorOnScreenshotFail: true,
+        ngrokTunnel: 5000,
+        ngrokUrlVariable: 'foo',
+        ngrokHostHeader: 'bar',
+        ngrokToken: '1234',
       })
 
       assert.deepEqual(result, { fooBar: 'biz', 'foo-bar': 'baz' })
@@ -116,6 +122,60 @@ describe('helpers', function () {
         const { overallPassing, exitOk } = helpers.resolvePassingStatus(this.args, true, true)
         assert.equal(overallPassing, true)
         assert.equal(exitOk, true)
+      })
+    })
+  })
+
+  describe('ngrokSetup', function () {
+    beforeEach(function () {
+      this.sandbox = sinon.createSandbox()
+      this.connectStub = this.sandbox.stub(ngrok, 'connect').resolves('some-url')
+    })
+
+    afterEach(function () {
+      this.sandbox.restore()
+    })
+
+    it('should throw and error when used with --immediate', async function () {
+      const input = {
+        ngrokTunnel: 8000,
+        immediate: true,
+      }
+      await assert.rejects(helpers.ngrokSetup(input), {
+        message: 'Cannot use --ngrokTunnel with --immediate',
+      })
+    })
+
+    it('should throw and error when no ngrok token', async function () {
+      const input = {
+        ngrokTunnel: 8000,
+      }
+      await assert.rejects(helpers.ngrokSetup(input), {
+        message: 'ngrokToken is required',
+      })
+    })
+
+    it('should connect', async function () {
+      const input = {
+        ngrokTunnel: 8000,
+        ngrokToken: 'foo',
+      }
+      await helpers.ngrokSetup(input)
+      assert.deepEqual(this.connectStub.args[0][0], { addr: 8000, authtoken: 'foo' })
+    })
+
+    it('should assign ngrok url to specified variable', async function () {
+      const input = {
+        ngrokTunnel: 8000,
+        ngrokToken: 'foo',
+        ngrokUrlVariable: 'myTunnelUrl',
+      }
+      const output = await helpers.ngrokSetup(input)
+      assert.deepEqual(output, {
+        ngrokToken: 'foo',
+        ngrokTunnel: 8000,
+        ngrokUrlVariable: 'myTunnelUrl',
+        myTunnelUrl: 'some-url',
       })
     })
   })

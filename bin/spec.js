@@ -103,6 +103,7 @@ describe('CLI', function () {
     require('./commands/test/download.spec')
     require('./commands/test/duplicate.spec')
     require('./commands/test/execute-on-demand.spec')
+    require('./commands/test/execute-on-demand-multiple.spec')
     require('./commands/test/execute.spec')
     require('./commands/test/execute-multiple.spec')
     require('./commands/test/get-running.spec')

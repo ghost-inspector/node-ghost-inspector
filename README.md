@@ -48,7 +48,11 @@ try {
 CLI quickstart:
 
 ```
-❯ ghost-inspector test execute <testId> --browser Firefox --myVariable "some variable" --errorOnFail
+❯ ghost-inspector test execute <testId> \
+  --browser firefox \
+  --ngrokTunnel localhost:8000 \
+  --myVariable "some variable" \
+  --errorOnFail
 ```
 
 ### Exit status control for CI systems
@@ -66,6 +70,42 @@ Under an automated build environment it makes sense to have a command return a n
 ❯ ghost-inspector test execute <testId> --errorOnFail --errorOnScreenshotFail
 
 ```
+
+### Creating a secure VPN tunnel with ngrok
+
+The CLI has built-in support for [ngrok](https://ngrok.com/) to make it easier for you to run your tests against a locally-accessible application. In order to set up `ngrok` you will need your access token from [your ngrok account](https://dashboard.ngrok.com/get-started/your-authtoken). To initiate a tunnel on execution use the `--ngrokTunnel` parameter to specify your local endpoint, this can be a port on your local computer or a target on the local network:
+
+```
+❯ ghost-inspector test execute <testId> \
+  --ngrokTunnel localhost:8000 \
+  --ngrokToken '<my-ngrok-token>'
+```
+
+**Note**: `--ngrokTunnel` option is not available when using `--immediate`.
+
+If you prefer you can also set the ngrok token using the environment variable `NGROK_TOKEN`.
+
+#### VPN tunnel URL variable
+
+Once you trigger your execution the variable `ngrokUrl` will be made available in your test with the URL of the tunnel. You can modify the name of this variable using the option `--ngrokUrlVariable`, for instance you could set it to `{{ appDomain }}` with the following example:
+
+```
+❯ ghost-inspector test execute <testId> \
+  --ngrokTunnel localhost:8000 \
+  --ngrokToken '<my-ngrok-token>'
+  --ngrokUrlVariable 'appDomain'
+```
+
+You can also set the ngrok URL to the start URL of your test or suite:
+
+```
+❯ ghost-inspector test execute <testId> \
+  --ngrokTunnel localhost:8000 \
+  --ngrokToken '<my-ngrok-token>'
+  --ngrokUrlVariable 'startUrl'
+```
+
+If you require additional configuration, you can use [the ngrok configuration file for your system](https://www.npmjs.com/package/ngrok#config) to customize your tunnel.
 
 ### View all available commands for the CLI
 
@@ -745,21 +785,30 @@ const myTest = require('./my-test.json')
 
 // Wait for the result to finish execution before returning
 const options = {
-  wait: true,
+  immediate: false,
 }
 
 // Example using await
 try {
-  const result = await GhostInspector.executeTestOnDemand('[organization-id]', myTest, options)
+  const [result, passing, screenshotPassing] = await GhostInspector.executeTestOnDemand(
+    '[organization-id]',
+    myTest,
+    options,
+  )
 } catch (err) {
   console.error(err)
 }
 
 // Example using a callback
-GhostInspector.executeTestOnDemand('[organization-id]', myTest, options, function (err, result) {
-  if (err) return console.error(err)
-  console.log(`Passing: ${result.passing}`)
-})
+GhostInspector.executeTestOnDemand(
+  '[organization-id]',
+  myTest,
+  options,
+  function (err, result, passing, screenshotPassing) {
+    if (err) return console.error(err)
+    console.log(`Passing: ${result.passing}`)
+  },
+)
 ```
 
 #### `GhostInspector.waitForTestResult(resultId, [options], [callback])`

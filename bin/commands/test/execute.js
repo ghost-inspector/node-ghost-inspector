@@ -20,18 +20,20 @@ module.exports = {
     return yargs
   },
 
-  handler: async function (argv) {
-    const args = helpers.cleanArgs(argv)
+  handler: async function (rawArgs) {
+    // pass raw args to ngrkok
+    rawArgs = await helpers.ngrokSetup(rawArgs)
 
-    const testId = args.testId
-    delete args.testId
+    const executionArgs = helpers.cleanArgs(rawArgs)
+    const testId = executionArgs.testId
+    delete executionArgs.testId
 
-    const client = helpers.getClient(argv)
-    let [result, passing, screenshotPassing] = await client.executeTest(testId, args)
+    const client = helpers.getClient(rawArgs)
+    let [result, passing, screenshotPassing] = await client.executeTest(testId, executionArgs)
 
-    const { exitOk } = helpers.resolvePassingStatus(argv, passing, screenshotPassing)
+    const { exitOk } = helpers.resolvePassingStatus(rawArgs, passing, screenshotPassing)
 
-    if (argv.json) {
+    if (rawArgs.json) {
       helpers.printJson(result)
     } else {
       // handle multiple results
@@ -40,7 +42,7 @@ module.exports = {
       }
       result.forEach((item) => {
         const { overallPassing } = helpers.resolvePassingStatus(
-          argv,
+          rawArgs,
           item.passing,
           item.screenshotComparePassing,
         )
@@ -51,6 +53,8 @@ module.exports = {
         })
       })
     }
+
+    await helpers.ngrokTeardown(rawArgs)
 
     process.exit(exitOk ? 0 : 1)
   },

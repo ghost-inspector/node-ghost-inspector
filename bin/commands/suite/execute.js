@@ -11,19 +11,22 @@ module.exports = {
     return yargs
   },
 
-  handler: async function (argv) {
-    const args = helpers.cleanArgs(argv)
+  handler: async function (rawArgs) {
+    // pass raw args to ngrok
+    rawArgs = await helpers.ngrokSetup(rawArgs)
+
+    const executionArgs = helpers.cleanArgs(rawArgs)
 
     // pull out the suiteId & apiKey so the rest can be passed in verbatim
-    const suiteId = args.suiteId
-    delete args.suiteId
+    const suiteId = executionArgs.suiteId
+    delete executionArgs.suiteId
 
     // execute
-    const client = helpers.getClient(argv)
-    let [result, passing, screenshotPassing] = await client.executeSuite(suiteId, args)
-    const { exitOk } = helpers.resolvePassingStatus(argv, passing, screenshotPassing)
+    const client = helpers.getClient(rawArgs)
+    let [result, passing, screenshotPassing] = await client.executeSuite(suiteId, executionArgs)
+    const { exitOk } = helpers.resolvePassingStatus(rawArgs, passing, screenshotPassing)
 
-    if (argv.json) {
+    if (rawArgs.json) {
       helpers.printJson(result)
     } else {
       // handle multiple results
@@ -32,7 +35,7 @@ module.exports = {
       }
       result.forEach((item) => {
         const { overallPassing } = helpers.resolvePassingStatus(
-          argv,
+          rawArgs,
           item.passing,
           item.screenshotComparePassing,
         )
@@ -43,6 +46,8 @@ module.exports = {
         })
       })
     }
+
+    await helpers.ngrokTeardown(rawArgs)
 
     process.exit(exitOk ? 0 : 1)
   },

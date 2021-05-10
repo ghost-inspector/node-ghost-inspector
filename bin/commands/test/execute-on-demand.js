@@ -16,34 +16,56 @@ module.exports = {
     return yargs
   },
 
-  // TODO; what happens when we execute with multiple browsers, etc?
-  handler: async function (argv) {
+  handler: async function (rawArgs) {
+    // pass raw args to ngrkok
+    rawArgs = await helpers.ngrokSetup(rawArgs)
+
     // clean up yargs-related stuff
-    const args = helpers.cleanArgs(argv)
+    const args = helpers.cleanArgs(rawArgs)
     const { organizationId, file, immediate } = args
 
-    const client = helpers.getClient(argv)
-    const input = helpers.loadJsonFile(file)
-    const [result, passing, screenshotPassing] = await client.executeTestOnDemand(
-      organizationId,
-      input,
-      { wait: !immediate },
-    )
-    const { overallPassing, exitOk } = helpers.resolvePassingStatus(
-      argv,
-      passing,
-      screenshotPassing,
-    )
+    const client = helpers.getClient(rawArgs)
+    const test = helpers.loadJsonFile(file)
 
-    if (argv.json) {
+    // process ngrokUrlVariable, since API endpoint doesn't accept variables
+    if (rawArgs.ngrokTunnel) {
+      if (rawArgs.ngrokUrlVariable === 'startUrl') {
+        test.startUrl = rawArgs.startUrl
+      } else {
+        test.variables = test.variables || {}
+        test.variables[rawArgs.ngrokUrlVariable] = rawArgs[rawArgs.ngrokUrlVariable]
+      }
+    }
+
+    let [result, passing, screenshotPassing] = await client.executeTestOnDemand(
+      organizationId,
+      test,
+      { immediate },
+    )
+    const { exitOk } = helpers.resolvePassingStatus(rawArgs, passing, screenshotPassing)
+
+    if (rawArgs.json) {
       helpers.printJson(result)
     } else {
-      helpers.print({
-        message: `Result: ${result.name}`,
-        id: result._id,
-        passing: overallPassing,
+      // handle multiple results
+      if (!Array.isArray(result)) {
+        result = [result]
+      }
+      result.forEach((item) => {
+        const { overallPassing } = helpers.resolvePassingStatus(
+          rawArgs,
+          item.passing,
+          item.screenshotComparePassing,
+        )
+        helpers.print({
+          message: `Result: ${item.name}`,
+          id: item._id,
+          passing: overallPassing,
+        })
       })
     }
+
+    await helpers.ngrokTeardown(rawArgs)
 
     process.exit(exitOk ? 0 : 1)
   },
