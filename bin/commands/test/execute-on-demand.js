@@ -7,6 +7,16 @@ module.exports = {
 
   builder: (yargs) => {
     yargs.options({
+      errorOnFail: {
+        description:
+          'Exit the command with a non-0 status if the test passing value is not `true`. Ignored when used with --immediate.',
+        default: false,
+      },
+      errorOnScreenshotFail: {
+        description:
+          'Exit the command with a non-0 status if the test screenshotComparePassing value is not `true`. Ignored when used with --immediate.',
+        default: false,
+      },
       immediate: {
         description: 'Initiate the execution, then immediate return a response when provided',
         type: 'boolean',
