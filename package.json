@@ -12,7 +12,7 @@
     "url": "http://github.com/ghost-inspector/node-ghost-inspector.git"
   },
   "engines": {
-    "node": ">=10.18.0"
+    "node": ">=10.0"
   },
   "scripts": {
     "lint": "eslint .",
