@@ -233,7 +233,7 @@ const ngrokSetup = async (args) => {
       throw new Error('Cannot use --ngrokTunnel with --immediate')
     }
 
-    const ngrokToken = process.env.NGROK_TOKEN || args.ngrokToken
+    const ngrokToken = args.ngrokToken || process.env.NGROK_TOKEN
     try {
       assert.ok(ngrokToken, 'ngrokToken is required')
     } catch (error) {
