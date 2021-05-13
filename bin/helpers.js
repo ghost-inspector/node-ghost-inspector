@@ -78,11 +78,13 @@ const getCommonExecutionOptions = () => {
       description:
         'Exit the command with a non-0 status if the test or suite passing value is not `true`. Ignored when used with --immediate.',
       default: false,
+      type: 'boolean',
     },
     errorOnScreenshotFail: {
       description:
         'Exit the command with a non-0 status if the test or suite screenshotComparePassing value is not `true`. Ignored when used with --immediate.',
       default: false,
+      type: 'boolean',
     },
     httpAuthPassword: {
       description: 'Alternate HTTP authentication password to use for this execution only.',
