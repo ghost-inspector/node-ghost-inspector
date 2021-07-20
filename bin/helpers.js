@@ -66,6 +66,10 @@ const getCommonExecutionOptions = () => {
     dataFile: {
       description: 'Path to local CSV file containing a row of variable values for each test run.',
     },
+    delay: {
+      description: 'The number of milliseconds to delay execution start, maximum 300000 (5 minutes)',
+      type: 'number'
+    },
     disableNotifications: {
       description: 'Disable all notifications for this execution only when provided.',
       type: 'boolean',
