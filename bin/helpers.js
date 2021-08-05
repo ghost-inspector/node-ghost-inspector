@@ -26,6 +26,7 @@ const cleanArgs = (args) => {
   delete args.jsonInput
   delete args.errorOnFail
   delete args.errorOnScreenshotFail
+  delete args.giIntegration
 
   // delete ngrok stuff
   delete args.ngrokTunnel
@@ -35,6 +36,8 @@ const cleanArgs = (args) => {
 
   return args
 }
+
+
 
 /**
  * Abstract the Ghost Inspector client to customize connection details.
@@ -48,8 +51,14 @@ const getClient = (args) => {
     throw new Error(error.message)
   }
 
+  // check for integration details
+  let integration = ''
+  if (args.giIntegration) {
+    integration = ` - ${args.giIntegration}`
+  }
+
   const client = require('../index')(apiKey)
-  client.userAgent = `${client.userAgent} CLI`
+  client.userAgent = `Ghost Inspector CLI${integration}`
   return client
 }
 
