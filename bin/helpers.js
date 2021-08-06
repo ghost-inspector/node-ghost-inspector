@@ -37,8 +37,6 @@ const cleanArgs = (args) => {
   return args
 }
 
-
-
 /**
  * Abstract the Ghost Inspector client to customize connection details.
  */
