@@ -10,7 +10,7 @@ jobs:
       - run: npm install .
       - run: npx caxa --input . --output ghost-inspector  -- "{{caxa}}/node_modules/.bin/node" "{{caxa}}/bin/ghost-inspector"
       - run: ls -l
-      - run: export VERSION=$(cat package.json | grep version | cut -d '"' -f4) && echo "::set-output name=package_version::$VERSION"
+      - run: export VERSION=$(cat package-lock.json | grep version | cut -d '"' -f4) && echo "::set-output name=package_version::$VERSION"
         id: get_version
       - run: echo $VERSION
         env:
@@ -20,12 +20,14 @@ jobs:
         env:
           VERSION: ${{ steps.get_version.outputs.package_version }}
       - run: ls -l
-      - run: cp ../ghost-inspector .
+      - name: build .deb
+        run: >
+          cp ../ghost-inspector .
+          export DEBEMAIL="support@ghostinspector.com"
+          export DEBFULLNAME="Ghost Inpsector"
+          dh_make --indep --createorig
+          touch debian/install
+          echo "ghost-inspector usr/bin" > debian/install
+          debuild -us -uc
         working-directory: ghost-inspector-${{ steps.get_version.outputs.package_version }}
-      - run: export DEBEMAIL="support@ghostinspector.com"
-      - run: export DEBFULLNAME="Ghost Inpsector"
-      - run: dh_make --indep --createorig
-      - run: touch debian/install
-      - run: echo "ghost-inspector usr/bin" > debian/install
-      - run: debuild -us -uc
       - run: ls -l
