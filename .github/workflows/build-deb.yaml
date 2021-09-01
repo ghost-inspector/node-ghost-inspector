@@ -27,7 +27,7 @@ jobs:
           export DEBEMAIL="support@ghostinspector.com"
           export DEBFULLNAME="Ghost Inpsector"
           dh_make --indep --createorig
-          touch debian/install
+          mkdir debian
           echo "ghost-inspector usr/bin" > debian/install
           debuild -us -uc
         working-directory: ghost-inspector-${{ steps.get_version.outputs.package_version }}
