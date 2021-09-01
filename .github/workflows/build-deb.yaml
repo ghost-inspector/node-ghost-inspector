@@ -10,11 +10,16 @@ jobs:
       - run: npm install .
       - run: npx caxa --input . --output ghost-inspector  -- "{{caxa}}/node_modules/.bin/node" "{{caxa}}/bin/ghost-inspector"
       - run: ls -l
-      - run: export VERSION=$(npm list ghost-inspector --depth 0 | grep ghost | cut -d '@' -f2 | cut -d ' ' -f1)
+      - run: export VERSION=$(npm list ghost-inspector --depth 0 | grep ghost | cut -d '@' -f2 | cut -d ' ' -f1) && echo "::set-output name=package_version::$VERSION"
+        id: get_version
       - run: echo $VERSION
+        env:
+          VERSION: ${{ steps.get_version.outputs.package_version }}
       - run: sudo apt-get -y install dh-make devscripts
-      - run: mkdir ghost-inspector-$VERSION && cd ghost-inspector-$VERSION
+      - run: mkdir ghost-inspector-$VERSION
+      - run: ls -l
       - run: cp ../ghost-inspector .
+        working-directory: ghost-inspector-$VERSION
       - run: export DEBEMAIL="support@ghostinspector.com"
       - run: export DEBFULLNAME="Ghost Inpsector"
       - run: dh_make --indep --createorig
