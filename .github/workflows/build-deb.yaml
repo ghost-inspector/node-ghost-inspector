@@ -6,28 +6,29 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - run: npm install caxa
-      - run: npm install .
-      - run: npx caxa --input . --output ghost-inspector  -- "{{caxa}}/node_modules/.bin/node" "{{caxa}}/bin/ghost-inspector"
-      - run: ls -l
-      - run: export VERSION=$(cat package-lock.json | grep version | cut -d '"' -f4) && echo "::set-output name=package_version::$VERSION"
-        id: get_version
-      - run: echo $VERSION
-        env:
-          VERSION: ${{ steps.get_version.outputs.package_version }}
-      - run: sudo apt-get -y install dh-make devscripts
-      - run: mkdir ghost-inspector-$VERSION
-        env:
-          VERSION: ${{ steps.get_version.outputs.package_version }}
-      - run: ls -l
-      - name: build .deb
-        run: >
-          cp ../ghost-inspector .
-          export DEBEMAIL="support@ghostinspector.com"
-          export DEBFULLNAME="Ghost Inpsector"
-          dh_make --indep --createorig
-          touch debian/install
-          echo "ghost-inspector usr/bin" > debian/install
-          debuild -us -uc
-        working-directory: ghost-inspector-${{ steps.get_version.outputs.package_version }}
-      - run: ls -l
+      - run: ls
+      # - run: npm install caxa
+      # - run: npm install .
+      # - run: npx caxa --input . --output ghost-inspector  -- "{{caxa}}/node_modules/.bin/node" "{{caxa}}/bin/ghost-inspector"
+      # - run: ls -l
+      # - run: export VERSION=$(cat package-lock.json | grep version | cut -d '"' -f4) && echo "::set-output name=package_version::$VERSION"
+      #   id: get_version
+      # - run: echo $VERSION
+      #   env:
+      #     VERSION: ${{ steps.get_version.outputs.package_version }}
+      # - run: sudo apt-get -y install dh-make devscripts
+      # - run: mkdir ghost-inspector-$VERSION
+      #   env:
+      #     VERSION: ${{ steps.get_version.outputs.package_version }}
+      # - run: ls -l
+      # - name: build .deb
+      #   run: >
+      #     cp ../ghost-inspector .
+      #     export DEBEMAIL="support@ghostinspector.com"
+      #     export DEBFULLNAME="Ghost Inpsector"
+      #     dh_make --indep --createorig
+      #     touch debian/install
+      #     echo "ghost-inspector usr/bin" > debian/install
+      #     debuild -us -uc
+      #   working-directory: ghost-inspector-${{ steps.get_version.outputs.package_version }}
+      # - run: ls -l
