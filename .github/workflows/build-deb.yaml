@@ -25,7 +25,7 @@ jobs:
         working-directory: ghost-inspector-${{ steps.get_version.outputs.package_version }}
       - run: export DEBEMAIL="support@ghostinspector.com" && export DEBFULLNAME="Ghost Inpsector" && dh_make --yes --copyright mit --indep --createorig
         working-directory: ghost-inspector-${{ steps.get_version.outputs.package_version }}
-      - run: mkdir debian && touch debian/install && echo "ghost-inspector usr/bin" > debian/install
+      - run: echo "ghost-inspector usr/bin" > debian/install
         working-directory: ghost-inspector-${{ steps.get_version.outputs.package_version }}
       - run: debuild -us -uc
         working-directory: ghost-inspector-${{ steps.get_version.outputs.package_version }}
