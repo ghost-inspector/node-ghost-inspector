@@ -21,14 +21,12 @@ jobs:
         env:
           VERSION: ${{ steps.get_version.outputs.package_version }}
       - run: ls -l
-      - name: build .deb
-        run: >
-          cp ../ghost-inspector .
-          export DEBEMAIL="support@ghostinspector.com"
-          export DEBFULLNAME="Ghost Inpsector"
-          dh_make --indep --createorig
-          mkdir debian
-          echo "ghost-inspector usr/bin" > debian/install
-          debuild -us -uc
+      - run: cp ../ghost-inspector .
+        working-directory: ghost-inspector-${{ steps.get_version.outputs.package_version }}
+      - run: export DEBEMAIL="support@ghostinspector.com" && export DEBFULLNAME="Ghost Inpsector" && dh_make --indep --createorig
+        working-directory: ghost-inspector-${{ steps.get_version.outputs.package_version }}
+      - run: mkdir debian && touch debian/install && echo "ghost-inspector usr/bin" > debian/install
+        working-directory: ghost-inspector-${{ steps.get_version.outputs.package_version }}
+      - run: debuild -us -uc
         working-directory: ghost-inspector-${{ steps.get_version.outputs.package_version }}
       - run: ls -l
