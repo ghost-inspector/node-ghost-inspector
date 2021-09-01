@@ -9,7 +9,8 @@ jobs:
       - run: npm install caxa
       - run: npm install .
       - run: npx caxa --input . --output ghost-inspector  -- "{{caxa}}/node_modules/.bin/node" "{{caxa}}/bin/ghost-inspector"
-      - run: VERSION=$(npm list ghost-inspector --depth 0 | grep ghost | cut -d '@' -f2 | cut -d ' ' -f1)
+      - run: ls -l
+      - run: export VERSION=$(npm list ghost-inspector --depth 0 | grep ghost | cut -d '@' -f2 | cut -d ' ' -f1)
       - run: echo $VERSION
       - run: sudo apt-get -y install dh-make devscripts
       - run: mkdir ghost-inspector-$VERSION && cd ghost-inspector-$VERSION
