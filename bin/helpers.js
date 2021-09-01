@@ -2,7 +2,6 @@ const assert = require('assert')
 const chalk = require('chalk')
 const path = require('path')
 const ngrok = require('ngrok')
-const fs = require('fs')
 
 /**
  * Clean up arguments so the output is compatible with the Ghost Inspector
