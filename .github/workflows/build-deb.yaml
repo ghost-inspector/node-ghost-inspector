@@ -1,0 +1,12 @@
+name: Build .deb
+
+on: [push]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - run: npm install caxa
+      - run: npm install .
+      - run: npx caxa --input . --output ghost-inspector  -- "{{caxa}}/node_modules/.bin/node" "{{caxa}}/bin/ghost-inspector"
+      - run: ls -l
