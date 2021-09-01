@@ -12,13 +12,12 @@ jobs:
       - run: VERSION=$(npm list ghost-inspector --depth 0 | grep ghost | cut -d '@' -f2 | cut -d ' ' -f1)
       - run: echo $VERSION
       - run: sudo apt-get -y install dh-make devscripts
-      - run: |
-        mkdir ghost-inspector-$VERSION && cd ghost-inspector-$VERSION
-        cp ../ghost-inspector .
-        export DEBEMAIL="support@ghostinspector.com"
-        export DEBFULLNAME="Ghost Inpsector"
-        dh_make --indep --createorig
-        touch debian/install
-        echo "ghost-inspector usr/bin" > debian/install
-        debuild -us -uc
+      - run: mkdir ghost-inspector-$VERSION && cd ghost-inspector-$VERSION
+      - run: cp ../ghost-inspector .
+      - run: export DEBEMAIL="support@ghostinspector.com"
+      - run: export DEBFULLNAME="Ghost Inpsector"
+      - run: dh_make --indep --createorig
+      - run: touch debian/install
+      - run: echo "ghost-inspector usr/bin" > debian/install
+      - run: debuild -us -uc
       - run: ls -l
