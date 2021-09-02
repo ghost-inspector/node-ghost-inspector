@@ -21,20 +21,23 @@ jobs:
           draft: true
           prerelease: false
   build:
-    needs: create_release # we need to know the upload URL
-    runs-on: ${{ matrix.config.os }} # we run many different builds
+    needs: create_release
+    runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        config:
+        include:
           - os: ubuntu-latest
+            binary: -linux
           - os: macos-latest
+            binary: -macos
           - os: windows-latest
+            binary: .exe
     steps:
       - uses: actions/checkout@v2
       - run: npm install -g caxa node-prune
       - run: npm install . --production
       - run: node-prune
-      - run: npx caxa --input . --output ghost-inspector-${{ matrix.config.os }}  -- "{{caxa}}/node_modules/.bin/node" "{{caxa}}/bin/ghost-inspector"
+      - run: npx caxa --input . --output ghost-inspector${{ matrix.binary }}  -- "{{caxa}}/node_modules/.bin/node" "{{caxa}}/bin/ghost-inspector"
       - run: ls -l
       - name: Upload release assets
         uses: actions/upload-release-asset@v1
@@ -42,14 +45,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ needs.create_release.outputs.upload_url }}
-          # This is how it will be named on the release page. Put hatever name
-          # you like, remember that they need to be different for each platform.
-          # You can choose any build matrix parameters. For Rust I use the
-          # target triple.
-          asset_name: ghost-inspector-${{ matrix.config.os }}
-          # The path to the file you want to upload.
-          asset_path: ./ghost-inspector-${{ matrix.config.os }}
-          # probably you will need to change it, but most likely you are
-          # uploading a binary file
+          asset_name: ghost-inspector${{ matrix.binary }}
+          asset_path: ./ghost-inspector${{ matrix.binary }}
           asset_content_type: application/octet-stream
 
