@@ -7,8 +7,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - run: npm install caxa
+      - run: npm install -g caxa
       - run: npm install . --production
+      - run: curl -sf https://gobinaries.com/tj/node-prune | sh && node-prune
       - run: npx caxa --input . --output ghost-inspector  -- "{{caxa}}/node_modules/.bin/node" "{{caxa}}/bin/ghost-inspector"
       - run: ls -l
 
