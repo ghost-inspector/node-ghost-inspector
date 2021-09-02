@@ -38,7 +38,7 @@ jobs:
       - run: npm install . --production
       - run: node-prune
       - run: npx caxa --input . --output ghost-inspector${{ matrix.binary }}  -- "{{caxa}}/node_modules/.bin/node" "{{caxa}}/bin/ghost-inspector"
-      - run: ls -l
+      # - run: ls -l
       - name: Upload release assets
         uses: actions/upload-release-asset@v1
         env:
