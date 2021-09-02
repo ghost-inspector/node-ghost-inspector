@@ -8,25 +8,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - run: npm install caxa
-      - run: npm install .
+      - run: npm install . --production
       - run: npx caxa --input . --output ghost-inspector  -- "{{caxa}}/node_modules/.bin/node" "{{caxa}}/bin/ghost-inspector"
       - run: ls -l
-      - run: export VERSION=$(cat package.json | grep version | cut -d '"' -f4) && echo "::set-output name=package_version::$VERSION"
-        id: get_version
-      - run: echo $VERSION
-        env:
-          VERSION: ${{ steps.get_version.outputs.package_version }}
-      - run: sudo apt-get -y install dh-make devscripts
-      - run: mkdir ghost-inspector-$VERSION
-        env:
-          VERSION: ${{ steps.get_version.outputs.package_version }}
-      - run: ls -l
-      - run: cp ../ghost-inspector .
-        working-directory: ghost-inspector-${{ steps.get_version.outputs.package_version }}
-      - run: export DEBEMAIL="support@ghostinspector.com" && export DEBFULLNAME="Ghost Inpsector" && dh_make --yes --copyright mit --indep --createorig
-        working-directory: ghost-inspector-${{ steps.get_version.outputs.package_version }}
-      - run: echo "ghost-inspector usr/bin" > debian/install
-        working-directory: ghost-inspector-${{ steps.get_version.outputs.package_version }}
-      - run: debuild -us -uc
-        working-directory: ghost-inspector-${{ steps.get_version.outputs.package_version }}
-      - run: ls -l
+
