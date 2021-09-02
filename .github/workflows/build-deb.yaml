@@ -1,6 +1,9 @@
-name: Build .deb
+name: Build and release binaries
 
-on: [push]
+on:
+  push:
+    tags:
+      - 'v[0-9]+.*'
 
 jobs:
   create_release:
@@ -15,10 +18,9 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          # tag_name: ${{ github.ref }}
-          tag_name: v6.0.6-alpha
+          tag_name: ${{ github.ref }}
           release_name: Release ${{ github.ref }}
-          draft: true
+          draft: false
           prerelease: false
   build:
     needs: create_release
@@ -38,7 +40,6 @@ jobs:
       - run: npm install . --production
       - run: node-prune
       - run: npx caxa --input . --output ghost-inspector${{ matrix.binary }}  -- "{{caxa}}/node_modules/.bin/node" "{{caxa}}/bin/ghost-inspector"
-      # - run: ls -l
       - name: Upload release assets
         uses: actions/upload-release-asset@v1
         env:
