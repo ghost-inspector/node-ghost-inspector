@@ -49,4 +49,8 @@ jobs:
           asset_name: ghost-inspector${{ matrix.binary }}
           asset_path: ./ghost-inspector${{ matrix.binary }}
           asset_content_type: application/octet-stream
-
+      - name: Archive binary
+        uses: actions/upload-artifact@v2
+        with:
+          name: binary-${{ matrix.os }}
+          path: ./ghost-inspector${{ matrix.binary }}
