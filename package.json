@@ -26,7 +26,6 @@
     "ghost-inspector": "./bin/ghost-inspector"
   },
   "dependencies": {
-    "caxa": "^2.1.0",
     "chalk": "^4.1.1",
     "ngrok": "^4.0.1",
     "request": "^2.88.2",
