@@ -23,7 +23,7 @@
   },
   "main": "./index.js",
   "bin": {
-    "ghost-inspector": "./bin/cli.js"
+    "ghost-inspector": "./bin/ghost-inspector"
   },
   "dependencies": {
     "chalk": "^4.1.1",
