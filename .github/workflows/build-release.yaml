@@ -30,8 +30,9 @@ jobs:
         include:
           - os: ubuntu-latest
             binary: -linux
-          - os: macos-latest
-            binary: -macos
+          # macos build not working properly, disabling for now
+          # - os: macos-latest
+          #   binary: -macos
           - os: windows-latest
             binary: .exe
     steps:
