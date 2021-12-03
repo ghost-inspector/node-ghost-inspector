@@ -2,8 +2,7 @@ const helpers = require('../../helpers')
 
 module.exports = {
   command: 'execute-on-demand <organizationId> <file> [options]',
-  desc:
-    'Execute an on-demand test against your organization providing the path to your local JSON <file>.',
+  desc: 'Execute an on-demand test against your organization providing the path to your local JSON <file>.',
 
   builder: (yargs) => {
     yargs.options({

@@ -77,8 +77,9 @@ const getCommonExecutionOptions = () => {
       description: 'Specify the the data source to use for this execution.',
     },
     delay: {
-      description: 'The number of milliseconds to delay execution start, maximum 300000 (5 minutes).',
-      type: 'number'
+      description:
+        'The number of milliseconds to delay execution start, maximum 300000 (5 minutes).',
+      type: 'number',
     },
     disableNotifications: {
       description: 'Disable all notifications for this execution only when provided.',
