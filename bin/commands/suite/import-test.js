@@ -2,8 +2,7 @@ const helpers = require('../../helpers')
 
 module.exports = {
   command: 'import-test <suiteId> <file>',
-  desc:
-    'Import a test in JSON or HTML (Selenium IDE v1) format. <file> must be local path on-disk to JSON test file.',
+  desc: 'Import a test in JSON or HTML (Selenium IDE v1) format. <file> must be local path on-disk to JSON test file.',
   builder: {},
   handler: async function (argv) {
     const client = helpers.getClient(argv)
