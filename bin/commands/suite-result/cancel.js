@@ -1,7 +1,7 @@
 const helpers = require('../../helpers')
 
 module.exports = {
-  command: 'cancel <suite-result-id>',
+  command: 'cancel <suiteResultId>',
   desc: 'Cancel an active suite run.',
   builder: {},
   handler: async function (argv) {
