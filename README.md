@@ -219,7 +219,7 @@ GhostInspector.getFolders(function (err, folders) {
 })
 ```
 
-#### `GhostInspector.createFolder(organizationId, folderName, [callback]`
+#### `GhostInspector.createFolder(organizationId, folderName, [callback])`
 
 Create a folder within your organization.
 
@@ -240,7 +240,7 @@ GhostInspector.createFolder('[organization-id]', '[folder-name]', function (err,
 
 #### `GhostInspector.updateFolder(folderId, folderName, [callback])`
 
-Create a folder name.
+Update a folder name.
 
 ```js
 // Example using await

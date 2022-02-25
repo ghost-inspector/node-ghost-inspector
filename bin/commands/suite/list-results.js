@@ -2,8 +2,7 @@ const helpers = require('../../helpers')
 
 module.exports = {
   command: 'list-results <suiteId>',
-  desc:
-    'Fetch an array containing the results for a suite. Results are returned in reverse chronological order (newest first).',
+  desc: 'Fetch an array containing the results for a suite. Results are returned in reverse chronological order (newest first).',
   builder: (yargs) => {
     yargs.options({
       count: {

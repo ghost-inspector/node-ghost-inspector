@@ -2,8 +2,7 @@ const helpers = require('../../helpers')
 
 module.exports = {
   command: 'get-running <organizationId>',
-  desc:
-    'Fetch a list of the currently-executing results for the entire organization and return the results.',
+  desc: 'Fetch a list of the currently-executing results for the entire organization and return the results.',
   builder: {},
   handler: async function (argv) {
     const client = helpers.getClient(argv)
